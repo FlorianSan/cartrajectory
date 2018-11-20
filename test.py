@@ -1,2 +1,4 @@
-def test(a) :
-    return 'toto'
+def test() :
+    pass
+Ceci est un test
+ok
