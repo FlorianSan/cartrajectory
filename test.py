@@ -1,2 +1,2 @@
-def test() :
-    pass
+def test(a) :
+    return 'toto'
