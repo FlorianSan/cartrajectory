@@ -7,7 +7,7 @@ import piste
 WIDTH = 800  # Initial window width (pixels)
 HEIGHT = 450  # Initial window height (pixels)
 AIRPORT_Z_VALUE = 0
-APT_COLOR = "black"
+COLOR = "black"
 
 
 class PanZoomView(QtWidgets.QGraphicsView):
@@ -65,24 +65,33 @@ class Dessin(QtWidgets.QWidget):
 
     def add_piste(self):
 
-        airport_group = QtWidgets.QGraphicsItemGroup()
-        self.scene.addItem(airport_group)
-        airport_group.setZValue(AIRPORT_Z_VALUE)
+        track_group = QtWidgets.QGraphicsItemGroup()
+        self.scene.addItem(track_group)
+        track_group.setZValue(AIRPORT_Z_VALUE)
 
-        [pointx, pointy] = piste.creationpiste(600)
-
-        pen = QPen(QtGui.QColor(APT_COLOR), 50)
+        [point] = piste.creationpiste(600)
+        (a,b)=minimum(point)
+        pen = QPen(QtGui.QColor(COLOR), 20)
         pen.setCapStyle(QtCore.Qt.RoundCap)
 
-        path1 = QtGui.QPainterPath()
+        path = QtGui.QPainterPath()
 
-        path1.moveTo(abs(int(pointx[0].x)), abs(int(pointx[0].y)))
+        path.moveTo(point[0].x-a, point[0].y-b)
 
-        for i in range(1, len(pointx)):
-            path1.lineTo(abs(int(pointx[i].x)), abs(int(pointx[i].y)))
-        item = QtWidgets.QGraphicsPathItem(path1, airport_group)
-            #item = QtWidgets.QGraphicsPathItem(path2, airport_group)
+        for i in range(1, len(point)):
+            path.lineTo(point[i].x-a, point[i].y-b)
+        item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
+
+def minimum(liste):
+    a = liste[0].x
+    b = liste[0].y
+    for i in range(1,len(liste)):
+        if liste[i].x<a:
+            a=liste[i].x
+        elif liste[i].y<b:
+            b=liste[i].y
+    return(a,b)
 
 if __name__ == "__main__":
     app = QApplication([])
