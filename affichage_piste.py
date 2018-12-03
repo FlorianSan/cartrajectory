@@ -10,7 +10,7 @@ class Dessin(QWidget):
         painter = QPainter(self)
         path1 = QPainterPath()
         path2 = QPainterPath()
-        [pointx, pointy] = circuit.creationpiste(60)
+        [pointx, pointy] = piste.creationpiste(60)
         # a,b = min(pointx),min(pointy)
         path1.moveTo(abs(int(pointx[0].x)), abs(int(pointx[0].y)))
         path2.moveTo(abs(int(pointy[0].x)), abs(int(pointy[0].y)))
