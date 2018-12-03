@@ -3,33 +3,19 @@ import numpy as np
 import random as rd
 
 LARGEUR = 15  # en mètre
-PAS = 15  # en mètreS
+PAS = 10  # en mètre
 NBETAPEZONE = 5  # nb étapes avant le choix d'une nouvelle zone
 NBZONE = 24  # nb de zones
 ANGLEZONE = 360 // NBZONE  # en degré
-INTENSITEVIRAGE = 4  # plus cette valeur est importante et plus les virages auront tendance à être serrés
-LIMITECADRE = 10000
-
-
-def afficherpiste2(l1, l2):
-    for k in range(len(l1)):
-        a = [l1[k].x, l2[k].x]
-        b = [l1[k].y, l2[k].y]
-        print(k)
-        plt.plot(a, b)
-        plt.axis('equal')
-    plt.show()
+INTENSITEVIRAGE = 3  # plus cette valeur est importante et plus les virages auront tendance à être serrés
 
 
 def afficherpiste(l1, l2):
-    for k in range(len(l1) - 1):
-        a = [l1[k].x, l1[k + 1].x]
-        b = [l1[k].y, l1[k + 1].y]
-        c = [l2[k].x, l2[k + 1].x]
-        d = [l2[k].y, l2[k + 1].y]
-        print(k)
+    for k in range(len(l1)):
+        a = [l1[k].x, l2[k].x]
+        b = [l1[k].y, l2[k].y]
+        #print(k)
         plt.plot(a, b)
-        plt.plot(c, d)
         plt.axis('equal')
     plt.show()
 
@@ -53,7 +39,6 @@ def clockwise(a, b, c):
 
 
 def intersect(a, b, c, d):
-    # return False
     if a == d and b == c:
         return True
     else:
@@ -65,18 +50,20 @@ def intersect(a, b, c, d):
 class Piste:
 
     def __init__(self):
-        self.pointsx = [Point(0, +LARGEUR / 2)]  # liste de points
-        self.pointsy = [Point(0, -LARGEUR / 2)]  # liste de points
+        self.largeur = LARGEUR
+        self.pas = PAS
+        self.pointsx = [Point(0, -LARGEUR / 2)]  # liste de points
+        self.pointsy = [Point(0, +LARGEUR / 2)]  # liste de points
         self.pointsm = [Point(0, 0)]  # liste des points milieux
-        self.zone = [0]  # initialisation à 0 nécessaire afin que le début de la piste soit rectiligne
+        self.zone = 0  # initialisation à 0 nécessaire afin que le début de la piste soit rectiligne
         self.angle = 0  # en degré
         self.anglerad = 0  # en rad (nécessaire pour les calculs)
 
     def miseajourzone(self):
-        self.zone.append(rd.randint(self.zone[-1] - INTENSITEVIRAGE, self.zone[-1] + INTENSITEVIRAGE))
+        self.zone = rd.randint(self.zone - INTENSITEVIRAGE, self.zone + INTENSITEVIRAGE)
 
     def miseajourangle(self):
-        self.angle = rd.randint(0, ANGLEZONE) + ANGLEZONE * self.zone[-1]
+        self.angle = rd.randint(0, ANGLEZONE) + ANGLEZONE * self.zone
         self.anglerad = self.angle * np.pi / 180
 
     def miseajourpointm(self):
@@ -94,7 +81,7 @@ class Piste:
     def verificationpoint(self, pointx, pointy):
         verif = True
         for i in range(len(self.pointsx)):
-            if intersect(pointx, self.pointsx[i], pointy, self.pointsy[i]):
+            if intersect(pointx, pointy, self.pointsx[i], self.pointsy[i]):
                 verif = False
         return verif
 
@@ -105,52 +92,22 @@ class Piste:
 
 def creationpiste(nbiterations):
     piste = Piste()
+    N = 0
     i = 0
-    piste.zone = [0]  # initialisation nécessaire afin que le début de la piste soit rectiligne
-    z = len(piste.zone)
-
+    piste.zone = 0  # initialisation nécessaire afin que le début de la piste soit rectiligne
     while i < nbiterations:
-        while len(piste.pointsx) - z * NBETAPEZONE < NBETAPEZONE:
+        while N < NBETAPEZONE:
             piste.miseajourangle()
             piste.miseajourpointm()
             px, py = piste.creationpointspiste()
-            if piste.verificationpoint(px, py) and veriflimitecadre(px, py):
+            if piste.verificationpoint(px, py):
                 piste.ajoutpoint(px, py)
+                N = N + 1
                 i = i + 1
-                # print(i)
-            else:
-                l = len(piste.pointsm)
-                print("l=" + str(l))
-                print("lpiste=" + str(len(piste.zone)))
-                print(l - (len(piste.zone) + 2) * NBETAPEZONE)
-                for k in range(l - (len(piste.zone) + 2) * NBETAPEZONE + 1):
-                    piste.pointsm.pop()
-                    piste.pointsx.pop()
-                    piste.pointsy.pop()
-                    # print("CHEVAUCHEMENT")
-                    i = i - 1
-                piste.zone.pop()
-                piste.zone.pop()
-                z = z - 2
-        # print(piste.zone)
+                #print(i)
+        N = 0
         piste.miseajourzone()
-        z = z + 1
-    return piste.pointsm
+    #afficherpiste(piste.pointsx, piste.pointsy)
+    return [piste.pointsx, piste.pointsy]
 
-
-if __name__ == "__main__":
-    def afficherpiste(l1):
-        for k in range(len(l1) - 1):
-            a = [l1[k].x, l1[k + 1].x]
-            b = [l1[k].y, l1[k + 1].y]
-            # c = [l2[k].x, l2[k+1].x]
-            # d = [l2[k].y, l2[k+1].y]
-            print(k)
-            plt.plot(a, b)
-            # plt.plot(c,d)
-            plt.axis('equal')
-        plt.show()
-
-
-    pm = creationpiste(1000)
-    afficherpiste(pm)
+#creationpiste(600)
