@@ -1,3 +1,4 @@
+#Astar
 class Path:
     def __init__(self, nodes, totalCost):
         self.nodes = nodes
