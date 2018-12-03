@@ -103,16 +103,6 @@ class Piste:
         self.pointsy.append(pointy)
 
 
-def veriflimitecadre(px, py):
-    return True
-    # return abs(px.x)<LIMITECADRE and abs(px.y)<LIMITECADRE and abs(py.x)<LIMITECADRE and abs(py.y)<LIMITECADRE
-    if abs(px.x) < LIMITECADRE and abs(px.y) < LIMITECADRE and abs(py.x) < LIMITECADRE and abs(py.y) < LIMITECADRE:
-        pass
-    else:
-        print("LIMITE CADRE")
-    return abs(px.x) < LIMITECADRE and abs(px.y) < LIMITECADRE and abs(py.x) < LIMITECADRE and abs(py.y) < LIMITECADRE
-
-
 def creationpiste(nbiterations):
     piste = Piste()
     i = 0
@@ -127,12 +117,12 @@ def creationpiste(nbiterations):
             if piste.verificationpoint(px, py) and veriflimitecadre(px, py):
                 piste.ajoutpoint(px, py)
                 i = i + 1
-                print(i)
+                # print(i)
             else:
                 l = len(piste.pointsm)
-                #print("l=" + str(l))
-                #print("lpiste=" + str(len(piste.zone)))
-                #print(l - (len(piste.zone) + 4) * NBETAPEZONE)
+                print("l=" + str(l))
+                print("lpiste=" + str(len(piste.zone)))
+                print(l - (len(piste.zone) + 2) * NBETAPEZONE)
                 for k in range(l - (len(piste.zone) + 2) * NBETAPEZONE + 1):
                     piste.pointsm.pop()
                     piste.pointsx.pop()
@@ -145,6 +135,22 @@ def creationpiste(nbiterations):
         # print(piste.zone)
         piste.miseajourzone()
         z = z + 1
-    afficherpiste(piste.pointsx, piste.pointsy)
+    return piste.pointsm
 
-creationpiste(1000)
+
+if __name__ == "__main__":
+    def afficherpiste(l1):
+        for k in range(len(l1) - 1):
+            a = [l1[k].x, l1[k + 1].x]
+            b = [l1[k].y, l1[k + 1].y]
+            # c = [l2[k].x, l2[k+1].x]
+            # d = [l2[k].y, l2[k+1].y]
+            print(k)
+            plt.plot(a, b)
+            # plt.plot(c,d)
+            plt.axis('equal')
+        plt.show()
+
+
+    pm = creationpiste(1000)
+    afficherpiste(pm)
