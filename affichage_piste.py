@@ -1,5 +1,6 @@
 from PyQt5.QtGui import QPainter, QPainterPath, QColor, QPen
 from PyQt5 import QtWidgets, QtGui, QtCore
+import math
 import piste
 
 
