@@ -14,7 +14,7 @@ def afficherpiste(l1, l2):
     for k in range(len(l1)):
         a = [l1[k].x, l2[k].x]
         b = [l1[k].y, l2[k].y]
-        print(k)
+        #print(k)
         plt.plot(a, b)
         plt.axis('equal')
     plt.show()
@@ -104,9 +104,10 @@ def creationpiste(nbiterations):
                 piste.ajoutpoint(px, py)
                 N = N + 1
                 i = i + 1
-                print(i)
+                #print(i)
         N = 0
         piste.miseajourzone()
-    afficherpiste(piste.pointsx, piste.pointsy)
+    #afficherpiste(piste.pointsx, piste.pointsy)
+    return [piste.pointsx, piste.pointsy]
 
-creationpiste(600)
+#creationpiste(600)

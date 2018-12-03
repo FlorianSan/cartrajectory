@@ -1,25 +1,88 @@
-from PyQt5.QtGui import QPainter, QPainterPath, QColor
-from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget
+from PyQt5.QtGui import QPainter, QPainterPath, QColor, QPen
 from PyQt5 import QtWidgets, QtGui, QtCore
+import math
 import piste
 
 
-class Dessin(QWidget):
+WIDTH = 800  # Initial window width (pixels)
+HEIGHT = 450  # Initial window height (pixels)
+AIRPORT_Z_VALUE = 0
+APT_COLOR = "black"
 
-    def paintEvent(self, event):
-        painter = QPainter(self)
-        path1 = QPainterPath()
-        path2 = QPainterPath()
-        [pointx, pointy] = piste.creationpiste(60)
-        # a,b = min(pointx),min(pointy)
+
+class PanZoomView(QtWidgets.QGraphicsView):
+    """An interactive view that supports Pan and Zoom functions"""
+
+    def __init__(self, scene):
+        super().__init__(scene)
+        # enable anti-aliasing
+        self.setRenderHint(QtGui.QPainter.Antialiasing)
+        # enable drag and drop of the view
+        self.setDragMode(self.ScrollHandDrag)
+
+    def wheelEvent(self, event):
+        """Overrides method in QGraphicsView in order to zoom it when mouse scroll occurs"""
+        factor = math.pow(1.001, event.angleDelta().y())
+        self.zoom_view(factor)
+
+    @QtCore.pyqtSlot(int)
+    def zoom_view(self, factor):
+        """Updates the zoom factor of the view"""
+        self.setTransformationAnchor(self.AnchorUnderMouse)
+        super().scale(factor, factor)
+
+
+
+class Dessin(QtWidgets.QWidget):
+    def __init__(self):
+        super().__init__()
+        self.time_increment = 1
+
+        # Settings
+        self.setWindowTitle('Trajectoire')
+        self.resize(WIDTH, HEIGHT)
+
+        # create components
+        root_layout = QtWidgets.QVBoxLayout(self)
+        self.scene = QtWidgets.QGraphicsScene()
+        self.view = PanZoomView(self.scene)
+        self.time_entry = QtWidgets.QLineEdit()
+
+        # invert y axis for the view
+        self.view.scale(1, -1)
+
+        # add the airport elements to the graphic scene and then fit it in the view
+        self.add_piste()
+
+
+
+        # add components to the root_layout
+        root_layout.addWidget(self.view)
+
+        # show the window
+        self.show()
+
+
+    def add_piste(self):
+
+        airport_group = QtWidgets.QGraphicsItemGroup()
+        self.scene.addItem(airport_group)
+        airport_group.setZValue(AIRPORT_Z_VALUE)
+
+        [pointx, pointy] = piste.creationpiste(600)
+
+        pen = QPen(QtGui.QColor(APT_COLOR), 50)
+        pen.setCapStyle(QtCore.Qt.RoundCap)
+
+        path1 = QtGui.QPainterPath()
+
         path1.moveTo(abs(int(pointx[0].x)), abs(int(pointx[0].y)))
-        path2.moveTo(abs(int(pointy[0].x)), abs(int(pointy[0].y)))
+
         for i in range(1, len(pointx)):
             path1.lineTo(abs(int(pointx[i].x)), abs(int(pointx[i].y)))
-            path2.lineTo(abs(int(pointy[i].x)), abs(int(pointy[i].y)))
-        painter.drawPath(path1)
-        painter.drawPath(path2)
-
+        item = QtWidgets.QGraphicsPathItem(path1, airport_group)
+            #item = QtWidgets.QGraphicsPathItem(path2, airport_group)
+        item.setPen(pen)
 
 if __name__ == "__main__":
     app = QApplication([])
