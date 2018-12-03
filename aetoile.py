@@ -1,4 +1,3 @@
-#Astar
 class Path:
     def __init__(self, noeud, coutot):
         self.noeud = noeud
