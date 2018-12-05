@@ -1,8 +1,9 @@
 #affichage
-import math
+import math 
 
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtGui import QPen, QBrush, QColor
+from PyQt5.QtCore import QPoint
+from PyQt5.QtGui import QPen, QBrush, QColor, QPolygonF
 
 import piste
 
@@ -78,10 +79,16 @@ class Dessin(QtWidgets.QWidget):
         path = QtGui.QPainterPath()
         point = self.point
         path.moveTo(point[0].x, point[0].y)
-        self.scene.addRect(point[0].x-40,point[0].y-40,40,40)
+        #(a,b,c)=carre(point)
+        
+        self.scene.addRect(point[0].x,point[0].y-10,40,20,QPen(QtGui.QColor(TK_COLOR),1),QBrush(QColor('black')))
         for i in range(1, len(point)):
             path.lineTo(point[i].x, point[i].y)
         item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
-   
+
+def carre(liste):
+    a = liste[2].x-liste[0].x
+    b = liste[2].y - liste[0].y        
+    return(a,b,a==math.sqrt(a**2))
     
