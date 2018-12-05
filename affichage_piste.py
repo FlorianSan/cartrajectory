@@ -1,7 +1,12 @@
 from PyQt5.QtGui import QPainter, QPainterPath, QColor, QPen
 from PyQt5 import QtWidgets, QtGui, QtCore
 import math
+
+from PyQt5.QtWidgets import QApplication, QMainWindow
+
 import piste
+import affichage
+
 
 
 WIDTH = 800  # Initial window width (pixels)
@@ -36,7 +41,6 @@ class PanZoomView(QtWidgets.QGraphicsView):
 class Dessin(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
-        self.time_increment = 1
 
         # Settings
         self.setWindowTitle('Trajectoire')

@@ -7,3 +7,6 @@ class Voiture:
         self.direction = []
         self.position = []
 
+    def get_position(self, t):
+        return self.position[t]
+
