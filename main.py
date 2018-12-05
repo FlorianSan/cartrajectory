@@ -13,15 +13,19 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication([])
     car = voiture.Voiture(10,10,10)
 
-    car.position = piste.creationpiste(600)
 
     # create the radar view and the time navigation interface
     main_window = affichage_piste.Dessin()
-    moving_car = affichage.CarMotion(main_window)
+    car.position = main_window.point
+    moving_car = affichage.CarMotion(main_window, car)
+
 
     timer = QTimer()
     timer.timeout.connect(moving_car.updateValues)
     timer.start(33)
 
+
+    # show the window
+    main_window.show()
     # enter the main loop
     app.exec_()

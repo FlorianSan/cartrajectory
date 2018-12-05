@@ -39,7 +39,6 @@ class PanZoomView(QtWidgets.QGraphicsView):
 class Dessin(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
-        self.time_increment = 1
 
         # Settings
         self.setWindowTitle('Trajectoire')
@@ -63,8 +62,7 @@ class Dessin(QtWidgets.QWidget):
         # add components to the root_layout
         root_layout.addWidget(self.view)
 
-        # show the window
-        self.show()
+
 
 
     def add_piste(self):
