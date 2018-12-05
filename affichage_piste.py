@@ -67,9 +67,9 @@ class Dessin(QtWidgets.QWidget):
 
     def add_piste(self):
 
-        airport_group = QtWidgets.QGraphicsItemGroup()
-        self.scene.addItem(airport_group)
-        airport_group.setZValue(AIRPORT_Z_VALUE)
+        track_group = QtWidgets.QGraphicsItemGroup()
+        self.scene.addItem(track_group)
+        track_group.setZValue(AIRPORT_Z_VALUE)
 
         [pointx, pointy] = piste.creationpiste(600)
 
@@ -82,7 +82,7 @@ class Dessin(QtWidgets.QWidget):
 
         for i in range(1, len(pointx)):
             path.lineTo(abs(int(pointx[i].x)), abs(int(pointx[i].y)))
-        item = QtWidgets.QGraphicsPathItem(path, airport_group)
+        item = QtWidgets.QGraphicsPathItem(path, track_group)
             #item = QtWidgets.QGraphicsPathItem(path2, airport_group)
         item.setPen(pen)
 
