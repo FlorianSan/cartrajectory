@@ -34,7 +34,7 @@ def clockwise(a, b, c):
     return x1 * y2 - x2 * y1 < 0
 
 
-def intersect(a, b, c, d):
+def intersect(a, b, c, d): #détermine si les segments ab et cs d'intersectent
     if a == d and b == c:
         return True
     else:
@@ -96,20 +96,17 @@ def creationpiste(nbiterations):
             piste.miseajourangle()
             pm = piste.miseajourpointm()
             px, py = piste.creationpointspiste()
-            if piste.verificationpoint(px, py):
+            if piste.verificationpoint(px, py): #vérifie que les nouveaux points de la piste n'intesectent pas des anciens points
                 piste.ajoutpoint(px, py, pm)
-                # i = i + 1
+                i = i + 1
                 k = k + 1
-                # print(i)
             else:
-
                 l = len(piste.pointsm)
-
-                for j in range(l - (len(piste.zone) - 1) * NBETAPEPARTIE + 1):
+                for j in range(l - (len(piste.zone) - 1) * NBETAPEPARTIE + 1): #si intersection alors on enlève les points de la partie en cours ainsi que ceux de la précdente
                     piste.pointsm.pop()
                     piste.pointsx.pop()
                     piste.pointsy.pop()
-                    # i=i-1
+                    i=i-1
                 piste.zone.pop()
         piste.miseajourzone()
         k = 0
