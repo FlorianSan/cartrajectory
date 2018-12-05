@@ -69,7 +69,6 @@ class Dessin(QtWidgets.QWidget):
 
         track_group = QtWidgets.QGraphicsItemGroup()
         self.scene.addItem(track_group)
-        track_group.setZValue(AIRPORT_Z_VALUE)
 
         [pointx, pointy] = piste.creationpiste(600)
 
@@ -78,15 +77,11 @@ class Dessin(QtWidgets.QWidget):
 
         path = QtGui.QPainterPath()
 
-        path.moveTo(abs(int(pointx[0].x)), abs(int(pointx[0].y)))
+        path.moveTo(pointx[0].x, pointx[0].y)
 
         for i in range(1, len(pointx)):
-            path.lineTo(abs(int(pointx[i].x)), abs(int(pointx[i].y)))
+            path.lineTo(pointx[i].x, pointx[i].y)
         item = QtWidgets.QGraphicsPathItem(path, track_group)
-            #item = QtWidgets.QGraphicsPathItem(path2, airport_group)
         item.setPen(pen)
-
-
-
 
 
