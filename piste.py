@@ -3,21 +3,12 @@ import numpy as np
 import random as rd
 
 LARGEUR = 15  # en mètre
-PAS = 10  # en mètre
-NBETAPEZONE = 5  # nb étapes avant le choix d'une nouvelle zone
+PAS = 15  # en mètre
+NBETAPEPARTIE = 5  # nb étapes avant le choix d'une nouvelle zone
 NBZONE = 24  # nb de zones
 ANGLEZONE = 360 // NBZONE  # en degré
-INTENSITEVIRAGE = 3  # plus cette valeur est importante et plus les virages auront tendance à être serrés
-
-
-def afficherpiste(l1, l2):
-    for k in range(len(l1)):
-        a = [l1[k].x, l2[k].x]
-        b = [l1[k].y, l2[k].y]
-        #print(k)
-        plt.plot(a, b)
-        plt.axis('equal')
-    plt.show()
+INTENSITEVIRAGE = 4  # plus cette valeur est importante et plus les virages auront tendance à être serrés
+LIMITECADRE = 10000
 
 
 class Point:
@@ -30,10 +21,12 @@ class Point:
         return self.x == other.x and self.y == other.y
 
     def mini(self, other):
-        return Point(min(self.x,other.x),min(self.y,other.y))
+        return Point(min(self.x, other.x), min(self.y, other.y))
 
-    def maxi(self,other):
-        return Point(max(self.x,other.x),max(self.y,other.y))
+    def maxi(self, other):
+        return Point(max(self.x, other.x), max(self.y, other.y))
+
+
 def clockwise(a, b, c):
     x1 = b.x - a.x
     y1 = b.y - a.y
@@ -54,25 +47,22 @@ def intersect(a, b, c, d):
 class Piste:
 
     def __init__(self):
-        self.largeur = LARGEUR
-        self.pas = PAS
-        self.pointsx = [Point(0, -LARGEUR / 2)]  # liste de points
-        self.pointsy = [Point(0, +LARGEUR / 2)]  # liste de points
+        self.pointsx = [Point(0, +LARGEUR / 2)]  # liste de points
+        self.pointsy = [Point(0, -LARGEUR / 2)]  # liste de points
         self.pointsm = [Point(0, 0)]  # liste des points milieux
-        self.zone = 0  # initialisation à 0 nécessaire afin que le début de la piste soit rectiligne
+        self.zone = [0]  # initialisation à 0 nécessaire afin que le début de la piste soit rectiligne
         self.angle = 0  # en degré
         self.anglerad = 0  # en rad (nécessaire pour les calculs)
 
     def miseajourzone(self):
-        self.zone = rd.randint(self.zone - INTENSITEVIRAGE, self.zone + INTENSITEVIRAGE)
+        self.zone.append(rd.randint(self.zone[-1] - INTENSITEVIRAGE, self.zone[-1] + INTENSITEVIRAGE))
 
     def miseajourangle(self):
-        self.angle = rd.randint(0, ANGLEZONE) + ANGLEZONE * self.zone
+        self.angle = rd.randint(0, ANGLEZONE) + ANGLEZONE * self.zone[-1]
         self.anglerad = self.angle * np.pi / 180
 
     def miseajourpointm(self):
-        self.pointsm.append(
-            Point(self.pointsm[-1].x - PAS * np.cos(self.anglerad), self.pointsm[-1].y + PAS * np.sin(self.anglerad)))
+        return Point(self.pointsm[-1].x - PAS * np.cos(self.anglerad), self.pointsm[-1].y + PAS * np.sin(self.anglerad))
 
     def creationpointspiste(self):
         pointx = Point(self.pointsm[-1].x + LARGEUR / 2 * np.sin(self.anglerad),
@@ -85,33 +75,42 @@ class Piste:
     def verificationpoint(self, pointx, pointy):
         verif = True
         for i in range(len(self.pointsx)):
-            if intersect(pointx, pointy, self.pointsx[i], self.pointsy[i]):
+            if intersect(pointx, self.pointsx[i], pointy, self.pointsy[i]):
                 verif = False
         return verif
 
-    def ajoutpoint(self, pointx, pointy):
+    def ajoutpoint(self, pointx, pointy, pointm):
         self.pointsx.append(pointx)
         self.pointsy.append(pointy)
+        self.pointsm.append(pointm)
 
 
 def creationpiste(nbiterations):
     piste = Piste()
-    N = 0
     i = 0
-    piste.zone = 0  # initialisation nécessaire afin que le début de la piste soit rectiligne
-    while i < nbiterations:
-        while N < NBETAPEZONE:
+    piste.zone = [0]  # initialisation nécessaire afin que le début de la piste soit rectiligne
+
+    while len(piste.pointsm) < nbiterations:
+
+        while len(piste.pointsm) - len(piste.zone) * NBETAPEPARTIE < NBETAPEPARTIE:
             piste.miseajourangle()
-            piste.miseajourpointm()
+            pm = piste.miseajourpointm()
             px, py = piste.creationpointspiste()
             if piste.verificationpoint(px, py):
-                piste.ajoutpoint(px, py)
-                N = N + 1
+                piste.ajoutpoint(px, py, pm)
                 i = i + 1
-                #print(i)
-        N = 0
+                # print(i)
+            else:
+                for k in range(l - (len(piste.zone) + 2) * NBETAPEPARTIE + 1):
+                    piste.pointsm.pop()
+                    piste.pointsx.pop()
+                    piste.pointsy.pop()
+                    # print("CHEVAUCHEMENT")
+                    i = i - 1
+                piste.zone.pop()
+                piste.zone.pop()
+        # print(piste.zone)
         piste.miseajourzone()
-    #afficherpiste(piste.pointsx, piste.pointsy)
-    return [piste.pointsx, piste.pointsy]
+    return piste.pointsm
 
-#creationpiste(600)
+
