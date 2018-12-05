@@ -91,7 +91,7 @@ class AStar:
         noeudsuivant = tnode  # tnode devient le prochain noeud
 
         while noeudsuivant is not None:  # tant qu'on a pas tout parcouru
-            termine = self.handleNode(noeudsuivant, fin)  # la fin devient le nextnode
+            termine = self.handleNode(noeudsuivant, fin)  # la fin devient le noeud suivant
             if termine:  # si on a finit
                 return self.tracePath(termine)  # on trace le chemin
             noeudsuivant = self.getBestOpenNode()  # le next noeud est le best node suivant
