@@ -50,7 +50,7 @@ class Dessin(QtWidgets.QWidget):
         self.scene.setBackgroundBrush(QColor('green'))
         self.view = PanZoomView(self.scene)
         self.time_entry = QtWidgets.QLineEdit()
-        [self.pointx,self.pointy]=piste.creationpiste(600)
+        self.point = piste.creationpiste(600)
 
         # invert y axis for the view
         self.view.scale(1, -1)
@@ -76,11 +76,11 @@ class Dessin(QtWidgets.QWidget):
         pen.setCapStyle(QtCore.Qt.RoundCap)
         
         path = QtGui.QPainterPath()
-        pointx = self.pointx
-        path.moveTo(pointx[0].x, pointx[0].y)
-
-        for i in range(1, len(pointx)):
-            path.lineTo(pointx[i].x, pointx[i].y)
+        point = self.point
+        path.moveTo(point[0].x, point[0].y)
+        #self.scene.addRect(point[0].x-40,point[0].y-40,40,40,pen,QBrush.color('black'))
+        for i in range(1, len(point)):
+            path.lineTo(point[i].x, point[i].y)
         item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
    
