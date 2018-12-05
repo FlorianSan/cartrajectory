@@ -72,15 +72,16 @@ class Dessin(QtWidgets.QWidget):
         self.scene.addItem(track_group)
 
 
-        pen = QPen(QtGui.QColor(TK_COLOR), 40)
+        pen = QPen(QtGui.QColor(TK_COLOR), 15)
         pen.setCapStyle(QtCore.Qt.RoundCap)
         
         path = QtGui.QPainterPath()
         point = self.point
         path.moveTo(point[0].x, point[0].y)
-        #self.scene.addRect(point[0].x-40,point[0].y-40,40,40,pen,QBrush.color('black'))
+        self.scene.addRect(point[0].x-40,point[0].y-40,40,40)
         for i in range(1, len(point)):
             path.lineTo(point[i].x, point[i].y)
         item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
    
+    
