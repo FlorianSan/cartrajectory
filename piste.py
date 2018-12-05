@@ -86,7 +86,6 @@ class Piste:
 
 def creationpiste(nbiterations):
     piste = Piste()
-    i = 0
     k = 0
     piste.zone = [0]  # initialisation nécessaire afin que le début de la piste soit rectiligne
 
@@ -98,7 +97,6 @@ def creationpiste(nbiterations):
             px, py = piste.creationpointspiste()
             if piste.verificationpoint(px, py): #vérifie que les nouveaux points de la piste n'intesectent pas des anciens points
                 piste.ajoutpoint(px, py, pm)
-                i = i + 1
                 k = k + 1
             else:
                 l = len(piste.pointsm)
@@ -106,9 +104,7 @@ def creationpiste(nbiterations):
                     piste.pointsm.pop()
                     piste.pointsx.pop()
                     piste.pointsy.pop()
-                    i=i-1
                 piste.zone.pop()
         piste.miseajourzone()
         k = 0
     return piste.pointsm
-
