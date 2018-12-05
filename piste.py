@@ -46,9 +46,9 @@ def intersect(a, b, c, d): #détermine si les segments ab et cs d'intersectent
 class Piste:
 
     def __init__(self):
-        self.pointsx = [Point(0, +LARGEUR / 2)]  # liste de points
-        self.pointsy = [Point(0, -LARGEUR / 2)]  # liste de points
-        self.pointsm = [Point(0, 0)]  # liste des points milieux
+        self.pointsg = [Point(0, +LARGEUR / 2)]  # liste de points à 'gauche' de l'axe de la piste
+        self.pointsd = [Point(0, -LARGEUR / 2)]  # liste de points à 'droite' de l'axe de la piste
+        self.pointsm = [Point(0, 0)]  # liste des points correspondants à l'axe de la piste
         self.zone = [0]  # initialisation à 0 nécessaire afin que le début de la piste soit rectiligne
         self.angle = 0  # en degré
         self.anglerad = 0  # en rad (nécessaire pour les calculs)
@@ -64,24 +64,24 @@ class Piste:
         return Point(self.pointsm[-1].x - PAS * np.cos(self.anglerad), self.pointsm[-1].y + PAS * np.sin(self.anglerad))
 
     def creationpointspiste(self):
-        pointx = Point(self.pointsm[-1].x + LARGEUR / 2 * np.sin(self.anglerad),
+        pointg = Point(self.pointsm[-1].x + LARGEUR / 2 * np.sin(self.anglerad),
                        self.pointsm[-1].y + LARGEUR / 2 * np.cos(self.anglerad))
-        pointy = Point(self.pointsm[-1].x - LARGEUR / 2 * np.sin(self.anglerad),
+        pointd = Point(self.pointsm[-1].x - LARGEUR / 2 * np.sin(self.anglerad),
                        self.pointsm[-1].y - LARGEUR / 2 * np.cos(self.anglerad))
 
-        return pointx, pointy
+        return pointg, pointd
 
-    def verificationpoint(self, pointx, pointy):
+    def verificationpoint(self, nouveaupointg, nouveaupointd):
         verif = True
-        for i in range(len(self.pointsx)):
-            if intersect(pointx, self.pointsx[i], pointy, self.pointsy[i]):
+        for i in range(len(self.pointsg)):
+            if intersect(nouveaupointg, self.pointsg[i], nouveaupointd, self.pointsd[i]):
                 verif = False
         return verif
 
-    def ajoutpoint(self, pointx, pointy, pointm):
-        self.pointsx.append(pointx)
-        self.pointsy.append(pointy)
-        self.pointsm.append(pointm)
+    def ajoutpoint(self, nouveaupointg, nouveaupointd, nouveaupointm):
+        self.pointsg.append(nouveaupointg)
+        self.pointsd.append(nouveaupointd)
+        self.pointsm.append(nouveaupointm)
 
 
 def creationpiste(nbiterations):
@@ -100,11 +100,12 @@ def creationpiste(nbiterations):
                 k = k + 1
             else:
                 l = len(piste.pointsm)
-                for j in range(l - (len(piste.zone) - 1) * NBETAPEPARTIE + 1): #si intersection alors on enlève les points de la partie en cours ainsi que ceux de la précdente
+                for j in range(l - (len(piste.zone) - 1) * NBETAPEPARTIE): #si intersection alors on enlève les points de la partie en cours ainsi que ceux de la précdente
                     piste.pointsm.pop()
-                    piste.pointsx.pop()
-                    piste.pointsy.pop()
+                    piste.pointsg.pop()
+                    piste.pointsd.pop()
                 piste.zone.pop()
         piste.miseajourzone()
         k = 0
     return piste.pointsm
+
