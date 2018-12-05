@@ -72,7 +72,7 @@ class Dessin(QtWidgets.QWidget):
         self.scene.addItem(track_group)
 
 
-        pen = QPen(QtGui.QColor(TK_COLOR), 15)
+        pen = QPen(QtGui.QColor(TK_COLOR), 20)
         pen.setCapStyle(QtCore.Qt.RoundCap)
         
         path = QtGui.QPainterPath()
