@@ -4,6 +4,7 @@ class Voiture:
         self.longueur = longueur
         self.largeur = largeur
         self.acceleration = []
+        self.vitesse = []
         self.direction = []
         self.position = []
 
