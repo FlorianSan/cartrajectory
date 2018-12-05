@@ -1,169 +1,99 @@
-#Astar
 class Path:
-    def __init__(self, nodes, totalCost):
-        self.nodes = nodes
-        self.totalCost = totalCost
+    def __init__(self, noeud, coutot):
+        self.noeud = noeud
+        self.coutot = coutot
 
-    def getNodes(self):
-        return self.nodes
+    def getNoeud(self):
+        return self.noeud
 
     def getTotalMoveCost(self):
-        return self.totalCost
+        return self.coutot
 
 
 class Node:
-    def __init__(self, location, mCost, lid, parent=None):
+    def __init__(self, location, mcout, id, parent=None):
         self.location = location  # où est situé le noeud dans l'arbre
-        self.mCost = mCost  # coût total pour attiendre ce noeud
+        self.mcout = mcout  # coût total pour attiendre ce noeud
         self.parent = parent  # parent du noeud
-        self.score = 0  # score calculé pour ce noeud ?????
-        self.lid = lid  # met en place un id de localisation pour chaque loc sur la carte
+        self.score = 0  # score qui détermine si c'est un best node
+        self.id = id  # met en place un id de localisation pour chaque loc sur la carte
 
     def __eq__(self, n):  # fonction 'est égale à'
-        if n.lid == self.lid:
-            return 1
-        else:
-            return 0
+        return n.id == self.id
 
 
 class AStar:
 
-    def __init__(self, maphandler):  # gestionnaire de map ???????
-        self.mh = maphandler
+    def __init__(self, map):  # initialise map
+        self.mh = map
 
-    def _getBestOpenNode(self):  # obtient le meilleur noeud pas encore calculé
-        bestNode = None
+    def getBestOpenNode(self):  # obtient le meilleur noeud pas encore calculé
+        bestnoeud = None
         for n in self.on:  # pour chaque dans la liste de noeuds à traiter
-            if not bestNode:
-                bestNode = n
+            if not bestnoeud:
+                bestnoeud = n
             else:
-                if n.score <= bestNode.score:
-                    bestNode = n
-        return bestNode
+                if n.score <= bestnoeud.score:
+                    bestnoeud = n
+        return bestnoeud
 
-    def _tracePath(self, n):  # trace le chemin en remontant l'arbre
-        nodes = []
-        totalCost = n.mCost  # cout total = cout tot du noeud
+    def tracePath(self, n):  # trace le chemin en remontant l'arbre
+        noeuds = []
+        coutot = n.mcout  # cout total = cout tot du noeud
         p = n.parent
-        nodes.insert(0, n)  # ajoute le noeud en début de liste
+        noeuds.insert(0, n)  # ajoute le noeud en début de liste
 
-        while 1:  # tant que l'id == n
+        while True:  # tant que l'id == n
             if p.parent is None:  # si en haut de liste (pas de parent)
                 break
 
-            nodes.insert(0, p)  # on met le parent de début de liste des noeuds
+            noeuds.insert(0, p)  # on met le parent de début de liste des noeuds
             p = p.parent
 
-        return Path(nodes, totalCost)
+        return Path(noeuds, coutot)
 
-    def _handleNode(self, node, end):  # fction qui gère chaque noeud
-        i = self.o.index(node.lid)  # index du noeud dans la liste des noeuds à traiter
+    def handleNode(self, noeud, fin):  # fction qui gère chaque noeud
+        i = self.o.index(noeud.id)  # index du noeud dans la liste des noeuds à traiter
         self.on.pop(i)  # on supprime ce noeud des noeuds courants
         self.o.pop(i)  # on le supprime des noeuds à traiter
-        self.c.append(node.lid)  # on l'aoute dans la liste des noeuds traités
+        self.c.append(noeud.id)  # on l'aoute dans la liste des noeuds traités
 
-        nodes = self.mh.getAdjacentNodes(node, end)  # fction getAdjacentNodes ???????
+        noeuds1 = self.mh.getAdjacentNodes(noeud, fin)  # fction getAdjacentNodes ???????
+        noeuds = self.mh.neighbors(noeud)
 
-        for n in nodes:  # pour chaque noeud
-            if n.location == end:  # on a atteint la destination
+        for n in noeuds:  # pour chaque noeud
+            if n.location == fin:  # on a atteint la destination
                 return n
-            elif n.lid in self.c:  # déjà dans la liste des noeuds traités, on continue
+            elif n.id in self.c:  # déjà dans la liste des noeuds traités, on continue
                 continue
-            elif n.lid in self.o:  # déjà dans la liste des noeuds à traiter, on vérifie si il y a pas de meilleur score
-                i = self.o.index(n.lid)
+            elif n.id in self.o:  # déjà dans la liste des noeuds à traiter, on vérifie si il y a pas de meilleur score
+                i = self.o.index(n.id)
                 on = self.on[i]  # on prend la valeur du noeud courant d'indice i
-                if n.mCost < on.mCost:  # si le noeud à traiter a un cout plus faible que le noeud courant
+                if n.mcout < on.mcout:  # si le noeud à traiter a un cout plus faible que le noeud courant
                     self.o.pop(i)  # on supprime l'indice du noeud à traiter
                     self.on.append(n)  # n devient un noeud courant (dans liste d'ouverts)
-                    self.o.append(n.lid)  # on ajoute l'id de n à la liste des noeuds à traiter
+                    self.o.append(n.id)  # on ajoute l'id de n à la liste des noeuds à traiter
             else:  # si c'est un nouveau noeud, on l'ajoute à la liste des noeuds à traiter
                 self.on.append(n)
-                self.o.append(n.lid)
+                self.o.append(n.id)
 
         return None
 
-    def findPath(self, fromlocation, tolocation):
+    def findPath(self, delocation, verslocation):
         self.o = []  # id des noeuds à traiter
         self.on = []  # valeur des noeuds à traiter
         self.c = []  # déjà étudiés
 
-        end = tolocation
-        fnode = self.mh.getNode(fromlocation)  # noeuds de la map en la position fromlocation
-        self.on.append(fnode)  # on ajoute ce noeud dans la liste des noeuds à traiter
-        self.o.append(fnode.lid)  # ...
-        nextNode = fnode  # fnode devient le prochain noeud
+        fin = verslocation
+        tnode = self.mh.getNode(delocation)  # noeud de la map en la position fromlocation rentré dans tnode
+        self.on.append(tnode)  # on ajoute ce noeud dans la liste des noeuds à traiter
+        self.o.append(tnode.id)  # ...
+        noeudsuivant = tnode  # tnode devient le prochain noeud
 
-        while nextNode is not None:  # tant qu'on a pas tout parcouru
-            finish = self._handleNode(nextNode, end)  # le début devient le nextnode
-            if finish:  # si on a finit
-                return self._tracePath(finish)  # on trace le chemin
-            nextNode = self._getBestOpenNode()  # le next noeud est le best node suivant
-
-        return None
-
-
-class SQ_Location:
-    """A simple Square Map Location implementation"""
-
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def __eq__(self, l):
-        """MUST BE IMPLEMENTED"""
-        if l.x == self.x and l.y == self.y:
-            return 1
-        else:
-            return 0
-
-
-class SQ_MapHandler:  ##inutile pour l'instant
-    """A simple Square Map implementation"""
-
-    def __init__(self, mapdata, width, height):
-        self.m = mapdata
-        self.w = width
-        self.h = height
-
-    def getNode(self, location):
-        """MUST BE IMPLEMENTED"""
-        x = location.x
-        y = location.y
-        if x < 0 or x >= self.w or y < 0 or y >= self.h:
-            return None
-        d = self.m[(y * self.w) + x]
-        if d == -1:
-            return None
-
-        return Node(location, d, ((y * self.w) + x))
-
-    def getAdjacentNodes(self, curnode, dest):
-        """MUST BE IMPLEMENTED"""
-        result = []
-
-        cl = curnode.location
-        dl = dest
-
-        n = self._handleNode(cl.x + 1, cl.y, curnode, dl.x, dl.y)
-        if n: result.append(n)
-        n = self._handleNode(cl.x - 1, cl.y, curnode, dl.x, dl.y)
-        if n: result.append(n)
-        n = self._handleNode(cl.x, cl.y + 1, curnode, dl.x, dl.y)
-        if n: result.append(n)
-        n = self._handleNode(cl.x, cl.y - 1, curnode, dl.x, dl.y)
-        if n: result.append(n)
-
-        return result
-
-    def _handleNode(self, x, y, fromnode, destx, desty):
-        n = self.getNode(SQ_Location(x, y))
-        if n is not None:
-            dx = max(x, destx) - min(x, destx)
-            dy = max(y, desty) - min(y, desty)
-            emCost = dx + dy
-            n.mCost += fromnode.mCost
-            n.score = n.mCost + emCost
-            n.parent = fromnode
-            return n
+        while noeudsuivant is not None:  # tant qu'on a pas tout parcouru
+            termine = self.handleNode(noeudsuivant, fin)  # la fin devient le nextnode
+            if termine:  # si on a finit
+                return self.tracePath(termine)  # on trace le chemin
+            noeudsuivant = self.getBestOpenNode()  # le next noeud est le best node suivant
 
         return None
