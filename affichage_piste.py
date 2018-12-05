@@ -2,14 +2,14 @@
 import math
 
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtGui import QPen, QBrush, QColor
+from PyQt5.QtGui import QPen, QBrush, QColor,QPainter
 
 import piste
 
 WIDTH = 800  # Initial window width (pixels)
 HEIGHT = 450  # Initial window height (pixels)
 AIRPORT_Z_VALUE = 0
-APT_COLOR = "black"
+TK_COLOR = "black"
 
 
 class PanZoomView(QtWidgets.QGraphicsView):
@@ -49,6 +49,7 @@ class Dessin(QtWidgets.QWidget):
         self.scene = QtWidgets.QGraphicsScene()
         self.view = PanZoomView(self.scene)
         self.time_entry = QtWidgets.QLineEdit()
+        [self.pointx,self.pointy]=piste.creationpiste(600)
 
         # invert y axis for the view
         self.view.scale(1, -1)
@@ -70,13 +71,12 @@ class Dessin(QtWidgets.QWidget):
         track_group = QtWidgets.QGraphicsItemGroup()
         self.scene.addItem(track_group)
 
-        [pointx, pointy] = piste.creationpiste(600)
 
-        pen = QPen(QtGui.QColor(APT_COLOR), 40)
+        pen = QPen(QtGui.QColor(TK_COLOR), 40)
         pen.setCapStyle(QtCore.Qt.RoundCap)
-
+        
         path = QtGui.QPainterPath()
-
+        pointx = self.pointx
         path.moveTo(pointx[0].x, pointx[0].y)
 
         for i in range(1, len(pointx)):
@@ -84,4 +84,4 @@ class Dessin(QtWidgets.QWidget):
         item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
 
-
+   
