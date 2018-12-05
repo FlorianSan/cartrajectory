@@ -101,6 +101,7 @@ def creationpiste(nbiterations):
                 i = i + 1
                 # print(i)
             else:
+                l=len(piste.pointsm)
                 for k in range(l - (len(piste.zone) + 2) * NBETAPEPARTIE + 1):
                     piste.pointsm.pop()
                     piste.pointsx.pop()
