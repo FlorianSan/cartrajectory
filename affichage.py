@@ -29,13 +29,14 @@ class CarMotion():
 
 
     def updateValues(self):
-        self.r+=0
+        if self.windows.play:
+            self.r+=0
 
-        transform = QTransform()
-        transform.translate(self.car.position[self.t].x, self.car.position[self.t].y)
-        transform.rotate(self.r)
+            transform = QTransform()
+            transform.translate(self.car.position[self.t].x, self.car.position[self.t].y)
+            transform.rotate(self.r)
 
 
-        self.car_group.setTransform(transform)
-        self.windows.update()  # <-- update the window!
-        self.t+=1
+            self.car_group.setTransform(transform)
+            self.windows.update()  # <-- update the window!
+            self.t+=1

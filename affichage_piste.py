@@ -44,13 +44,15 @@ class Dessin(QtWidgets.QWidget):
         # Settings
         self.setWindowTitle('Trajectoire')
         self.resize(WIDTH, HEIGHT)
+        
+        self.play = True
 
         # create components
         root_layout = QtWidgets.QVBoxLayout(self)
         self.scene = QtWidgets.QGraphicsScene()
         self.scene.setBackgroundBrush(QColor('green'))
         self.view = PanZoomView(self.scene)
-        self.time_entry = QtWidgets.QLineEdit()
+        #self.time_entry = QtWidgets.QLineEdit()
         toolbar = self.create_toolbar()
         
         self.point = piste.creationpiste(600)
@@ -65,6 +67,7 @@ class Dessin(QtWidgets.QWidget):
         # add components to the root_layout
         root_layout.addWidget(self.view)
         root_layout.addLayout(toolbar)
+
 
 
 
@@ -85,6 +88,17 @@ class Dessin(QtWidgets.QWidget):
         toolbar.addStretch()
         add_button('|>', self.playpause)
         toolbar.addStretch()
+
+        def add_shortcut(text, slot):
+            """creates an application-wide key binding"""
+            shortcut = QtWidgets.QShortcut(QtGui.QKeySequence(text), self)
+            shortcut.activated.connect(slot)
+
+        add_shortcut('+', lambda: self.zoom_view(1.1))
+        add_shortcut('-', lambda: self.zoom_view(1 / 1.1))
+        add_shortcut(' ', self.playpause)
+        add_shortcut('q', QtCore.QCoreApplication.instance().quit)
+        return toolbar
 
     def add_piste(self):
 
@@ -110,7 +124,8 @@ class Dessin(QtWidgets.QWidget):
     @QtCore.pyqtSlot()
     def playpause(self):
         """this slot toggles the replay using the timer as model"""
-        if self.timer.isActive():
-            self.timer.stop()
+        if self.play:
+            self.play = False
         else:
-            self.timer.start(ANIMATION_DELAY)
+            self.play = True
+        
