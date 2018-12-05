@@ -3,12 +3,11 @@ import numpy as np
 import random as rd
 
 LARGEUR = 15  # en mètre
-PAS = 15  # en mètre
-NBETAPEPARTIE = 5  # nb étapes avant le choix d'une nouvelle zone
+PAS = 2  # en mètre
+NBETAPEPARTIE = 30  # nb étapes avant le choix d'une nouvelle zone
 NBZONE = 24  # nb de zones
 ANGLEZONE = 360 // NBZONE  # en degré
 INTENSITEVIRAGE = 4  # plus cette valeur est importante et plus les virages auront tendance à être serrés
-LIMITECADRE = 10000
 
 
 class Point:
@@ -88,30 +87,31 @@ class Piste:
 def creationpiste(nbiterations):
     piste = Piste()
     i = 0
+    k = 0
     piste.zone = [0]  # initialisation nécessaire afin que le début de la piste soit rectiligne
 
     while len(piste.pointsm) < nbiterations:
 
-        while len(piste.pointsm) - len(piste.zone) * NBETAPEPARTIE < NBETAPEPARTIE:
+        while k < NBETAPEPARTIE:
             piste.miseajourangle()
             pm = piste.miseajourpointm()
             px, py = piste.creationpointspiste()
             if piste.verificationpoint(px, py):
                 piste.ajoutpoint(px, py, pm)
-                i = i + 1
+                # i = i + 1
+                k = k + 1
                 # print(i)
             else:
-                l=len(piste.pointsm)
-                for k in range(l - (len(piste.zone) + 2) * NBETAPEPARTIE + 1):
+
+                l = len(piste.pointsm)
+
+                for j in range(l - (len(piste.zone) - 1) * NBETAPEPARTIE + 1):
                     piste.pointsm.pop()
                     piste.pointsx.pop()
                     piste.pointsy.pop()
-                    # print("CHEVAUCHEMENT")
-                    i = i - 1
+                    # i=i-1
                 piste.zone.pop()
-                piste.zone.pop()
-        # print(piste.zone)
         piste.miseajourzone()
+        k = 0
     return piste.pointsm
-
 
