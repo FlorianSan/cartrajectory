@@ -29,7 +29,11 @@ class Point:
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
 
+    def mini(self, other):
+        return Point(min(self.x,other.x),min(self.y,other.y))
 
+    def maxi(self,other):
+        return Point(max(self.x,other.x),max(self.y,other.y))
 def clockwise(a, b, c):
     x1 = b.x - a.x
     y1 = b.y - a.y
