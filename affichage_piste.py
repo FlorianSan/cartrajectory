@@ -2,7 +2,7 @@
 import math
 
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtGui import QPen, QBrush, QColor,QPainter
+from PyQt5.QtGui import QPen, QBrush, QColor
 
 import piste
 
@@ -47,6 +47,7 @@ class Dessin(QtWidgets.QWidget):
         # create components
         root_layout = QtWidgets.QVBoxLayout(self)
         self.scene = QtWidgets.QGraphicsScene()
+        self.scene.setBackgroundBrush(QColor('green'))
         self.view = PanZoomView(self.scene)
         self.time_entry = QtWidgets.QLineEdit()
         [self.pointx,self.pointy]=piste.creationpiste(600)
@@ -56,7 +57,6 @@ class Dessin(QtWidgets.QWidget):
 
         # add the airport elements to the graphic scene and then fit it in the view
         self.add_piste()
-
 
 
         # add components to the root_layout
@@ -83,5 +83,4 @@ class Dessin(QtWidgets.QWidget):
             path.lineTo(pointx[i].x, pointx[i].y)
         item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
-
    
