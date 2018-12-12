@@ -6,12 +6,13 @@ from PyQt5.QtCore import QPoint
 from PyQt5.QtGui import QPen, QBrush, QColor, QPolygonF
 
 import piste
+import affichage
 LARGEUR = piste.LARGEUR
 WIDTH = 800  # Initial window width (pixels)
 HEIGHT = 450  # Initial window height (pixels)
 AIRPORT_Z_VALUE = 0
 TK_COLOR = "black"
-ANIMATION_DELAY = 50  # milliseconds
+ANIMATION_DELAY = 51  # milliseconds
 
 
 class PanZoomView(QtWidgets.QGraphicsView):
@@ -44,15 +45,15 @@ class Dessin(QtWidgets.QWidget):
         # Settings
         self.setWindowTitle('Trajectoire')
         self.resize(WIDTH, HEIGHT)
-        
-        self.play = True
+
+        self.play=True
 
         # create components
         root_layout = QtWidgets.QVBoxLayout(self)
         self.scene = QtWidgets.QGraphicsScene()
         self.scene.setBackgroundBrush(QColor('green'))
         self.view = PanZoomView(self.scene)
-        #self.time_entry = QtWidgets.QLineEdit()
+        self.time_entry = QtWidgets.QLineEdit()
         toolbar = self.create_toolbar()
         
         self.point = piste.creationpiste(600)
@@ -67,7 +68,6 @@ class Dessin(QtWidgets.QWidget):
         # add components to the root_layout
         root_layout.addWidget(self.view)
         root_layout.addLayout(toolbar)
-
 
 
 
@@ -89,17 +89,6 @@ class Dessin(QtWidgets.QWidget):
         add_button('|>', self.playpause)
         toolbar.addStretch()
 
-        def add_shortcut(text, slot):
-            """creates an application-wide key binding"""
-            shortcut = QtWidgets.QShortcut(QtGui.QKeySequence(text), self)
-            shortcut.activated.connect(slot)
-
-        add_shortcut('+', lambda: self.zoom_view(1.1))
-        add_shortcut('-', lambda: self.zoom_view(1 / 1.1))
-        add_shortcut(' ', self.playpause)
-        add_shortcut('q', QtCore.QCoreApplication.instance().quit)
-        return toolbar
-
     def add_piste(self):
 
         track_group = QtWidgets.QGraphicsItemGroup()
@@ -113,10 +102,14 @@ class Dessin(QtWidgets.QWidget):
         point = self.point
         path.moveTo(point[0].x, point[0].y)
         
-        self.scene.addRect(point[0].x,point[0].y-10,40,20,QPen(QtGui.QColor(TK_COLOR),1),QBrush(QColor('black')))
-        
+        self.scene.addRect(point[0].x,point[0].y-8,30,LARGEUR,QPen(QtGui.QColor(TK_COLOR),1),QBrush(QColor('black')))
+        self.scene.addRect(point[0].x,point[0].y-7,5,2,QPen(QtGui.QColor(TK_COLOR),0.5),QBrush(QColor('white')))
+        self.scene.addRect(point[0].x,point[0].y-3,5,2,QPen(QtGui.QColor(TK_COLOR),0.5),QBrush(QColor('white')))
+        self.scene.addRect(point[0].x,point[0].y+1,5,2,QPen(QtGui.QColor(TK_COLOR),0.5),QBrush(QColor('white')))
+        self.scene.addRect(point[0].x,point[0].y+5,5,2,QPen(QtGui.QColor(TK_COLOR),0.5),QBrush(QColor('white')))
         for i in range(1, len(point)):
             path.lineTo(point[i].x, point[i].y)
+        self.scene.addRect(point[-1].x-30,point[-1].y-8,LARGEUR,30,QPen(QtGui.QColor(TK_COLOR),1),QBrush(QColor('black')))
         item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
         
@@ -124,8 +117,7 @@ class Dessin(QtWidgets.QWidget):
     @QtCore.pyqtSlot()
     def playpause(self):
         """this slot toggles the replay using the timer as model"""
-        if self.play:
-            self.play = False
+        if self.timer.isActive():
+            self.timer.stop()
         else:
-            self.play = True
-        
+            self.timer.start(ANIMATION_DELAY)
