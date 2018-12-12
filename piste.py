@@ -19,6 +19,9 @@ class Point:
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
 
+    def __add__(self, other):
+        return Point(self.x+other.x, self.y+other.y)
+
     def mini(self, other):
         return Point(min(self.x, other.x), min(self.y, other.y))
 
