@@ -39,6 +39,9 @@ class CarMotion():
             self.windows.update()  # <-- update the window!
             self.t+=1
 
+    def redemarer(self):
+        self.t = 2
+
 
 
 def cal_angle(point1, point2, point3):
