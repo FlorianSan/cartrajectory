@@ -29,7 +29,7 @@ class CarMotion():
 
 
     def updateValues(self):
-        if self.windows.play:
+        if self.windows.play and self.t+1 < len(self.car.position):
             self.r += cal_angle(self.car.position[self.t-1],self.car.position[self.t],self.car.position[self.t+1])
             transform = QTransform()
             self.car_group.setTransformOriginPoint(self.car.position[self.t].x, self.car.position[self.t].y)

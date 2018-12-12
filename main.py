@@ -22,7 +22,7 @@ if __name__ == "__main__":
 
     timer = QTimer()
     timer.timeout.connect(moving_car.updateValues)
-    timer.start(50)
+    timer.start(33)
 
 
     # show the window
