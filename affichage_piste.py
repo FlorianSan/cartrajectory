@@ -1,5 +1,5 @@
-#affichage
-import math 
+# affichage
+import math
 
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import QPoint
@@ -7,9 +7,10 @@ from PyQt5.QtGui import QPen, QBrush, QColor, QPolygonF
 
 import piste
 import affichage
+
 LARGEUR = piste.LARGEUR
-WIDTH = 800  # Initial window width (pixels)
-HEIGHT = 450  # Initial window height (pixels)
+WIDTH = 900  # Initial window width (pixels)
+HEIGHT = 500  # Initial window height (pixels)
 AIRPORT_Z_VALUE = 0
 TK_COLOR = "black"
 ANIMATION_DELAY = 51  # milliseconds
@@ -37,7 +38,6 @@ class PanZoomView(QtWidgets.QGraphicsView):
         super().scale(factor, factor)
 
 
-
 class Dessin(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
@@ -46,7 +46,7 @@ class Dessin(QtWidgets.QWidget):
         self.setWindowTitle('Trajectoire')
         self.resize(WIDTH, HEIGHT)
 
-        self.play=True
+        self.play = True
 
         # create components
         root_layout = QtWidgets.QVBoxLayout(self)
@@ -55,7 +55,7 @@ class Dessin(QtWidgets.QWidget):
         self.view = PanZoomView(self.scene)
         self.time_entry = QtWidgets.QLineEdit()
         toolbar = self.create_toolbar()
-        
+
         self.point = piste.creationpiste(600)
 
         # invert y axis for the view
@@ -64,12 +64,9 @@ class Dessin(QtWidgets.QWidget):
         # add the airport elements to the graphic scene and then fit it in the view
         self.add_piste()
 
-
         # add components to the root_layout
         root_layout.addWidget(self.view)
         root_layout.addLayout(toolbar)
-
-
 
     def create_toolbar(self):
         # create layout for time controls and entry
@@ -87,14 +84,18 @@ class Dessin(QtWidgets.QWidget):
         add_button('+', lambda: self.view.zoom_view(1.1))
         toolbar.addStretch()
         add_button('|>', self.playpause)
+        add_button('R', affichage.CarMotion.redemarer)
         toolbar.addStretch()
+
         def add_shortcut(text, slot):
             """creates an application-wide key binding"""
             shortcut = QtWidgets.QShortcut(QtGui.QKeySequence(text), self)
             shortcut.activated.connect(slot)
+
         add_shortcut('+', lambda: self.zoom_view(1.1))
         add_shortcut('-', lambda: self.zoom_view(1 / 1.1))
         add_shortcut(' ', self.playpause)
+        add_shortcut('R', affichage.CarMotion.redemarer)
         add_shortcut('q', QtCore.QCoreApplication.instance().quit)
         return toolbar
 
@@ -103,26 +104,27 @@ class Dessin(QtWidgets.QWidget):
         track_group = QtWidgets.QGraphicsItemGroup()
         self.scene.addItem(track_group)
 
-
         pen = QPen(QtGui.QColor(TK_COLOR), LARGEUR)
         pen.setCapStyle(QtCore.Qt.RoundCap)
-        
+
         path = QtGui.QPainterPath()
         point = self.point
         path.moveTo(point[0].x, point[0].y)
-        
-        self.scene.addRect(point[0].x,point[0].y-8,30,LARGEUR,QPen(QtGui.QColor(TK_COLOR),1),QBrush(QColor('black')))
-        self.scene.addRect(point[0].x,point[0].y-7,5,2,QPen(QtGui.QColor(TK_COLOR),0.5),QBrush(QColor('white')))
-        self.scene.addRect(point[0].x,point[0].y-3,5,2,QPen(QtGui.QColor(TK_COLOR),0.5),QBrush(QColor('white')))
-        self.scene.addRect(point[0].x,point[0].y+1,5,2,QPen(QtGui.QColor(TK_COLOR),0.5),QBrush(QColor('white')))
-        self.scene.addRect(point[0].x,point[0].y+5,5,2,QPen(QtGui.QColor(TK_COLOR),0.5),QBrush(QColor('white')))
+        self.scene.addRect(point[0].x, point[0].y - 8, 30, LARGEUR, QPen(QtGui.QColor(TK_COLOR), 1),
+                           QBrush(QColor('black')))
+        self.scene.addRect(point[0].x, point[0].y - 7, 5, 2, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
+        self.scene.addRect(point[0].x, point[0].y - 3, 5, 2, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
+        self.scene.addRect(point[0].x, point[0].y + 1, 5, 2, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
+        self.scene.addRect(point[0].x, point[0].y + 5, 5, 2, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         for i in range(1, len(point)):
             path.lineTo(point[i].x, point[i].y)
-        self.scene.addRect(point[-1].x-30,point[-1].y-8,LARGEUR,30,QPen(QtGui.QColor(TK_COLOR),1),QBrush(QColor('black')))
+        A, B = point[-2], point[-1]
+        Poly = Polygone(A, B, 20)
+        self.scene.addPolygon(Poly, QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor('black')))
+        # self.scene.addRect(point[-1].x-30,point[-1].y-8,LARGEUR,30,QPen(QtGui.QColor(TK_COLOR),1),QBrush(QColor('black')))
         item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
-        
-        
+
     @QtCore.pyqtSlot()
     def playpause(self):
         """this slot toggles the replay using the timer as model"""
@@ -130,3 +132,17 @@ class Dessin(QtWidgets.QWidget):
             self.play = False
         else:
             self.play = True
+
+
+def Polygone(A, B, longueur):
+    theta = math.atan((B.y - A.y) / (B.x - A.x))
+    B1 = QPoint(B.x - LARGEUR * math.sin(theta) / 2, B.y + LARGEUR * math.cos(theta) / 2)
+    B2 = QPoint(B.x + LARGEUR * math.sin(theta) / 2, B.y - LARGEUR * math.cos(theta) / 2)
+    C = piste.Point(B.x + longueur * (B.x - A.x), B.y + longueur * (B.y - A.y))
+    C1 = QPoint(C.x - LARGEUR * math.sin(theta) / 2, C.y + LARGEUR * math.cos(theta) / 2)
+    C2 = QPoint(C.x + LARGEUR * math.sin(theta) / 2, C.y - LARGEUR * math.cos(theta) / 2)
+    Poly = QPolygonF()
+    lt = [B1, B2, C2, C1]
+    for i in range(len(lt)):
+        Poly.append(lt[i])
+    return (Poly)
