@@ -1,6 +1,7 @@
+import random as rd
+
 import matplotlib.pyplot as plt
 import numpy as np
-import random as rd
 
 LARGEUR = 15  # en mètre
 PAS = 2  # en mètre
@@ -46,9 +47,9 @@ def intersect(a, b, c, d): #détermine si les segments ab et cs d'intersectent
 class Piste:
 
     def __init__(self):
-        self.pointsg = [Point(0, +LARGEUR / 2)]  # liste de points à 'gauche' de l'axe de la piste
-        self.pointsd = [Point(0, -LARGEUR / 2)]  # liste de points à 'droite' de l'axe de la piste
-        self.pointsm = [Point(0, 0)]  # liste des points correspondants à l'axe de la piste
+        self.pointsx = [Point(0,+LARGEUR / 2),Point(-PAS,+LARGEUR/2)] #liste de points
+        self.pointsy = [Point(0,-LARGEUR / 2),Point(-PAS,-LARGEUR/2)] #liste de points
+        self.pointsm = [Point(0, 0),Point(-PAS, 0)] #liste des points milieux
         self.zone = [0]  # initialisation à 0 nécessaire afin que le début de la piste soit rectiligne
         self.angle = 0  # en degré
         self.anglerad = 0  # en rad (nécessaire pour les calculs)
@@ -87,7 +88,6 @@ class Piste:
 def creationpiste(nbiterations):
     piste = Piste()
     k = 0
-    piste.zone = [0]  # initialisation nécessaire afin que le début de la piste soit rectiligne
 
     while len(piste.pointsm) < nbiterations:
 
