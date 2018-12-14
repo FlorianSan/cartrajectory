@@ -2,7 +2,7 @@ import random as rd
 
 import numpy as np
 
-LARGEUR = 15  # en mètre
+LARGEUR = 15# en mètre
 PAS = 2  # en mètre
 NBETAPEPARTIE = 30  # nb étapes avant le choix d'une nouvelle zone
 NBZONE = 24  # nb de zones

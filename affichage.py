@@ -10,7 +10,7 @@ PAS = 1
 class CarMotion():
     def __init__(self, windows, car):
 
-        self.t=2
+        self.t=1
 
         self.r=0
         self.car = car
@@ -38,9 +38,11 @@ class CarMotion():
             self.car_group.setTransform(transform)
             self.windows.update()  # <-- update the window!
             self.t+=1
+        if self.windows.redemarrer:
+            self.t=1
+            self.windows.redemarrer = False
 
-    def redemarer(self):
-        self.t = 2
+
 
 
 
