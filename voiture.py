@@ -13,21 +13,21 @@ class Voiture:
         self.masse = masse
         self.longueur = longueur
         self.largeur = largeur
-        self.position = [piste.Point(0,0)]
-        self.acceleration = [0]
-        self.vitesse = [0]
-        self.direction = [0]
+        self.position = []
+        self.acceleration = []
+        self.vitesse = []
+        self.direction = []
 
     def get_position(self, t):
         return self.position[t]
 
-def newposition(vitesse,acceleration,direction,position):
-    res=[]
-    for acc in range (-DELTAACC, DELTAACC +1):
-        newacceleration = acceleration+ acc*ACCELERATION
-        for vir in range (-DELTAVIR , DELTAVIR +1):
-            newdirection = direction+vir*VIRAGE
-            newvitesse=vitesse + PASDETEMPS * newacceleration
-            newposition = position + piste.Point(-newvitesse * PASDETEMPS * np.cos(newdirection), newvitesse * PASDETEMPS * np.sin(newdirection)) #SIGNE A REVOIR
-            res.append([newposition, newacceleration, newvitesse, newdirection])
-    return res
+    def newposition(self):
+        res=[]
+        for acc in range (-DELTAACC, DELTAACC +1):
+            newacceleration = self.acceleration[-1]+ acc*ACCELERATION
+            for vir in range (-DELTAVIR , DELTAVIR +1):
+                newdirection = self.direction[-1]+vir*VIRAGE
+                newvitesse=self.vitesse[-1] + PASDETEMPS * newacceleration
+                newposition = self.position[-1] + piste.Point(-newvitesse * PASDETEMPS * np.cos(newdirection), newvitesse * PASDETEMPS * np.sin(newdirection)) #SIGNE A REVOIR
+                res.append([newposition, newacceleration, newvitesse, newdirection])
+        return res
