@@ -47,6 +47,7 @@ class Dessin(QtWidgets.QWidget):
         self.resize(WIDTH, HEIGHT)
 
         self.play = True
+        self.redemarrer = False
 
         # create components
         root_layout = QtWidgets.QVBoxLayout(self)
@@ -84,7 +85,7 @@ class Dessin(QtWidgets.QWidget):
         add_button('+', lambda: self.view.zoom_view(1.1))
         toolbar.addStretch()
         add_button('|>', self.playpause)
-        add_button('R', affichage.CarMotion.redemarer)
+        add_button('R', self.redemarrer)
         toolbar.addStretch()
 
         def add_shortcut(text, slot):
@@ -95,7 +96,7 @@ class Dessin(QtWidgets.QWidget):
         add_shortcut('+', lambda: self.zoom_view(1.1))
         add_shortcut('-', lambda: self.zoom_view(1 / 1.1))
         add_shortcut(' ', self.playpause)
-        add_shortcut('R', affichage.CarMotion.redemarer)
+        add_shortcut('R', self.redemarrer)
         add_shortcut('q', QtCore.QCoreApplication.instance().quit)
         return toolbar
 
@@ -110,11 +111,11 @@ class Dessin(QtWidgets.QWidget):
         path = QtGui.QPainterPath()
         point = self.point
         path.moveTo(point[0].x, point[0].y)
-        self.scene.addRect(point[0].x, point[0].y - 8, 30, LARGEUR, QPen(QtGui.QColor(TK_COLOR), 1),
+        self.scene.addRect(point[0].x, point[0].y - LARGEUR/2, 30, LARGEUR, QPen(QtGui.QColor(TK_COLOR), 1),
                            QBrush(QColor('black')))
-        self.scene.addRect(point[0].x, point[0].y - 7, 5, 2, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
-        self.scene.addRect(point[0].x, point[0].y - 3, 5, 2, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
-        self.scene.addRect(point[0].x, point[0].y + 1, 5, 2, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
+        self.scene.addRect(point[0].x, point[0].y - 7, 5, LARGEUR/8, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
+        self.scene.addRect(point[0].x, point[0].y - 3, 5, LARGEUR/8, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
+        self.scene.addRect(point[0].x, point[0].y + 1, 5, LARGEUR/8, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         self.scene.addRect(point[0].x, point[0].y + 5, 5, 2, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         for i in range(1, len(point)):
             path.lineTo(point[i].x, point[i].y)
@@ -132,6 +133,10 @@ class Dessin(QtWidgets.QWidget):
             self.play = False
         else:
             self.play = True
+            
+    def redemarrer(self):
+        if self.redemarrer:
+            self.redemarrer = True
 
 
 def Polygone(A, B, longueur):
