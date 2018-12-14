@@ -47,7 +47,7 @@ class Dessin(QtWidgets.QWidget):
         self.resize(WIDTH, HEIGHT)
 
         self.play = True
-        self.redemarrer = False
+        self.re = False
 
         # create components
         root_layout = QtWidgets.QVBoxLayout(self)
@@ -135,8 +135,7 @@ class Dessin(QtWidgets.QWidget):
             self.play = True
             
     def redemarrer(self):
-        if self.redemarrer:
-            self.redemarrer = True
+        self.re = True
 
 
 def Polygone(A, B, longueur):
