@@ -38,9 +38,16 @@ class CarMotion():
             self.car_group.setTransform(transform)
             self.windows.update()  # <-- update the window!
             self.t+=1
-        if self.windows.redemarrer:
+
+        if self.windows.re:
             self.t=1
-            self.windows.redemarrer = False
+            self.r = 0
+            transform = QTransform()
+            self.car_group.setTransformOriginPoint(self.car.position[self.t].x, self.car.position[self.t].y)
+            transform.translate(self.car.position[self.t].x, self.car.position[self.t].y)
+            transform.rotate(self.r)
+            self.car_group.setTransform(transform)
+            self.windows.re = False
 
 
 
