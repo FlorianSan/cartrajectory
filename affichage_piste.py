@@ -112,17 +112,14 @@ class Dessin(QtWidgets.QWidget):
         point = self.point
         path.moveTo(point[0].x, point[0].y)
         self.scene.addRect(point[0].x, point[0].y - LARGEUR/2, 30, LARGEUR, QPen(QtGui.QColor(TK_COLOR), 1),
-                           QBrush(QColor('black')))
-        self.scene.addRect(point[0].x, point[0].y - 7, 5, LARGEUR/8, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
-        self.scene.addRect(point[0].x, point[0].y - 3, 5, LARGEUR/8, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
-        self.scene.addRect(point[0].x, point[0].y + 1, 5, LARGEUR/8, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
-        self.scene.addRect(point[0].x, point[0].y + 5, 5, 2, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
+                           QBrush(QColor(TK_COLOR)))
+        self.scene.addRect(point[0].x, point[0].y - 3.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
+        self.scene.addRect(point[0].x, point[0].y - 1.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
+        self.scene.addRect(point[0].x, point[0].y + 0.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
+        self.scene.addRect(point[0].x, point[0].y + 2.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         for i in range(1, len(point)):
             path.lineTo(point[i].x, point[i].y)
-        A, B = point[-2], point[-1]
-        Poly = Polygone(A, B, 20)
-        self.scene.addPolygon(Poly, QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor('black')))
-        # self.scene.addRect(point[-1].x-30,point[-1].y-8,LARGEUR,30,QPen(QtGui.QColor(TK_COLOR),1),QBrush(QColor('black')))
+        self.scene.addPolygon(Polygone(point[-2],point[-1]), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor('black')))
         item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
 
