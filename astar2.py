@@ -4,7 +4,7 @@ import voiture
 
 class Node:
 
-    def __init__(self, vitesse, acceleration, direction, parent=None, position=None):  # rajouter infos
+    def __init__(self, vitesse, acceleration, direction, parent=None, position=None):
         self.parent = parent
         self.position = position
 
