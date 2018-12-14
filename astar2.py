@@ -15,7 +15,7 @@ class Node:
         return self.position == autre.position
 
 
-def astar(piste, start, end):
+def astar(chemin, start, end):
     # crée le noeud de début et de fin
     start_node = Node(None, start)
     start_node.dstart = start_node.dend = start_node.couttot = 0
@@ -55,7 +55,7 @@ def astar(piste, start, end):
 
         # Génère les children
         children = []
-        for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]: # Adjacent square A MODIFIER
+        for new_position in chemin.neighbors(current_node) :
 
             # On obtient la position du noeud A MODIFIER
             node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
@@ -64,9 +64,10 @@ def astar(piste, start, end):
             #if node_position[0] > (len(piste) - 1) or node_position[0] < 0 or node_position[1] > (len(piste[len(piste)-1]) -1) or node_position[1] < 0:
             #    continue
 
-            # Make sure walkable terrain A MODIFIER
-            if node_position[0] in piste.Piste():
-                continue
+            # Noeud bien dans la piste
+            for i in range(len(chemin.piste.pointsg)):
+                if not piste.intersect(current_node.position[0],node_position[0],chemin.piste.pointsg[i],chemin.piste.pointsg[i+1])and not piste.intersect(current_node.position[0],node_position[0],chemin.piste.pointsd[i],chemin.piste.pointsd[i+1]) :
+                    continue
 
             # Crée un nouveau noeud
             new_node = Node(current_node, node_position)

@@ -10,7 +10,7 @@ PAS = 1
 class CarMotion():
     def __init__(self, windows, car):
 
-        self.t=2
+        self.t=1
 
         self.r=0
         self.car = car
@@ -39,8 +39,17 @@ class CarMotion():
             self.windows.update()  # <-- update the window!
             self.t+=1
 
-    def redemarer(self):
-        self.t = 2
+        if self.windows.re:
+            self.t=1
+            self.r = 0
+            transform = QTransform()
+            self.car_group.setTransformOriginPoint(self.car.position[self.t].x, self.car.position[self.t].y)
+            transform.translate(self.car.position[self.t].x, self.car.position[self.t].y)
+            transform.rotate(self.r)
+            self.car_group.setTransform(transform)
+            self.windows.re = False
+
+
 
 
 
