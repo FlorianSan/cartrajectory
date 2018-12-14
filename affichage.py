@@ -38,9 +38,9 @@ class CarMotion():
             self.car_group.setTransform(transform)
             self.windows.update()  # <-- update the window!
             self.t+=1
-        if self.windows.redemarrer:
+        if self.windows.re:
             self.t=1
-            self.windows.redemarrer = False
+            self.windows.re = False
 
 
 
