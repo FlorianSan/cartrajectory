@@ -47,7 +47,7 @@ class Dessin(QtWidgets.QWidget):
         self.resize(WIDTH, HEIGHT)
 
         self.play = True
-        self.redemarrer = False
+        self.re = False
 
         # create components
         root_layout = QtWidgets.QVBoxLayout(self)
@@ -113,10 +113,10 @@ class Dessin(QtWidgets.QWidget):
         path.moveTo(point[0].x, point[0].y)
         self.scene.addRect(point[0].x, point[0].y - LARGEUR/2, 30, LARGEUR, QPen(QtGui.QColor(TK_COLOR), 1),
                            QBrush(QColor('black')))
-        self.scene.addRect(point[0].x, point[0].y - 7, 5, LARGEUR/8, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
+        self.scene.addRect(point[0].x, point[0].y - 1*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         self.scene.addRect(point[0].x, point[0].y - 3, 5, LARGEUR/8, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         self.scene.addRect(point[0].x, point[0].y + 1, 5, LARGEUR/8, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
-        self.scene.addRect(point[0].x, point[0].y + 5, 5, 2, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
+        self.scene.addRect(point[0].x, point[0].y + 5, 5, LARGEUR/8, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         for i in range(1, len(point)):
             path.lineTo(point[i].x, point[i].y)
         A, B = point[-2], point[-1]
@@ -135,8 +135,8 @@ class Dessin(QtWidgets.QWidget):
             self.play = True
             
     def redemarrer(self):
-        if self.redemarrer:
-            self.redemarrer = True
+        if self.re:
+            self.re = True
 
 
 def Polygone(A, B, longueur):
