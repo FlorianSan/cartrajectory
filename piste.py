@@ -20,7 +20,7 @@ class Point:
         return self.x == other.x and self.y == other.y
 
     def __add__(self, other):
-        return Point(self.x+other.x, self.y+other.y)
+        return Point(self.x+oher.x, self.y+other.y)
 
     def mini(self, other):
         return Point(min(self.x, other.x), min(self.y, other.y))
@@ -41,9 +41,7 @@ def intersect(a, b, c, d): #détermine si les segments ab et cs d'intersectent
     if a == d and b == c:
         return True
     else:
-        return (a != c and a != d and b != c and b != d and clockwise(a, b, c) != clockwise(a, b, d) and clockwise(a, c,
-                                                                                                                   d) != clockwise(
-            b, c, d))
+        return (a != c and a != d and b != c and b != d and clockwise(a, b, c) != clockwise(a, b, d) and clockwise(a, c, d) != clockwise(b, c, d))
 
 
 class Piste:
@@ -52,6 +50,7 @@ class Piste:
         self.pointsg = [Point(0,+LARGEUR / 2),Point(-PAS,+LARGEUR/2)] #liste de points à gauche de l'axe de la piste
         self.pointsd = [Point(0,-LARGEUR / 2),Point(-PAS,-LARGEUR/2)] #liste de points à droite de l'axe de la piste
         self.pointsm = [Point(0, 0),Point(-PAS, 0)] #liste des points milieux
+        self.point
         self.zone = [0]  # initialisation à 0 nécessaire afin que le début de la piste soit rectiligne
         self.angle = 0  # en degré
         self.anglerad = 0  # en rad (nécessaire pour les calculs)
