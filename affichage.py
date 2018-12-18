@@ -1,11 +1,14 @@
 
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtCore import QRectF, QPoint
-from PyQt5.QtGui import QTransform, QBrush
+from PyQt5.QtGui import QTransform, QBrush, QPen
 import math
+
+from PyQt5.uic.properties import QtCore
+
 import piste
 
-PAS = 1
+TRAJ_COLOR = "white"
 
 class CarMotion():
     def __init__(self, windows, car):
@@ -36,7 +39,8 @@ class CarMotion():
             transform.translate(self.car.position[self.t].x, self.car.position[self.t].y)
             transform.rotate(self.r)
             self.car_group.setTransform(transform)
-            self.windows.scene.addLine(self.car.position[self.t-1].x,self.car.position[self.t-1].y,self.car.position[self.t].x,self.car.position[self.t].y)
+
+            self.windows.scene.addLine(self.car.position[self.t-1].x,self.car.position[self.t-1].y,self.car.position[self.t].x,self.car.position[self.t].y, QPen(QtGui.QColor(TRAJ_COLOR), 1))
 
             self.windows.update()  # <-- update the window!
             self.t+=1

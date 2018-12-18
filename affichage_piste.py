@@ -13,7 +13,7 @@ LARGEUR = piste.LARGEUR
 WIDTH = 900  # Initial window width (pixels)
 HEIGHT = 500  # Initial window height (pixels)
 AIRPORT_Z_VALUE = 0
-TK_COLOR = "white"
+TK_COLOR = "black"
 ANIMATION_DELAY = 51  # milliseconds
 
 
