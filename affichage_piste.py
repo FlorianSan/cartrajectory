@@ -123,7 +123,7 @@ class Dessin(QtWidgets.QWidget):
         self.scene.addRect(point[0].x, point[0].y + 2.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         for i in range(1, len(point)):
             path.lineTo(point[i].x, point[i].y)
-        self.scene.addPolygon(Polygone(point[-2],point[-1]), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor('black')))
+        #self.scene.addPolygon(Polygone(point[-2],point[-1]), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor('black')))
         item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
 
