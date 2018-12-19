@@ -1,6 +1,6 @@
 import piste
 import voiture
-
+from operator import itemgetter, attrgetter
 
 class Node:
 
@@ -18,7 +18,6 @@ class Node:
 
     def __eq__(self, autre):
         return self.position == autre.position
-
 
 M = 0
 L = 0
@@ -44,9 +43,12 @@ def astar(chemin, start):
     while len(open_list) > 0:  # tant qu'il y a des noeuds à traiter
 
         # Accéder au noeud courant
-        current_node = sorted(open_list)
+        for i in range(1, len(open_list)):
+            if open_list[i-1].couttot > open_list[i].couttot:
+                open_list[i-1], open_list[i] = open_list[i], open_list[i-1]
+        current_node = open_list[0]
         current_index = 0
-        for index, item in enumerate(sorted(open_list)):
+        for index, item in enumerate(open_list):
             if item.couttot < current_node.couttot and item.dend < current_node.dend:
                 current_node = item
                 current_index = index
