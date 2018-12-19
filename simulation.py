@@ -1,31 +1,16 @@
-"""Interactive airport simulation.
+import affichage_piste
+import affichage
 
-This module defines the interactions with the simulation"""
-
-
-SHORTCUTS = """Shortcuts:
-n: next time step
-b: last time step
-q: close window"""
+def Simulation(car):
+    main_window = affichage_piste.Dessin()
+    car.position = main_window.point
+    moving_car = affichage.CarMotion(main_window, car)
 
 
-class Simulation:
-    """The simulation state, with the following attributes:
-    - airport: airport.Airport (the airport)
-    - flights: traffic.Flight list (the traffic)
-    - t: int (current time step)"""
-
-    def __init__(self):
-
-        self.t = 0
+    timer = QTimer()
+    timer.timeout.connect(moving_car.updateValues)
+    timer.start(33)
 
 
-    def set_time(self, t):
-        """set_time(int): set the current time to 't'"""
-        self.t = t
-
-
-    def increment_time(self, dt):
-        """increment_time(int): increases the current time step by 'dt'
-        (dt might be negative)"""
-        self.set_time(self.t + dt)
+    # show the window
+    main_window.show()
