@@ -77,7 +77,7 @@ def astar(chemin, start):
             for i in range(len(res)):
                 children.append(Node(res[i][2], res[i][1], res[i][3], current_node, res[i][0]))
 
-            for i in range(len(chemin[1].x)):
+            for i in range(len(chemin[1])):
                 if piste.intersect(current_node.position, node_position, chemin.piste.pointsg[i], chemin.piste.pointsg[i+1])or piste.intersect(current_node.position, node_position, chemin.piste.pointsd[i], chemin.piste.pointsd[i+1]):
                     children.pop()
                     continue
@@ -105,5 +105,5 @@ def astar(chemin, start):
 
 
 chemin = piste.creationpiste(1000)
-astar(chemin, chemin[0])
+astar(chemin, chemin[0][0])
 
