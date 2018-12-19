@@ -7,7 +7,6 @@ from PyQt5.QtGui import QPen, QBrush, QColor, QPolygonF
 
 import piste
 import affichage
-import mouse_tracker
 
 LARGEUR = piste.LARGEUR
 WIDTH = 900  # Initial window width (pixels)
@@ -58,8 +57,7 @@ class Dessin(QtWidgets.QWidget):
         self.time_entry = QtWidgets.QLineEdit()
         toolbar = self.create_toolbar()
 
-
-        self.point = piste.creationpiste(600)
+        self.pointm, self.pointsg, self.pointsd = piste.creationpiste(600)
 
         # invert y axis for the view
         self.view.scale(1, -1)
@@ -88,7 +86,6 @@ class Dessin(QtWidgets.QWidget):
         toolbar.addStretch()
         add_button('|>', self.playpause)
         add_button('R', self.redemarrer)
-        add_button('Create', self.mouse_draw)
         toolbar.addStretch()
 
         def add_shortcut(text, slot):
@@ -100,7 +97,6 @@ class Dessin(QtWidgets.QWidget):
         add_shortcut('-', lambda: self.zoom_view(1 / 1.1))
         add_shortcut(' ', self.playpause)
         add_shortcut('R', self.redemarrer)
-        add_shortcut('Create', self.mouse_draw)
         add_shortcut('q', QtCore.QCoreApplication.instance().quit)
         return toolbar
 
@@ -113,7 +109,7 @@ class Dessin(QtWidgets.QWidget):
         pen.setCapStyle(QtCore.Qt.RoundCap)
 
         path = QtGui.QPainterPath()
-        point = self.point
+        point = self.pointm
         path.moveTo(point[0].x, point[0].y)
         self.scene.addRect(point[0].x, point[0].y - LARGEUR/2, 30, LARGEUR, QPen(QtGui.QColor(TK_COLOR), 1),
                            QBrush(QColor(TK_COLOR)))
@@ -123,7 +119,7 @@ class Dessin(QtWidgets.QWidget):
         self.scene.addRect(point[0].x, point[0].y + 2.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         for i in range(1, len(point)):
             path.lineTo(point[i].x, point[i].y)
-        #self.scene.addPolygon(Polygone(point[-2],point[-1]), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor('black')))
+        self.scene.addPolygon(Polygone(point[-2],point[-1]), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor('black')))
         item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
 
@@ -137,10 +133,6 @@ class Dessin(QtWidgets.QWidget):
             
     def redemarrer(self):
         self.re = True
-
-    def mouse_draw(self):
-        self.ex = mouse_tracker.MouseTracker()
-        self.ex.show()
 
 
 def Polygone(A, B, longueur):
