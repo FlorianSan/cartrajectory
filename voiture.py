@@ -30,4 +30,5 @@ def newposition(vitesse,acceleration,direction,position):
             newvitesse=vitesse + PASDETEMPS * newacceleration
             newposition = position + piste.Point(-newvitesse * PASDETEMPS * np.cos(newdirection), newvitesse * PASDETEMPS * np.sin(newdirection)) #SIGNE A REVOIR
             res.append([newposition, newacceleration, newvitesse, newdirection])
+
     return res
