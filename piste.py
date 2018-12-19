@@ -50,7 +50,6 @@ class Piste:
         self.pointsg = [Point(0,+LARGEUR / 2),Point(-PAS,+LARGEUR/2)] #liste de points à gauche de l'axe de la piste
         self.pointsd = [Point(0,-LARGEUR / 2),Point(-PAS,-LARGEUR/2)] #liste de points à droite de l'axe de la piste
         self.pointsm = [Point(0, 0),Point(-PAS, 0)] #liste des points milieux
-        self.point
         self.zone = [0]  # initialisation à 0 nécessaire afin que le début de la piste soit rectiligne
         self.angle = 0  # en degré
         self.anglerad = 0  # en rad (nécessaire pour les calculs)

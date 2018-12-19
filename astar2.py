@@ -70,7 +70,7 @@ def astar(chemin, start, end):
                     current = current.parent
                 return path[::-1]  # return le chemin
 
-        for new_position in voit.newposition(current_node.vitesse, current_node.acceleration, current_node.direction, current_node.position)[3]:  # a mod
+        for new_position in voiture.newposition(current_node.vitesse, current_node.acceleration, current_node.direction, current_node.position)[3]:  # a mod
             # On obtient la position du noeud
             node_position = new_position
 

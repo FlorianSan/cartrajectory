@@ -1,17 +1,19 @@
 
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtCore import QRectF, QPoint
-from PyQt5.QtGui import QTransform, QBrush
+from PyQt5.QtGui import QTransform, QBrush, QPen
 import math
+
+from PyQt5.uic.properties import QtCore
+
 import piste
 
-PAS = 1
+TRAJ_COLOR = "white"
 
 class CarMotion():
     def __init__(self, windows, car):
 
         self.t=1
-
         self.r=0
         self.car = car
         self.windows = windows
@@ -30,12 +32,16 @@ class CarMotion():
 
     def updateValues(self):
         if self.windows.play and self.t+1 < len(self.car.position):
+
             self.r += cal_angle(self.car.position[self.t-1],self.car.position[self.t],self.car.position[self.t+1])
             transform = QTransform()
             self.car_group.setTransformOriginPoint(self.car.position[self.t].x, self.car.position[self.t].y)
             transform.translate(self.car.position[self.t].x, self.car.position[self.t].y)
             transform.rotate(self.r)
             self.car_group.setTransform(transform)
+
+            self.windows.scene.addLine(self.car.position[self.t-1].x,self.car.position[self.t-1].y,self.car.position[self.t].x,self.car.position[self.t].y, QPen(QtGui.QColor(TRAJ_COLOR), 1))
+
             self.windows.update()  # <-- update the window!
             self.t+=1
 
@@ -48,9 +54,6 @@ class CarMotion():
             transform.rotate(self.r)
             self.car_group.setTransform(transform)
             self.windows.re = False
-
-
-
 
 
 def cal_angle(point1, point2, point3):
