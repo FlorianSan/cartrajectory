@@ -32,3 +32,4 @@ def newposition(vitesse,acceleration,direction,position):
             res.append([newposition, newacceleration, newvitesse, newdirection])
 
     return res
+
