@@ -5,6 +5,7 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import QPoint
 from PyQt5.QtGui import QPen, QBrush, QColor, QPolygonF
 
+import pickle
 import piste
 import affichage
 import mouse_tracker
@@ -40,9 +41,9 @@ class PanZoomView(QtWidgets.QGraphicsView):
 
 
 class Dessin(QtWidgets.QWidget):
-    def __init__(self):
+    def __init__(self,file):
         super().__init__()
-
+        
         # Settings
         self.setWindowTitle('Trajectoire')
         self.resize(WIDTH, HEIGHT)
@@ -58,8 +59,12 @@ class Dessin(QtWidgets.QWidget):
         self.time_entry = QtWidgets.QLineEdit()
         toolbar = self.create_toolbar()
 
-
-        self.point = piste.creationpiste(600)
+        if file == 'None':
+            self.point = piste.creationpiste(600)
+        else:
+            with open(file,'rb') as fichier:
+                mon_depickler=pickle.Unpickler(fichier)
+                self.point=mon_depickler.load()
 
         # invert y axis for the view
         self.view.scale(1, -1)
@@ -89,6 +94,7 @@ class Dessin(QtWidgets.QWidget):
         add_button('|>', self.playpause)
         add_button('R', self.redemarrer)
         add_button('Create', self.mouse_draw)
+        add_button('Pickle',self.sauvegarder)
         toolbar.addStretch()
 
         def add_shortcut(text, slot):
@@ -100,7 +106,8 @@ class Dessin(QtWidgets.QWidget):
         add_shortcut('-', lambda: self.zoom_view(1 / 1.1))
         add_shortcut(' ', self.playpause)
         add_shortcut('R', self.redemarrer)
-        add_shortcut('Create', self.mouse_draw)
+        add_shortcut('C', self.mouse_draw)
+        add_shortcut('P',self.sauvegarder)
         add_shortcut('q', QtCore.QCoreApplication.instance().quit)
         return toolbar
 
@@ -141,7 +148,11 @@ class Dessin(QtWidgets.QWidget):
     def mouse_draw(self):
         self.ex = mouse_tracker.MouseTracker()
         self.ex.show()
-
+        
+    def sauvegarder(self):
+        with open('data','wb') as fichier:
+            mon_picker=pickle.Pickler(fichier)
+            mon_picker.dump(self.point)
 
 def Polygone(A, B, longueur):
     theta = math.atan((B.y - A.y) / (B.x - A.x))
