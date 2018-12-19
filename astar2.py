@@ -27,16 +27,14 @@ Lg = 0
 # rajouter affichage
 
 
-def astar(chemin, start, end):
+def astar(chemin, start):
     voit = voiture.Voiture(M, L, Lg)
     # crée le noeud de début et de fin
     start_node = Node(0, 0, 0, None, start)
     start_node.dstart = start_node.dend = start_node.couttot = 0
-    end_node = Node(0, 0, 0, None, end)   # tout modifier pour pouvoir enlever ça
-    end_node.dend = end_node.dstart = end_node.couttot = 0
 
     # Initialisation des deux listes
-    open_list = []  # liste des noeuds à traiter
+    open_list = []  # liste des noeuds à traiter  FILE DE PRIORITÉ
     closed_list = []  # liste des noeuds déjà traités
 
     # Ajoute le noeud de départ
@@ -46,10 +44,10 @@ def astar(chemin, start, end):
     while len(open_list) > 0:  # tant qu'il y a des noeuds à traiter
 
         # Accéder au noeud courant
-        current_node = open_list[0]
+        current_node = sorted(open_list)[0]
         current_index = 0
-        for index, item in enumerate(open_list):
-            if item.couttot < current_node.couttot:  # rajouter couttot
+        for index, item in enumerate(sorted(open_list)):
+            if item.couttot < current_node.couttot and item.dend < current_node.dend:
                 current_node = item
                 current_index = index
 
@@ -70,7 +68,7 @@ def astar(chemin, start, end):
                     current = current.parent
                 return path[::-1]  # return le chemin
 
-        for new_position in voiture.newposition(current_node.vitesse, current_node.acceleration, current_node.direction, current_node.position)[3]:  # a mod
+        for new_position in voiture.newposition(current_node.vitesse, current_node.acceleration, current_node.direction, current_node.position)[0]:  # a mod
             # On obtient la position du noeud
             node_position = new_position
 
@@ -79,7 +77,7 @@ def astar(chemin, start, end):
             for i in range(len(res)):
                 children.append(Node(res[i][2], res[i][1], res[i][3], current_node, res[i][0]))
 
-            for i in range(len(chemin.piste.pointsg)):
+            for i in range(len(chemin[1].x)):
                 if piste.intersect(current_node.position, node_position, chemin.piste.pointsg[i], chemin.piste.pointsg[i+1])or piste.intersect(current_node.position, node_position, chemin.piste.pointsd[i], chemin.piste.pointsd[i+1]):
                     children.pop()
                     continue
@@ -94,7 +92,7 @@ def astar(chemin, start, end):
 
             # Create coutrest, dstart, dend
             child.dstart = current_node.dstart + 1    # 1 à modifier
-            child.dend = ((child.position[0] - end_node.position[0]) ** 2) + ((child.position[1] - end_node.position[1]) ** 2)**0.5
+            child.dend = ((child.position[0] - chemin[0][-1].x) ** 2) + ((child.position[1] - chemin[0][-1]).y ** 2)**0.5
             child.couttot = child.dstart + child.dend
 
             # Child dans la liste des noeuds à traiter
@@ -104,3 +102,8 @@ def astar(chemin, start, end):
 
             # Ajoute child dans open liste
             open_list.append(child)
+
+
+chemin = piste.creationpiste(1000)
+astar(chemin, chemin[0])
+
