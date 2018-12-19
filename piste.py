@@ -88,7 +88,6 @@ class Piste:
 def creationpiste(nbiterations):
     piste = Piste()
     k = 0
-
     while len(piste.pointsm) < nbiterations:
 
         while k < NBETAPEPARTIE:
