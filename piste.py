@@ -108,5 +108,5 @@ def creationpiste(nbiterations):
                 piste.zone.pop()
         piste.miseajourzone()
         k = 0
-    return piste.pointsm, piste.pointsg, piste.pointsd
+    return [piste.pointsm, piste.pointsg, piste.pointsd]
 
