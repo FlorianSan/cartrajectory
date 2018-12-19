@@ -20,7 +20,7 @@ class Point:
         return self.x == other.x and self.y == other.y
 
     def __add__(self, other):
-        return Point(self.x+oher.x, self.y+other.y)
+        return Point(self.x+other.x, self.y+other.y)
 
     def mini(self, other):
         return Point(min(self.x, other.x), min(self.y, other.y))
@@ -108,5 +108,5 @@ def creationpiste(nbiterations):
                 piste.zone.pop()
         piste.miseajourzone()
         k = 0
-    return piste.pointsm
+    return piste.pointsm, piste.pointsg, piste.pointsd
 
