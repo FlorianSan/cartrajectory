@@ -5,8 +5,10 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import QPoint
 from PyQt5.QtGui import QPen, QBrush, QColor, QPolygonF
 
+import pickle
 import piste
 import affichage
+import mouse_tracker
 
 LARGEUR = piste.LARGEUR
 WIDTH = 900  # Initial window width (pixels)
@@ -39,9 +41,9 @@ class PanZoomView(QtWidgets.QGraphicsView):
 
 
 class Dessin(QtWidgets.QWidget):
-    def __init__(self):
+    def __init__(self,file):
         super().__init__()
-
+        
         # Settings
         self.setWindowTitle('Trajectoire')
         self.resize(WIDTH, HEIGHT)
@@ -57,7 +59,12 @@ class Dessin(QtWidgets.QWidget):
         self.time_entry = QtWidgets.QLineEdit()
         toolbar = self.create_toolbar()
 
-        self.pointm, self.pointsg, self.pointsd = piste.creationpiste(600)
+        if file == 'None':
+            self.point = piste.creationpiste(600)
+        else:
+            with open(file,'rb') as fichier:
+                mon_depickler=pickle.Unpickler(fichier)
+                self.point=mon_depickler.load()
 
         # invert y axis for the view
         self.view.scale(1, -1)
@@ -86,6 +93,8 @@ class Dessin(QtWidgets.QWidget):
         toolbar.addStretch()
         add_button('|>', self.playpause)
         add_button('R', self.redemarrer)
+        add_button('Create', self.mouse_draw)
+        add_button('Pickle',self.sauvegarder)
         toolbar.addStretch()
 
         def add_shortcut(text, slot):
@@ -97,6 +106,8 @@ class Dessin(QtWidgets.QWidget):
         add_shortcut('-', lambda: self.zoom_view(1 / 1.1))
         add_shortcut(' ', self.playpause)
         add_shortcut('R', self.redemarrer)
+        add_shortcut('C', self.mouse_draw)
+        add_shortcut('P',self.sauvegarder)
         add_shortcut('q', QtCore.QCoreApplication.instance().quit)
         return toolbar
 
@@ -109,7 +120,7 @@ class Dessin(QtWidgets.QWidget):
         pen.setCapStyle(QtCore.Qt.RoundCap)
 
         path = QtGui.QPainterPath()
-        point = self.pointm
+        point = self.point
         path.moveTo(point[0].x, point[0].y)
         self.scene.addRect(point[0].x, point[0].y - LARGEUR/2, 30, LARGEUR, QPen(QtGui.QColor(TK_COLOR), 1),
                            QBrush(QColor(TK_COLOR)))
@@ -119,7 +130,7 @@ class Dessin(QtWidgets.QWidget):
         self.scene.addRect(point[0].x, point[0].y + 2.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         for i in range(1, len(point)):
             path.lineTo(point[i].x, point[i].y)
-        self.scene.addPolygon(Polygone(point[-2],point[-1]), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor('black')))
+        #self.scene.addPolygon(Polygone(point[-2],point[-1]), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor('black')))
         item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
 
@@ -134,6 +145,14 @@ class Dessin(QtWidgets.QWidget):
     def redemarrer(self):
         self.re = True
 
+    def mouse_draw(self):
+        self.ex = mouse_tracker.MouseTracker()
+        self.ex.show()
+        
+    def sauvegarder(self):
+        with open('data','wb') as fichier:
+            mon_picker=pickle.Pickler(fichier)
+            mon_picker.dump(self.point)
 
 def Polygone(A, B, longueur):
     theta = math.atan((B.y - A.y) / (B.x - A.x))
