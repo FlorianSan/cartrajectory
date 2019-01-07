@@ -9,7 +9,7 @@ import piste
 import affichage
 import mouse_tracker
 
-FILE=['None','data']
+FILE=['None','data.txt']
 
 if __name__ == "__main__":
     choice = 0 if input("1: aléatoire / 2: enregistré ? ") == '1' else 1

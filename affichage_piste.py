@@ -50,6 +50,7 @@ class Dessin(QtWidgets.QWidget):
 
         self.play = True
         self.re = False
+        file = 'None'
 
         # create components
         root_layout = QtWidgets.QVBoxLayout(self)
@@ -60,16 +61,16 @@ class Dessin(QtWidgets.QWidget):
         toolbar = self.create_toolbar()
 
         if file == 'None':
-            self.point = piste.creationpiste(600)
+            self.piste = piste.creationpiste(600)
         else:
             with open(file,'rb') as fichier:
                 mon_depickler=pickle.Unpickler(fichier)
-                self.point=mon_depickler.load()
+                self.piste  = mon_depickler.load()
 
         # invert y axis for the view
         self.view.scale(1, -1)
 
-        # add the airport elements to the graphic scene and then fit it in the view
+        # add the track elements to the graphic scene and then fit it in the view
         self.add_piste()
 
         # add components to the root_layout
@@ -120,7 +121,7 @@ class Dessin(QtWidgets.QWidget):
         pen.setCapStyle(QtCore.Qt.RoundCap)
 
         path = QtGui.QPainterPath()
-        point = self.point
+        point = self.piste
         path.moveTo(point[0].x, point[0].y)
         self.scene.addRect(point[0].x, point[0].y - LARGEUR/2, 30, LARGEUR, QPen(QtGui.QColor(TK_COLOR), 1),
                            QBrush(QColor(TK_COLOR)))
