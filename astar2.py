@@ -71,7 +71,7 @@ def astar(chemin, start):
         print(current_node.position.x, current_node.position.y)
 
         compteur += 1
-        print(compteur)
+        #print(compteur)
 
         if compteur > 1000:
             print('OK')
@@ -127,7 +127,8 @@ def astar(chemin, start):
             open_list.append(child)
 
 
-chemin = piste.creationpiste(500)
+chemin = piste.creationpiste(300)
+
 
 
 def afficherpiste(l1, l2):
