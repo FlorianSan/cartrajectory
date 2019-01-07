@@ -41,7 +41,7 @@ class PanZoomView(QtWidgets.QGraphicsView):
 
 
 class Dessin(QtWidgets.QWidget):
-    def __init__(self,file):
+    def __init__(self,choice):
         super().__init__()
         
         # Settings
@@ -50,6 +50,7 @@ class Dessin(QtWidgets.QWidget):
 
         self.play = True
         self.re = False
+        file = 'None'
 
         # create components
         root_layout = QtWidgets.QVBoxLayout(self)
@@ -59,17 +60,19 @@ class Dessin(QtWidgets.QWidget):
         self.time_entry = QtWidgets.QLineEdit()
         toolbar = self.create_toolbar()
 
-        if file == 'None':
-            self.point = piste.creationpiste(600)
-        else:
-            with open(file,'rb') as fichier:
+        if choice == 1:
+            self.piste = piste.creationpiste(600)
+        elif choice == 2:
+            with open('data','rb') as fichier:
                 mon_depickler=pickle.Unpickler(fichier)
-                self.point=mon_depickler.load()
+                self.piste  = mon_depickler.load()
+        else:
+            self.piste = self.mouse_draw()
 
         # invert y axis for the view
         self.view.scale(1, -1)
 
-        # add the airport elements to the graphic scene and then fit it in the view
+        # add the track elements to the graphic scene and then fit it in the view
         self.add_piste()
 
         # add components to the root_layout
@@ -120,7 +123,7 @@ class Dessin(QtWidgets.QWidget):
         pen.setCapStyle(QtCore.Qt.RoundCap)
 
         path = QtGui.QPainterPath()
-        point = self.point
+        point = self.piste
         path.moveTo(point[0].x, point[0].y)
         self.scene.addRect(point[0].x, point[0].y - LARGEUR/2, 30, LARGEUR, QPen(QtGui.QColor(TK_COLOR), 1),
                            QBrush(QColor(TK_COLOR)))

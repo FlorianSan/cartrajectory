@@ -9,15 +9,15 @@ import piste
 import affichage
 import mouse_tracker
 
-
+FILE=['None','data.txt']
 
 if __name__ == "__main__":
-    choice = input("1: aléatoire / 2: enregistré / 3: dessin manuel ? ") 
+    choice = 0 if input("1: aléatoire / 2: enregistré ? ") == '1' else 1
     # Initialize Qt
     app = QtWidgets.QApplication([])
     car = voiture.Voiture(10,10,10)
 
-    main_window = affichage_piste.Dessin(choice)
+    main_window = affichage_piste.Dessin(FILE[choice])
     car.position = main_window.point
     moving_car = affichage.CarMotion(main_window, car)
 
