@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import (QApplication, QLabel, QWidget)
 from PyQt5.QtGui import QPainter
 
 import piste
+import affichage_piste
 
 class MouseTracker(QWidget):
     def __init__(self):
@@ -12,12 +13,13 @@ class MouseTracker(QWidget):
 
     def initUI(self):
         self.setGeometry(200, 200, 1000, 500)
-        self.setWindowTitle('Mouse Tracker')
+        self.setWindowTitle('Dessin Piste')
         self.label = QLabel(self)
         self.label.resize(500, 40)
         self.show()
         self.pos = None
         self.point = []
+        self.close = False
 
 
     def mouseMoveEvent(self, event):
@@ -28,9 +30,6 @@ class MouseTracker(QWidget):
         self.point.append(piste.Point(event.x(), event.y()))
         self.update()
 
-
-
-
     def paintEvent(self, event):
         q = QPainter(self)
         if len(self.point)>1:
@@ -39,8 +38,18 @@ class MouseTracker(QWidget):
             if self.pos :
                 q.drawLine(self.point[len(self.point)-1].x, self.point[len(self.point)-1].y,  self.pos.x(),  self.pos.y())
 
-if __name__ == "__main__":
+    def closeEvent(self, event):
+        self.close = True
 
+
+def dessinpiste():
     app = QApplication(sys.argv)
     ex = MouseTracker()
     sys.exit(app.exec_())
+    while not ex.close:
+        if ex.close:
+            return
+
+if __name__ == "__main__":
+
+    dessinpiste()
