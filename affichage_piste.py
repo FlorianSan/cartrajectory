@@ -4,6 +4,8 @@ import math
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import QPoint
 from PyQt5.QtGui import QPen, QBrush, QColor, QPolygonF
+from PyQt5.QtWidgets import QApplication
+import sys
 
 import pickle
 import piste
@@ -50,7 +52,6 @@ class Dessin(QtWidgets.QWidget):
 
         self.play = True
         self.re = False
-        file = 'None'
 
         # create components
         root_layout = QtWidgets.QVBoxLayout(self)
@@ -59,15 +60,19 @@ class Dessin(QtWidgets.QWidget):
         self.view = PanZoomView(self.scene)
         self.time_entry = QtWidgets.QLineEdit()
         toolbar = self.create_toolbar()
+        self.piste = []
+
 
         if choice == 1:
-            self.piste = piste.creationpiste(600)
+            self.piste = piste.creationpiste(600)[0]
+
         elif choice == 2:
             with open('data','rb') as fichier:
                 mon_depickler=pickle.Unpickler(fichier)
                 self.piste  = mon_depickler.load()
         else:
-            self.piste = self.mouse_draw()
+           self.piste = mouse_tracker.dessinpiste()
+
 
         # invert y axis for the view
         self.view.scale(1, -1)
@@ -96,7 +101,6 @@ class Dessin(QtWidgets.QWidget):
         toolbar.addStretch()
         add_button('|>', self.playpause)
         add_button('R', self.redemarrer)
-        add_button('Create', self.mouse_draw)
         add_button('Pickle',self.sauvegarder)
         toolbar.addStretch()
 
@@ -109,7 +113,6 @@ class Dessin(QtWidgets.QWidget):
         add_shortcut('-', lambda: self.zoom_view(1 / 1.1))
         add_shortcut(' ', self.playpause)
         add_shortcut('R', self.redemarrer)
-        add_shortcut('C', self.mouse_draw)
         add_shortcut('P',self.sauvegarder)
         add_shortcut('q', QtCore.QCoreApplication.instance().quit)
         return toolbar
@@ -123,16 +126,16 @@ class Dessin(QtWidgets.QWidget):
         pen.setCapStyle(QtCore.Qt.RoundCap)
 
         path = QtGui.QPainterPath()
-        point = self.piste
-        path.moveTo(point[0].x, point[0].y)
-        self.scene.addRect(point[0].x, point[0].y - LARGEUR/2, 30, LARGEUR, QPen(QtGui.QColor(TK_COLOR), 1),
+
+        path.moveTo(self.piste[0].x, self.piste[0].y)
+        self.scene.addRect(self.piste[0].x, self.piste[0].y - LARGEUR/2, 30, LARGEUR, QPen(QtGui.QColor(TK_COLOR), 1),
                            QBrush(QColor(TK_COLOR)))
-        self.scene.addRect(point[0].x, point[0].y - 3.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
-        self.scene.addRect(point[0].x, point[0].y - 1.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
-        self.scene.addRect(point[0].x, point[0].y + 0.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
-        self.scene.addRect(point[0].x, point[0].y + 2.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
-        for i in range(1, len(point)):
-            path.lineTo(point[i].x, point[i].y)
+        self.scene.addRect(self.piste[0].x, self.piste[0].y - 3.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
+        self.scene.addRect(self.piste[0].x, self.piste[0].y - 1.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
+        self.scene.addRect(self.piste[0].x, self.piste[0].y + 0.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
+        self.scene.addRect(self.piste[0].x, self.piste[0].y + 2.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
+        for i in range(1, len(self.piste)):
+            path.lineTo(self.piste[i].x, self.piste[i].y)
         #self.scene.addPolygon(Polygone(point[-2],point[-1]), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor('black')))
         item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
@@ -148,14 +151,11 @@ class Dessin(QtWidgets.QWidget):
     def redemarrer(self):
         self.re = True
 
-    def mouse_draw(self):
-        self.ex = mouse_tracker.MouseTracker()
-        self.ex.show()
-        
+    
     def sauvegarder(self):
         with open('data','wb') as fichier:
             mon_picker=pickle.Pickler(fichier)
-            mon_picker.dump(self.point)
+            mon_picker.dump(self.piste)
 
 def Polygone(A, B, longueur):
     theta = math.atan((B.y - A.y) / (B.x - A.x))

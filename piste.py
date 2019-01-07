@@ -108,3 +108,5 @@ def creationpiste(nbiterations):
         k = 0
     return [piste.pointsm, piste.pointsg, piste.pointsd]
 
+if __name__ == "__main__":
+    print(creationpiste(600))

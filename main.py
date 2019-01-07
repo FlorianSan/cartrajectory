@@ -11,13 +11,13 @@ import mouse_tracker
 
 
 if __name__ == "__main__":
-    choice = input("1: aléatoire / 2: enregistré / 3 : dessin ? ")
+    choice = int(input("1: aléatoire / 2: enregistré / 3 : dessin ? "))
     # Initialize Qt
     app = QtWidgets.QApplication([])
     car = voiture.Voiture(10,10,10)
 
     main_window = affichage_piste.Dessin(choice)
-    car.position = main_window.point
+    car.position = main_window.piste
     moving_car = affichage.CarMotion(main_window, car)
 
 
