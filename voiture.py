@@ -21,7 +21,7 @@ class Voiture:
     def get_position(self, t):
         return self.position[t]
 
-def newposition(vitesse,acceleration,direction,position):
+def newposition2(vitesse,acceleration,direction,position):
     res=[]
     for acc in range (-DELTAACC, DELTAACC +1):
         newacceleration = acceleration + acc*ACCELERATION
@@ -35,3 +35,16 @@ def newposition(vitesse,acceleration,direction,position):
 
     return res
 
+def newposition(vitesse,acceleration,direction,position):
+    res=[]
+    for vir in range (-DELTAVIR , DELTAVIR +1):
+        newdirection = direction + vir * VIRAGE
+        for acc in range (-DELTAVIR , DELTAVIR +1):
+            newacceleration = acceleration + acc * ACCELERATION
+            newvitesse=vitesse + PASDETEMPS * newacceleration
+            newposition = position + piste.Point(-newvitesse * PASDETEMPS * np.cos(newdirection), newvitesse * PASDETEMPS * np.sin(newdirection))
+            #print(type(newposition))
+            res.append([newposition, newacceleration, newvitesse, newdirection])
+            #print(res)
+
+    return res

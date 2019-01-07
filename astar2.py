@@ -15,7 +15,7 @@ class Node:
         self.dend = 0
         self.couttot = 0
 
-        self.temp s =0  # nb de pas de temps pour arriver à ce noeud
+        self.temps =0  # nb de pas de temps pour arriver à ce noeud
 
         self.vitesse = vitesse
         self.direction = direction
@@ -60,7 +60,7 @@ def astar(chemin, start):
         current_node = open_list[0]
         current_index = 0
         for index, item in enumerate(open_list):
-            if item.dend < current_node.dend:
+            if item.couttot < current_node.couttot:
                 current_node = item
                 current_index = index
 
