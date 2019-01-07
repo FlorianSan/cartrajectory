@@ -4,9 +4,9 @@ import piste
 
 PASDETEMPS = 0.5 #en secondes
 ACCELERATION = 0.1 #en m/s²
-DELTAACC = 1
-VIRAGE = (17*np.pi)/180 #angle de virage en radian
-DELTAVIR = 1
+DELTAACC = 3
+VIRAGE = (10*np.pi)/180 #angle de virage en radian
+DELTAVIR = 3
 
 class Voiture:
     def __init__(self, masse, longueur, largeur):
@@ -28,7 +28,7 @@ def newposition(vitesse,acceleration,direction,position):
         for vir in range (-DELTAVIR , DELTAVIR +1):
             newdirection = direction+vir*VIRAGE
             newvitesse=vitesse + PASDETEMPS * newacceleration
-            newposition = position + piste.Point(-newvitesse * PASDETEMPS * np.cos(newdirection), newvitesse * PASDETEMPS * np.sin(newdirection)) #SIGNE A REVOIR
+            newposition = position + piste.Point(-newvitesse * PASDETEMPS * np.cos(newdirection), newvitesse * PASDETEMPS * np.sin(newdirection))
             #print(type(newposition))
             res.append([newposition, newacceleration, newvitesse, newdirection])
             #print(res)

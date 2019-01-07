@@ -1,3 +1,8 @@
+
+
+import matplotlib.pyplot as plt
+
+
 import random as rd
 
 import numpy as np
@@ -74,8 +79,11 @@ class Piste:
 
     def verificationpoint(self, nouveaupointg, nouveaupointd):
         verif = True
-        for i in range(len(self.pointsg)):
+        for i in range(len(self.pointsg)-1):
             if intersect(nouveaupointg, self.pointsg[i], nouveaupointd, self.pointsd[i]):
+                verif = False
+        for i in range (len(self.pointsg)-3):
+            if intersect(nouveaupointg,self.pointsg[-1],self.pointsg[i], self.pointsg[i+1]) or intersect(nouveaupointd,self.pointsd[-1],self.pointsd[i], self.pointsd[i+1]):
                 verif = False
         return verif
 

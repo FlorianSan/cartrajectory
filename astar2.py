@@ -1,3 +1,4 @@
+
 import matplotlib.pyplot as plt
 
 import piste
@@ -14,6 +15,8 @@ class Node:
         self.dend = 0
         self.couttot = 0
 
+        self.temp s =0  # nb de pas de temps pour arriver à ce noeud
+
         self.vitesse = vitesse
         self.direction = direction
         self.acceleration = acceleration
@@ -29,57 +32,73 @@ Lg = 0
 
 
 def astar(chemin, start):
+
+    compteur = 0
+
     voit = voiture.Voiture(M, L, Lg)
-    # crée le noeud de début et de fin
+    # cree le noeud de debut et de fin
     start_node = Node(0, 0, 0, None, start)
     start_node.dstart = 0
-    start_node.dend = ((start_node.position.x - chemin[-1][0].x) ** 2 + (start_node.position.y - chemin[-1][0].y) ** 2)**0.5
+    start_node.dend = ((start_node.position.x - chemin[-1][0].x) ** 2 +
+                (start_node.position.y - chemin[-1][0].y) ** 2) ** 0.5
     start_node.couttot = 0
 
     # Initialisation des deux listes
-    open_list = []  # liste des noeuds à traiter  FILE DE PRIORITÉ
-    closed_list = []  # liste des noeuds déjà traités
+    open_list = []  # liste des noeuds a traiter  FILE DE PRIORITe
+    closed_list = []  # liste des noeuds deja traites
 
-    # Ajoute le noeud de départ
+    # Ajoute le noeud de depart
     open_list.append(start_node)
 
     # On boucle jusqu'au noeud final
-    while len(open_list) > 0:  # tant qu'il y a des noeuds à traiter
+    while len(open_list) > 0:  # tant qu'il y a des noeuds a traiter
 
-
-        # Accéder au noeud courant
+        # Acceder au noeud courant
         for i in range(1, len(open_list)):
-            if open_list[i-1].couttot > open_list[i].couttot:
-                open_list[i-1], open_list[i] = open_list[i], open_list[i-1]
+            if open_list[i - 1].couttot > open_list[i].couttot:
+                open_list[i - 1], open_list[i] = open_list[i], open_list[i - 1]
         current_node = open_list[0]
         current_index = 0
         for index, item in enumerate(open_list):
-            if item.dend < current_node.dend :
+            if item.dend < current_node.dend:
                 current_node = item
                 current_index = index
 
-
-        # On retire le current node de la liste des noeuds à traiter et on l'ajoute dans la liste des noeuds traités
+        # On retire le current node de la liste des noeuds a traiter et on l'ajoute dans la liste des noeuds traites
         open_list.pop(current_index)
         closed_list.append(current_node)
 
         print(current_node.position.x, current_node.position.y)
 
-        # Génère les children
+        compteur += 1
+        print(compteur)
+
+        if compteur > 1000:
+            print('OK')
+            path = []  # initialise le chemin
+            current = current_node
+            while current is not None:  # on cree le chemin en partant de la fin
+                path.append(current.position)
+                current = current.parent
+            return path[::-1]  # return le chemin
+
+        # Genere les children
         children = []
 
-        res = voiture.newposition(current_node.vitesse, current_node.acceleration, current_node.direction, current_node.position)
+        res = voiture.newposition(current_node.vitesse, current_node.acceleration, current_node.direction,
+                                  current_node.position)
         for i in range(len(res)):
             children.append(Node(res[i][2], res[i][1], res[i][3], current_node, res[i][0]))
+            children[-1].temps = current_node.temps + 1
 
-            verif=True # Test si child se trouve dans la piste
-            for i in range(len(chemin[1])-1):
-                if piste.intersect(current_node.position, children[-1].position, chemin[1][i], chemin[1][i+1])or piste.intersect(current_node.position, children[-1].position, chemin[2][i], chemin[2][i+1]):
-                    verif=False
+            verif = True  # Test si child se trouve dans la piste
+            for j in range(len(chemin[1]) - 1):
+                if piste.intersect(current_node.position, children[-1].position, chemin[1][j],
+                                   chemin[1][j + 1]) or piste.intersect(current_node.position, children[-1].position,
+                                                                        chemin[2][j], chemin[2][j + 1]):
+                    verif = False
             if not verif:
                 children.pop()
-
-
 
         # Si on a atteint la fin
         for child in children:
@@ -87,7 +106,7 @@ def astar(chemin, start):
                 print('OK')
                 path = []  # initialise le chemin
                 current = current_node
-                while current is not None:  # on crée le chemin en partant de la fin
+                while current is not None:  # on cree le chemin en partant de la fin
                     path.append(current.position)
                     current = current.parent
                 return path[::-1]  # return le chemin
@@ -95,41 +114,36 @@ def astar(chemin, start):
         # On boucle sur les children
         for child in children:
 
-            # Child est dans la liste des noeuds traités
+            # Child est dans la liste des noeuds traites
             for closed_child in closed_list:
                 if child == closed_child:
                     continue
 
             # Create coutrest, dstart, dend
-            child.dstart = current_node.dstart + 1
-            child.dend = ((child.position.x - chemin[0][-1].x) ** 2 + (child.position.y - chemin[1][-1].y) ** 2)**0.5 # A modifier (doit dépendre du temps)
+            child.dstart = current_node.dstart + child.vitesse * child.temps * voiture.PASDETEMPS
+            child.dend = ((child.position.x - chemin[0][-1].x) ** 2 + (child.position.y - chemin[1][-1].y) ** 2) ** 0.5
             child.couttot = child.dstart + child.dend
 
-            # Child dans la liste des noeuds à traiter
-            #  for open_node in open_list:
-            #    if child == open_node and child.dstart > open_node.dstart:
-            #        continue
-            # Ajoute child dans open liste
             open_list.append(child)
 
 
-chemin = piste.creationpiste(100)
+chemin = piste.creationpiste(500)
+
 
 def afficherpiste(l1, l2):
-    for k in range(len(l1)-1):
-        a = [l1[k].x, l1[k+1].x]
+    for k in range(len(l1) - 1):
+        a = [l1[k].x, l1[k + 1].x]
         b = [l1[k].y, l1[k + 1].y]
         c = [l2[k].x, l2[k + 1].x]
         d = [l2[k].y, l2[k + 1].y]
         plt.plot(a, b)
-        plt.plot(c,d)
+        plt.plot(c, d)
         plt.axis('equal')
 
 
+afficherpiste(chemin[1], chemin[2])
 
-afficherpiste(chemin[1],chemin[2])
-
-ast=astar(chemin, chemin[0][0])
+ast = astar(chemin, chemin[0][0])
 
 
 def afficherastar(l1):
@@ -139,5 +153,6 @@ def afficherastar(l1):
         plt.plot(a, b)
         plt.axis('equal')
     plt.show()
+
 
 afficherastar(ast)
