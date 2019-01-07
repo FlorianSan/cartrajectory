@@ -41,7 +41,7 @@ class PanZoomView(QtWidgets.QGraphicsView):
 
 
 class Dessin(QtWidgets.QWidget):
-    def __init__(self,file):
+    def __init__(self,choice):
         super().__init__()
         
         # Settings
@@ -60,12 +60,14 @@ class Dessin(QtWidgets.QWidget):
         self.time_entry = QtWidgets.QLineEdit()
         toolbar = self.create_toolbar()
 
-        if file == 'None':
+        if choice == 1:
             self.piste = piste.creationpiste(600)
-        else:
-            with open(file,'rb') as fichier:
+        elif choice == 2:
+            with open('data','rb') as fichier:
                 mon_depickler=pickle.Unpickler(fichier)
                 self.piste  = mon_depickler.load()
+        else:
+            self.piste = self.mouse_draw()
 
         # invert y axis for the view
         self.view.scale(1, -1)
