@@ -12,7 +12,7 @@ class MouseTracker(QWidget):
 
     def initUI(self):
         self.setGeometry(200, 200, 1000, 500)
-        self.setWindowTitle('Mouse Tracker')
+        self.setWindowTitle('Dessin Piste')
         self.label = QLabel(self)
         self.label.resize(500, 40)
         self.show()
@@ -35,7 +35,7 @@ class MouseTracker(QWidget):
                 q.drawLine(self.point[i].x, self.point[i].y, self.point[i+1].x,self.point[i+1].y)
             if self.pos :
                 q.drawLine(self.point[len(self.point)-1].x, self.point[len(self.point)-1].y,  self.pos.x(),  self.pos.y())
-                
+
     def closeEvent(self, event):
         return(self.point)
 
