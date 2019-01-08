@@ -1,6 +1,6 @@
 import numpy as np
 
-import piste
+import piste,presentationvoiture
 
 PASDETEMPS = 0.1 #en secondes
 ACCELERATION = 0.1 #en m/s²
@@ -18,9 +18,16 @@ class Voiture:
         self.acceleration = [0]
         self.vitesse = [0]
         self.direction = [np.pi]
+        self.choisie = None
+        self.firstview = presentationvoiture.FirstView()
+        self.firstview.voiturechoisie.connect(self.defvoiture)
+        self.firstview.show()
 
     def get_position(self, t):
         return self.position[t]
+
+    def defvoiture(self):
+        self.choisie = self.firstview.choisie
 
 def newposition2(vitesse,acceleration,direction,position):
     res=[]
