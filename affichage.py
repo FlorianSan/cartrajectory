@@ -20,9 +20,9 @@ class CarMotion():
 
         self.car_group = QtWidgets.QGraphicsItemGroup()
         self.windows.scene.addItem(self.car_group)
-        self.car_group.setZValue(0)
+        self.car_group.setZValue(1)
         self.path = QtGui.QPainterPath()
-        self.voiture = QRectF(QPoint(self.car.position[1].x-self.car.longueur/2, self.car.position[1].y-self.car.largeur/2), QPoint(self.car.position[1].x+self.car.longueur/2, self.car.position[1].y+self.car.largeur/2))
+        self.voiture = QRectF(QPoint(self.car.position[0].x-self.car.longueur/2, self.car.position[0].y-self.car.largeur/2), QPoint(self.car.position[0].x+self.car.longueur/2, self.car.position[0].y+self.car.largeur/2))
         self.path.addRect(self.voiture)
         brush = QBrush(QtGui.QColor("Red"))
         item = QtWidgets.QGraphicsPathItem(self.path, self.car_group)
@@ -40,7 +40,7 @@ class CarMotion():
             transform.rotate(self.r)
             self.car_group.setTransform(transform)
 
-            self.windows.scene.addLine(self.car.position[self.t-1].x,self.car.position[self.t-1].y,self.car.position[self.t].x,self.car.position[self.t].y, QPen(QtGui.QColor(TRAJ_COLOR), 1))
+            self.windows.scene.addLine(self.car.position[self.t-1].x,self.car.position[self.t-1].y,self.car.position[self.t].x,self.car.position[self.t].y, QPen(QtGui.QColor(TRAJ_COLOR), 0))
 
             self.windows.update()  # <-- update the window!
             self.t+=1
