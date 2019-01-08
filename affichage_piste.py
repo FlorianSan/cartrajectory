@@ -12,6 +12,7 @@ import piste
 import affichage
 import mouse_tracker
 import voiture
+import presentationvoiture
 
 LARGEUR = piste.LARGEUR
 WIDTH = 900  # Initial window width (pixels)
@@ -54,21 +55,18 @@ class Dessin(QtWidgets.QWidget):
         self.play = False
         self.re = False
         self.ready = False
-
-
+        
         self.car = voiture.Voiture(10,10,10)
 
-
-
         if choice == 1:
-            self.piste = piste.creationpiste(4)[0]
+            [self.piste,self.pointg,self.pointd] = piste.creationpiste(4)
             self.mainwindows()
             self.ready = True
 
         elif choice == 2:
             with open('data','rb') as fichier:
                 mon_depickler=pickle.Unpickler(fichier)
-                self.piste  = mon_depickler.load()
+                [self.piste,self.pointg,self.pointd]  = mon_depickler.load()
                 self.mainwindows()
                 self.ready =True
         else:
@@ -145,15 +143,14 @@ class Dessin(QtWidgets.QWidget):
         path = QtGui.QPainterPath()
 
         path.moveTo(self.piste[0].x, self.piste[0].y)
-        self.scene.addRect(self.piste[0].x, self.piste[0].y - LARGEUR/2, 30, LARGEUR, QPen(QtGui.QColor(TK_COLOR), 1),
-                           QBrush(QColor(TK_COLOR)))
+        self.scene.addPolygon(Polygonee(self.pointg[0], self.pointd[0],self.piste[1],self.piste[2],15), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor(TK_COLOR)))
         self.scene.addRect(self.piste[0].x, self.piste[0].y - 3.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         self.scene.addRect(self.piste[0].x, self.piste[0].y - 1.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         self.scene.addRect(self.piste[0].x, self.piste[0].y + 0.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         self.scene.addRect(self.piste[0].x, self.piste[0].y + 2.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         for i in range(1, len(self.piste)):
             path.lineTo(self.piste[i].x, self.piste[i].y)
-        #self.scene.addPolygon(Polygone(point[-2],point[-1]), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor('black')))
+        self.scene.addPolygon(Polygonee(self.pointg[-1],self.pointd[-1],self.piste[-1],self.piste[-2],15), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor(TK_COLOR)))
         item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
 
@@ -175,7 +172,7 @@ class Dessin(QtWidgets.QWidget):
     def sauvegarder(self):
         with open('data','wb') as fichier:
             mon_picker=pickle.Pickler(fichier)
-            mon_picker.dump(self.piste)
+            mon_picker.dump([self.piste,self.pointg,self.pointd] )
         print("Sauvegarde réussie ")
 
     def listemousetracker(self):
@@ -186,8 +183,6 @@ class Dessin(QtWidgets.QWidget):
     def miseajour(self):
         if self.ready:
             self.moving_car.updateValues()
-
-
 
 
 def Polygone(A, B, longueur):
@@ -202,3 +197,14 @@ def Polygone(A, B, longueur):
     for i in range(len(lt)):
         Poly.append(lt[i])
     return (Poly)
+    
+def Polygonee(A,B,C,D,longueur):
+    Poly = QPolygonF()
+    P1 = QPoint(A.x,A.y)
+    P2 = QPoint(A.x+longueur*(C.x-D.x),A.y + longueur*(C.y-D.y))
+    P3 = QPoint(B.x+longueur*(C.x-D.x),B.y + longueur*(C.y-D.y))
+    P4 = QPoint(B.x,B.y)
+    lt = [P1,P2,P3,P4]
+    for i in range(len(lt)):
+        Poly.append(lt[i])
+    return(Poly)
