@@ -119,7 +119,7 @@ def astar(chemin):
             while current is not None:  # on cree le chemin en partant de la fin
                 path.append(current.position)
                 current = current.parent
-            return path[::-1]  # return le chemin
+            return path[::-1]  # return le chemin 
         
 
         # On boucle sur les children
