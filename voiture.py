@@ -2,11 +2,11 @@ import numpy as np
 
 import piste
 
-PASDETEMPS = 0.5 #en secondes
+PASDETEMPS = 0.1 #en secondes
 ACCELERATION = 0.1 #en m/s²
-DELTAACC = 3
-VIRAGE = (10*np.pi)/180 #angle de virage en radian
-DELTAVIR = 3
+DELTAACC = 5
+VIRAGE = (8*np.pi)/180 #angle de virage en radian
+DELTAVIR = 5
 VMAX = 40
 
 class Voiture:
@@ -17,7 +17,7 @@ class Voiture:
         self.position = [piste.Point(0,0)]
         self.acceleration = [0]
         self.vitesse = [0]
-        self.direction = [0]
+        self.direction = [np.pi]
 
     def get_position(self, t):
         return self.position[t]

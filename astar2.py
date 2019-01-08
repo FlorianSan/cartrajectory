@@ -1,9 +1,9 @@
-
 import matplotlib.pyplot as plt
 
 import piste
 import voiture
 from operator import itemgetter, attrgetter
+
 
 class Node:
 
@@ -15,7 +15,7 @@ class Node:
         self.dend = 0
         self.couttot = 0
 
-        self.temps =0  # nb de pas de temps pour arriver à ce noeud
+        self.temps = 0  # nb de pas de temps pour arriver à ce noeud
 
         self.vitesse = vitesse
         self.direction = direction
@@ -24,24 +24,29 @@ class Node:
     def __eq__(self, autre):
         return self.position == autre.position
 
+
 M = 0
 L = 0
 Lg = 0
+
 
 # rajouter affichage
 
 
 def astar(chemin, start):
-
     compteur = 0
 
     voit = voiture.Voiture(M, L, Lg)
     # cree le noeud de debut et de fin
     start_node = Node(0, 0, 0, None, start)
     start_node.dstart = 0
-    start_node.dend = ((start_node.position.x - chemin[-1][0].x) ** 2 +
-                (start_node.position.y - chemin[-1][0].y) ** 2) ** 0.5
-    start_node.couttot = 0
+    l = -1
+    d = chemin[0][l].distance(chemin[0][l - 1])
+    while chemin[0][l].distance(start_node.position) > piste.LARGEUR:
+        start_node.dend += d
+        l = l - 1
+    # start_node.dend = ((start_node.position.x - chemin[-1][0].x) ** 2 +v(start_node.position.y - chemin[-1][0].y) ** 2) ** 0.5
+    start_node.couttot = start_node.dstart + start_node.dend
 
     # Initialisation des deux listes
     open_list = []  # liste des noeuds a traiter  FILE DE PRIORITe
@@ -71,9 +76,9 @@ def astar(chemin, start):
         print(current_node.position.x, current_node.position.y)
 
         compteur += 1
-        #print(compteur)
+        print(compteur)
 
-        if compteur > 1000:
+        if compteur > 50:
             print('OK')
             path = []  # initialise le chemin
             current = current_node
@@ -99,6 +104,8 @@ def astar(chemin, start):
                     verif = False
             if not verif:
                 children.pop()
+        if len(children) == 0:
+            open_list.pop(0)
 
         # Si on a atteint la fin
         for child in children:
@@ -121,14 +128,20 @@ def astar(chemin, start):
 
             # Create coutrest, dstart, dend
             child.dstart = current_node.dstart + child.vitesse * child.temps * voiture.PASDETEMPS
-            child.dend = ((child.position.x - chemin[0][-1].x) ** 2 + (child.position.y - chemin[1][-1].y) ** 2) ** 0.5
+            # child.dend = ((child.position.x - chemin[0][-1].x) ** 2 + (child.position.y - chemin[1][-1].y) ** 2) ** 0.5
+
+            l = -1
+            d = chemin[0][l].distance(chemin[0][l - 1])
+            while chemin[0][l].distance(child.position) > piste.LARGEUR:
+                child.dend += d
+                l = l - 1
+
             child.couttot = child.dstart + child.dend
 
             open_list.append(child)
 
 
 chemin = piste.creationpiste(300)
-
 
 
 def afficherpiste(l1, l2):

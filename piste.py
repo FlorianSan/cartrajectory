@@ -2,6 +2,7 @@
 
 import matplotlib.pyplot as plt
 
+from math import sqrt
 
 import random as rd
 
@@ -32,6 +33,9 @@ class Point:
 
     def maxi(self, other):
         return Point(max(self.x, other.x), max(self.y, other.y))
+        
+    def distance(self,other):
+        return sqrt((self.x-other.x)**2 + (self.y-other.y)**2)
 
 
 def clockwise(a, b, c):
@@ -58,6 +62,7 @@ class Piste:
         self.zone = [0]  # initialisation à 0 nécessaire afin que le début de la piste soit rectiligne
         self.angle = 0  # en degré
         self.anglerad = 0  # en rad (nécessaire pour les calculs)
+        
 
     def miseajourzone(self):
         self.zone.append(rd.randint(self.zone[-1] - INTENSITEVIRAGE, self.zone[-1] + INTENSITEVIRAGE))
