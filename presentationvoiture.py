@@ -1,5 +1,5 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
-#from PyQt5.QtGui import 
+from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QGraphicsView, QShortcut
 VITESSE_MAX=300
 VITESSE_MIN=0
@@ -10,11 +10,14 @@ VIRAGE_MIN=0
 FILE='voiture.txt'
 
 class FirstView(QtWidgets.QWidget):
+    voiturechoisie = pyqtSignal()
     def __init__(self):
         super().__init__()
         root_layout = QtWidgets.QVBoxLayout(self)
         #truc=self.createH()
         self.setWindowTitle('caractéristique voiture')
+        
+        self.choisie = None
         Voiture = self.add_voiture()
         for i in range(len(Voiture)):
             root_layout.addLayout(self.ajout_sld(Voiture[i]))
@@ -47,8 +50,9 @@ class FirstView(QtWidgets.QWidget):
         return(H)
         
     def btnstate(self,car):
+        self.choisie = car
+        self.voiturechoisie.emit()
         self.close()
-        print(car.split('\n'))
         
         
 def horizontal_box(nom,mini,maxi,valeur):
