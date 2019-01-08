@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 import piste
 import voiture
 from operator import itemgetter, attrgetter
-import numpy as np
 
 class Node:
 
@@ -78,7 +78,7 @@ def astar(chemin):
         compteur += 1
         print(compteur)
 
-        if compteur > 500:
+        if compteur > 1000:
             print('OK')
             path = []  # initialise le chemin
             current = current_node
@@ -91,12 +91,12 @@ def astar(chemin):
         children = []
 
         res = voiture.newposition(current_node.vitesse, current_node.acceleration, current_node.direction,
-                                  current_node.position)
-        for i in range(len(res)):
+                                  current_node.position)  # accès aux children
+        for i in range(len(res)):  # append les children
             children.append(Node(res[i][2], res[i][1], res[i][3], current_node, res[i][0]))
             children[-1].temps = current_node.temps + 1
 
-            verif = True  # Test si child se trouve dans la piste
+            verif = True  # Test si child se trouve dans la piste, sinon, on le supprime
             for j in range(len(chemin[1]) - 1):
                 if piste.intersect(current_node.position, children[-1].position, chemin[1][j],
                                    chemin[1][j + 1]) or piste.intersect(current_node.position, children[-1].position,
@@ -112,7 +112,7 @@ def astar(chemin):
             if piste.intersect(current_node.position, child.position, chemin[1][-1], chemin[2][-1]):
                 print('OK')
                 path = []  # initialise le chemin
-                current = current_node
+                current = child
                 while current is not None:  # on cree le chemin en partant de la fin
                     path.append(current.position)
                     current = current.parent
@@ -131,9 +131,10 @@ def astar(chemin):
             # child.dend = ((child.position.x - chemin[0][-1].x) ** 2 + (child.position.y - chemin[1][-1].y) ** 2) ** 0.5
 
             l = -1
-            while chemin[0][l].distance(child.position) > piste.LARGEUR:
-                child.dend += d
+            while chemin[0][l].distance(child.position) > piste.LARGEUR:  # déterminer dend (à partir de la somme des points milieu)
+                child.dend += chemin[0][l].distance(chemin[0][l - 1])
                 l = l - 1
+            child.dend += chemin[0][l].distance(child.position)
 
             child.couttot = child.dstart + child.dend
 
