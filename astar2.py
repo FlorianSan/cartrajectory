@@ -1,10 +1,9 @@
 import matplotlib.pyplot as plt
-import numpy as np
 
 import piste
 import voiture
 from operator import itemgetter, attrgetter
-
+import numpy as np
 
 class Node:
 
@@ -79,7 +78,7 @@ def astar(chemin):
         compteur += 1
         print(compteur)
 
-        if compteur > 1000:
+        if compteur > 500:
             print('OK')
             path = []  # initialise le chemin
             current = current_node
@@ -134,9 +133,8 @@ def astar(chemin):
             l = -1
             d = chemin[0][l].distance(chemin[0][l - 1])
             while chemin[0][l].distance(child.position) > piste.LARGEUR:
-                child.dend += chemin[0][l].distance(chemin[0][l - 1])
+                child.dend += d
                 l = l - 1
-            child.dend += chemin[0][l].distance(child.position)
 
             child.couttot = child.dstart + child.dend
 
