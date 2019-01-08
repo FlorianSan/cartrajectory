@@ -132,7 +132,6 @@ def astar(chemin):
             # child.dend = ((child.position.x - chemin[0][-1].x) ** 2 + (child.position.y - chemin[1][-1].y) ** 2) ** 0.5
 
             l = -1
-            d = chemin[0][l].distance(chemin[0][l - 1])
             while chemin[0][l].distance(child.position) > piste.LARGEUR:
                 child.dend += chemin[0][l].distance(chemin[0][l - 1])
                 l = l - 1
