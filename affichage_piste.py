@@ -2,7 +2,7 @@
 import math
 
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtCore import QPoint
+from PyQt5.QtCore import QPoint, QTimer
 from PyQt5.QtGui import QPen, QBrush, QColor, QPolygonF
 from PyQt5.QtWidgets import QApplication
 import sys
@@ -11,6 +11,7 @@ import pickle
 import piste
 import affichage
 import mouse_tracker
+import voiture
 
 LARGEUR = piste.LARGEUR
 WIDTH = 900  # Initial window width (pixels)
@@ -45,14 +46,39 @@ class PanZoomView(QtWidgets.QGraphicsView):
 class Dessin(QtWidgets.QWidget):
     def __init__(self,choice):
         super().__init__()
-        
+
         # Settings
         self.setWindowTitle('Trajectoire')
         self.resize(WIDTH, HEIGHT)
 
-        self.play = True
+        self.play = False
         self.re = False
+        self.ready = False
 
+
+        self.car = voiture.Voiture(10,10,10)
+
+
+
+        if choice == 1:
+            self.piste = piste.creationpiste(4)[0]
+            self.mainwindows()
+            self.ready = True
+
+        elif choice == 2:
+            with open('data','rb') as fichier:
+                mon_depickler=pickle.Unpickler(fichier)
+                self.piste  = mon_depickler.load()
+                self.mainwindows()
+                self.ready =True
+        else:
+
+            self.ex = mouse_tracker.MouseTracker()
+            self.ex.listeMouseTracker.connect(self.listemousetracker)
+            self.ex.setWindowModality(QtCore.Qt.ApplicationModal)
+            self.ex.show()
+
+    def mainwindows(self):
         # create components
         root_layout = QtWidgets.QVBoxLayout(self)
         self.scene = QtWidgets.QGraphicsScene()
@@ -60,29 +86,20 @@ class Dessin(QtWidgets.QWidget):
         self.view = PanZoomView(self.scene)
         self.time_entry = QtWidgets.QLineEdit()
         toolbar = self.create_toolbar()
-        self.piste = []
-
-
-        if choice == 1:
-            self.piste = piste.creationpiste(600)[0]
-
-        elif choice == 2:
-            with open('data','rb') as fichier:
-                mon_depickler=pickle.Unpickler(fichier)
-                self.piste  = mon_depickler.load()
-        else:
-           self.piste = mouse_tracker.dessinpiste()
-
-
-        # invert y axis for the view
-        self.view.scale(1, -1)
-
-        # add the track elements to the graphic scene and then fit it in the view
         self.add_piste()
+
+        self.car.position = self.piste
+
+        self.moving_car = affichage.CarMotion(self, self.car)
+        # invert y axis for the view
+
+
+        self.view.scale(1, 1)
 
         # add components to the root_layout
         root_layout.addWidget(self.view)
         root_layout.addLayout(toolbar)
+        self.show()
 
     def create_toolbar(self):
         # create layout for time controls and entry
@@ -143,6 +160,9 @@ class Dessin(QtWidgets.QWidget):
     @QtCore.pyqtSlot()
     def playpause(self):
         """this slot toggles the replay using the timer as model"""
+
+
+
         if self.play:
             self.play = False
         else:
@@ -156,6 +176,19 @@ class Dessin(QtWidgets.QWidget):
         with open('data','wb') as fichier:
             mon_picker=pickle.Pickler(fichier)
             mon_picker.dump(self.piste)
+        print("Sauvegarde réussie ")
+
+    def listemousetracker(self):
+        self.piste = self.ex.point
+        self.mainwindows()
+        self.ready = True
+
+    def miseajour(self):
+        if self.ready:
+            self.moving_car.updateValues()
+
+
+
 
 def Polygone(A, B, longueur):
     theta = math.atan((B.y - A.y) / (B.x - A.x))
