@@ -1,4 +1,5 @@
 import matplotlib.pyplot as plt
+import numpy as np
 
 import piste
 import voiture
@@ -33,12 +34,12 @@ Lg = 0
 # rajouter affichage
 
 
-def astar(chemin, start):
+def astar(chemin):
     compteur = 0
 
     voit = voiture.Voiture(M, L, Lg)
     # cree le noeud de debut et de fin
-    start_node = Node(0, 0, 0, None, start)
+    start_node = Node(0, 0, np.pi, None, chemin[0][0])
     start_node.dstart = 0
     l = -1
     d = chemin[0][l].distance(chemin[0][l - 1])
@@ -78,7 +79,7 @@ def astar(chemin, start):
         compteur += 1
         print(compteur)
 
-        if compteur > 50:
+        if compteur > 1000:
             print('OK')
             path = []  # initialise le chemin
             current = current_node
@@ -133,8 +134,9 @@ def astar(chemin, start):
             l = -1
             d = chemin[0][l].distance(chemin[0][l - 1])
             while chemin[0][l].distance(child.position) > piste.LARGEUR:
-                child.dend += d
+                child.dend += chemin[0][l].distance(chemin[0][l - 1])
                 l = l - 1
+            child.dend += chemin[0][l].distance(child.position)
 
             child.couttot = child.dstart + child.dend
 
@@ -157,7 +159,7 @@ def afficherpiste(l1, l2):
 
 afficherpiste(chemin[1], chemin[2])
 
-ast = astar(chemin, chemin[0][0])
+ast = astar(chemin)
 
 
 def afficherastar(l1):
