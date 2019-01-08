@@ -13,7 +13,7 @@ TRAJ_COLOR = "white"
 class CarMotion():
     def __init__(self, windows, car):
 
-        self.t=1
+        self.t=0
         self.r=0
         self.car = car
         self.windows = windows
@@ -32,21 +32,22 @@ class CarMotion():
 
     def updateValues(self):
         if self.windows.play and self.t+1 < len(self.car.position):
-
-            self.r += cal_angle(self.car.position[self.t-1],self.car.position[self.t],self.car.position[self.t+1])
+            if self.t>0:
+                self.r += cal_angle(self.car.position[self.t-1],self.car.position[self.t],self.car.position[self.t+1])
             transform = QTransform()
             self.car_group.setTransformOriginPoint(self.car.position[self.t].x, self.car.position[self.t].y)
-            transform.translate(self.car.position[self.t].x, self.car.position[self.t].y)
+            transform.translate(self.car.position[self.t+1].x, self.car.position[self.t+1].y)
             transform.rotate(self.r)
             self.car_group.setTransform(transform)
 
-            self.windows.scene.addLine(self.car.position[self.t-1].x,self.car.position[self.t-1].y,self.car.position[self.t].x,self.car.position[self.t].y, QPen(QtGui.QColor(TRAJ_COLOR), 0))
+            self.windows.scene.addLine(self.car.position[self.t].x,self.car.position[self.t].y,self.car.position[self.t+1].x,self.car.position[self.t+1].y, QPen(QtGui.QColor(TRAJ_COLOR), 0))
 
             self.windows.update()  # <-- update the window!
             self.t+=1
 
+
         if self.windows.re:
-            self.t=1
+            self.t=0
             self.r = 0
             transform = QTransform()
             self.car_group.setTransformOriginPoint(self.car.position[self.t].x, self.car.position[self.t].y)

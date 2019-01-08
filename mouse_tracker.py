@@ -22,7 +22,7 @@ class MouseTracker(QWidget):
         self.label = QLabel(self)
         self.label.resize(500, 40)
         self.pos = None
-        self.point = []
+        self.point = [piste.Point(0,0)]
 
     def mouseMoveEvent(self, event):
         if QApplication.keyboardModifiers() == Qt.ShiftModifier:

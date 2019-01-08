@@ -61,7 +61,7 @@ class Dessin(QtWidgets.QWidget):
 
 
         if choice == 1:
-            self.piste = piste.creationpiste(600)[0]
+            self.piste = piste.creationpiste(4)[0]
             self.mainwindows()
             self.ready = True
 

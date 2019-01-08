@@ -17,6 +17,6 @@ if __name__ == "__main__":
     main_window = affichage_piste.Dessin(choice)
     timer = QTimer()
     timer.timeout.connect(main_window.miseajour)
-    timer.start(33)
+    timer.start(330)
     main_window.show()
     app.exec_()
