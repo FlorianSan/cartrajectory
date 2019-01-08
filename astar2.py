@@ -5,6 +5,7 @@ import piste
 import voiture
 from operator import itemgetter, attrgetter
 
+
 class Node:
 
     def __init__(self, vitesse, acceleration, direction, parent=None, position=None):
@@ -73,30 +74,21 @@ def astar(chemin):
         open_list.pop(current_index)
         closed_list.append(current_node)
 
-        print(current_node.position.x, current_node.position.y)
+        #print(current_node.position.x, current_node.position.y)
 
         compteur += 1
         print(compteur)
-
-        if compteur > 1000:
-            print('OK')
-            path = []  # initialise le chemin
-            current = current_node
-            while current is not None:  # on cree le chemin en partant de la fin
-                path.append(current.position)
-                current = current.parent
-            return path[::-1]  # return le chemin
 
         # Genere les children
         children = []
 
         res = voiture.newposition(current_node.vitesse, current_node.acceleration, current_node.direction,
-                                  current_node.position)  # accès aux children
-        for i in range(len(res)):  # append les children
+                                  current_node.position)
+        for i in range(len(res)):
             children.append(Node(res[i][2], res[i][1], res[i][3], current_node, res[i][0]))
             children[-1].temps = current_node.temps + 1
 
-            verif = True  # Test si child se trouve dans la piste, sinon, on le supprime
+            verif = True  # Test si child se trouve dans la piste
             for j in range(len(chemin[1]) - 1):
                 if piste.intersect(current_node.position, children[-1].position, chemin[1][j],
                                    chemin[1][j + 1]) or piste.intersect(current_node.position, children[-1].position,
@@ -108,30 +100,41 @@ def astar(chemin):
             open_list.pop(0)
 
         # Si on a atteint la fin
-        for child in children:
+        
+        listendnode=[]
+        for child in children :
             if piste.intersect(current_node.position, child.position, chemin[1][-1], chemin[2][-1]):
-                print('OK')
-                path = []  # initialise le chemin
-                current = child
-                while current is not None:  # on cree le chemin en partant de la fin
-                    path.append(current.position)
-                    current = current.parent
-                return path[::-1]  # return le chemin
+                listendnode.append(child)
+        if len(listendnode)>0:
+            print(len(listendnode))
+            endchild=listendnode[0]
+            difdir=abs(current_node.direction-endchild.direction)
+            for child in listendnode :
+                if difdir> abs(child.direction-current_node.direction):
+                    endchild=child
+                    difdir=abs(child.direction-current_node.direction)
+            #print('OK')
+            path = []  # initialise le chemin
+            current = endchild
+            while current is not None:  # on cree le chemin en partant de la fin
+                path.append(current.position)
+                current = current.parent
+            return path[::-1]  # return le chemin
+        
 
         # On boucle sur les children
         for child in children:
 
             # Child est dans la liste des noeuds traites
-            for closed_child in closed_list:
+            """for closed_child in closed_list:
                 if child == closed_child:
-                    continue
+                    continue"""
 
             # Create coutrest, dstart, dend
             child.dstart = current_node.dstart + child.vitesse * child.temps * voiture.PASDETEMPS
-            # child.dend = ((child.position.x - chemin[0][-1].x) ** 2 + (child.position.y - chemin[1][-1].y) ** 2) ** 0.5
 
             l = -1
-            while chemin[0][l].distance(child.position) > piste.LARGEUR:  # déterminer dend (à partir de la somme des points milieu)
+            while chemin[0][l].distance(child.position) > piste.LARGEUR:
                 child.dend += chemin[0][l].distance(chemin[0][l - 1])
                 l = l - 1
             child.dend += chemin[0][l].distance(child.position)
