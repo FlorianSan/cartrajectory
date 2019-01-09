@@ -61,7 +61,8 @@ class Dessin(QtWidgets.QWidget):
 
 
         if choice == 1:
-            self.piste = piste.creationpiste(4)[0]
+            self.chemin = piste.creationpiste(10)
+            self.piste = self.chemin[0]
             self.mainwindows()
             self.ready = True
 
@@ -88,12 +89,13 @@ class Dessin(QtWidgets.QWidget):
         toolbar = self.create_toolbar()
         self.add_piste()
 
-        astar2.astar(self.piste, self.car)
+        astar2.astar(self.chemin, self.car)
+
 
         self.moving_car = affichage.CarMotion(self, self.car)
         # invert y axis for the view
 
-        self.view.scale(1, 1)
+        self.view.scale(-1, 1)
 
         # add components to the root_layout
         root_layout.addWidget(self.view)

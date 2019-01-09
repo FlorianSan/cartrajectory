@@ -32,11 +32,11 @@ class CarMotion():
 
     def updateValues(self):
         if self.windows.play and self.t+1 < len(self.car.position):
-            if self.t>0:
-                self.r = self.car.direction(self.t)
+
+            self.r = self.car.direction[self.t]*(360/(2*math.pi))
             transform = QTransform()
-            self.car_group.setTransformOriginPoint(self.car.position[self.t].x, self.car.position[self.t].y)
-            transform.translate(self.car.position[self.t+1].x, self.car.position[self.t+1].y)
+            #self.car_group.setTransformOriginPoint(self.car.position[self.t].x-self.car.longueur/2, self.car.position[self.t].y-self.car.largeur/2)
+            transform.translate(self.car.position[self.t].x, self.car.position[self.t].y)
             transform.rotate(self.r)
             self.car_group.setTransform(transform)
 
