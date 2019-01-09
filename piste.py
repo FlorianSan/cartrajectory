@@ -28,6 +28,10 @@ class Point:
     def __add__(self, other):
         return Point(self.x+other.x, self.y+other.y)
 
+    def __repr__(self):
+        return "({}, {})".format(
+                self.x, self.y)
+
     def mini(self, other):
         return Point(min(self.x, other.x), min(self.y, other.y))
 
@@ -75,10 +79,8 @@ class Piste:
         return Point(self.pointsm[-1].x - PAS * np.cos(self.anglerad), self.pointsm[-1].y + PAS * np.sin(self.anglerad))
 
     def creationpointspiste(self):
-        pointg = Point(self.pointsm[-1].x + LARGEUR / 2 * np.sin(self.anglerad),
-                       self.pointsm[-1].y + LARGEUR / 2 * np.cos(self.anglerad))
-        pointd = Point(self.pointsm[-1].x - LARGEUR / 2 * np.sin(self.anglerad),
-                       self.pointsm[-1].y - LARGEUR / 2 * np.cos(self.anglerad))
+        pointg = Point(self.pointsm[-1].x + LARGEUR / 2 * np.sin(self.anglerad),self.pointsm[-1].y + LARGEUR / 2 * np.cos(self.anglerad))
+        pointd = Point(self.pointsm[-1].x - LARGEUR / 2 * np.sin(self.anglerad),self.pointsm[-1].y - LARGEUR / 2 * np.cos(self.anglerad))
 
         return pointg, pointd
 
@@ -122,4 +124,6 @@ def creationpiste(nbiterations):
     return [piste.pointsm, piste.pointsg, piste.pointsd]
 
 if __name__ == "__main__":
-    print(creationpiste(600))
+   # print(creationpiste(600))
+    p1= Point(10,25)
+    print(p1)

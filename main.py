@@ -14,9 +14,10 @@ if __name__ == "__main__":
     choice = int(input("1: aléatoire / 2: enregistré / 3 : dessin ? "))
     # Initialize Qt
     app = QtWidgets.QApplication([])
-    main_window = affichage_piste.Dessin(choice)
+    car = voiture.Voiture(10, 10, 10)
+    main_window = affichage_piste.Dessin(choice, car)
     timer = QTimer()
     timer.timeout.connect(main_window.miseajour)
-    timer.start(330)
+    timer.start(33)
     main_window.show()
     app.exec_()

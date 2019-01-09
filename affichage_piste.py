@@ -11,8 +11,7 @@ import pickle
 import piste
 import affichage
 import mouse_tracker
-import voiture
-import presentationvoiture
+import astar2
 
 LARGEUR = piste.LARGEUR
 WIDTH = 900  # Initial window width (pixels)
@@ -45,7 +44,7 @@ class PanZoomView(QtWidgets.QGraphicsView):
 
 
 class Dessin(QtWidgets.QWidget):
-    def __init__(self,choice):
+    def __init__(self,choice, car):
         super().__init__()
 
         # Settings
@@ -55,26 +54,40 @@ class Dessin(QtWidgets.QWidget):
         self.play = False
         self.re = False
         self.ready = False
-        
-        self.car = voiture.Voiture(10,10,10)
+
+
+        self.car = car
+
 
         if choice == 1:
-            [self.piste,self.pointg,self.pointd] = piste.creationpiste(4)
-            self.mainwindows()
+            self.chemin = piste.creationpiste(200)
+            self.piste = self.chemin[0]
+            self.lancerastar()
             self.ready = True
 
         elif choice == 2:
             with open('data','rb') as fichier:
                 mon_depickler=pickle.Unpickler(fichier)
-                [self.piste,self.pointg,self.pointd]  = mon_depickler.load()
-                self.mainwindows()
+                self.piste  = mon_depickler.load()
+                self.lancerastar()
                 self.ready =True
+                
+        elif choice == 3:
+            with open('alldata','rb') as fichier:
+                depickler = pickle.Unpickler(fichier)
+                [self.piste,self.car] = depickler.load()
+                self.mainwindows()
+                self.ready = True
         else:
 
             self.ex = mouse_tracker.MouseTracker()
             self.ex.listeMouseTracker.connect(self.listemousetracker)
             self.ex.setWindowModality(QtCore.Qt.ApplicationModal)
             self.ex.show()
+    
+    def lancerastar(self):
+        astar2.astar(self.chemin, self.car)
+        self.mainwindows()
 
     def mainwindows(self):
         # create components
@@ -86,13 +99,12 @@ class Dessin(QtWidgets.QWidget):
         toolbar = self.create_toolbar()
         self.add_piste()
 
-        self.car.position = self.piste
+
 
         self.moving_car = affichage.CarMotion(self, self.car)
         # invert y axis for the view
 
-
-        self.view.scale(1, 1)
+        self.view.scale(-1, 1)
 
         # add components to the root_layout
         root_layout.addWidget(self.view)
@@ -116,7 +128,8 @@ class Dessin(QtWidgets.QWidget):
         toolbar.addStretch()
         add_button('|>', self.playpause)
         add_button('R', self.redemarrer)
-        add_button('Pickle',self.sauvegarder)
+        add_button('Save Track',self.sauvegarder)
+        add_button('Save Simu', self.savesimu)
         toolbar.addStretch()
 
         def add_shortcut(text, slot):
@@ -143,14 +156,15 @@ class Dessin(QtWidgets.QWidget):
         path = QtGui.QPainterPath()
 
         path.moveTo(self.piste[0].x, self.piste[0].y)
-        self.scene.addPolygon(Polygonee(self.pointg[0], self.pointd[0],self.piste[1],self.piste[2],15), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor(TK_COLOR)))
+        self.scene.addRect(self.piste[0].x, self.piste[0].y - LARGEUR/2, 30, LARGEUR, QPen(QtGui.QColor(TK_COLOR), 1),
+                           QBrush(QColor(TK_COLOR)))
         self.scene.addRect(self.piste[0].x, self.piste[0].y - 3.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         self.scene.addRect(self.piste[0].x, self.piste[0].y - 1.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         self.scene.addRect(self.piste[0].x, self.piste[0].y + 0.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         self.scene.addRect(self.piste[0].x, self.piste[0].y + 2.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         for i in range(1, len(self.piste)):
             path.lineTo(self.piste[i].x, self.piste[i].y)
-        self.scene.addPolygon(Polygonee(self.pointg[-1],self.pointd[-1],self.piste[-1],self.piste[-2],15), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor(TK_COLOR)))
+        #self.scene.addPolygon(Polygone(point[-2],point[-1]), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor('black')))
         item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
 
@@ -172,18 +186,23 @@ class Dessin(QtWidgets.QWidget):
     def sauvegarder(self):
         with open('data','wb') as fichier:
             mon_picker=pickle.Pickler(fichier)
-            mon_picker.dump([self.piste,self.pointg,self.pointd] )
+            mon_picker.dump(self.chemin)
         print("Sauvegarde réussie ")
 
     def listemousetracker(self):
         self.piste = self.ex.point
-        self.mainwindows()
+        self.lancerastar()
         self.ready = True
 
     def miseajour(self):
         if self.ready:
             self.moving_car.updateValues()
 
+    def savesimu(self):
+        with open('alldata','wb') as fichier:
+            picker = pickle.Pickler(fichier)
+            picker.dump([self.piste,self.car])
+        print('Sauvegarde réussie')
 
 def Polygone(A, B, longueur):
     theta = math.atan((B.y - A.y) / (B.x - A.x))
@@ -197,14 +216,3 @@ def Polygone(A, B, longueur):
     for i in range(len(lt)):
         Poly.append(lt[i])
     return (Poly)
-    
-def Polygonee(A,B,C,D,longueur):
-    Poly = QPolygonF()
-    P1 = QPoint(A.x,A.y)
-    P2 = QPoint(A.x+longueur*(C.x-D.x),A.y + longueur*(C.y-D.y))
-    P3 = QPoint(B.x+longueur*(C.x-D.x),B.y + longueur*(C.y-D.y))
-    P4 = QPoint(B.x,B.y)
-    lt = [P1,P2,P3,P4]
-    for i in range(len(lt)):
-        Poly.append(lt[i])
-    return(Poly)
