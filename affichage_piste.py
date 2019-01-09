@@ -11,7 +11,6 @@ import pickle
 import piste
 import affichage
 import mouse_tracker
-import voiture
 import astar2
 
 LARGEUR = piste.LARGEUR
@@ -61,23 +60,34 @@ class Dessin(QtWidgets.QWidget):
 
 
         if choice == 1:
-            self.chemin = piste.creationpiste(10)
+            self.chemin = piste.creationpiste(200)
             self.piste = self.chemin[0]
-            self.mainwindows()
+            self.lancerastar()
             self.ready = True
 
         elif choice == 2:
             with open('data','rb') as fichier:
                 mon_depickler=pickle.Unpickler(fichier)
                 self.piste  = mon_depickler.load()
-                self.mainwindows()
+                self.lancerastar()
                 self.ready =True
+                
+        elif choice == 3:
+            with open('alldata','rb') as fichier:
+                depickler = pickle.Unpickler(fichier)
+                [self.piste,self.car] = depickler.load()
+                self.mainwindows()
+                self.ready = True
         else:
 
             self.ex = mouse_tracker.MouseTracker()
             self.ex.listeMouseTracker.connect(self.listemousetracker)
             self.ex.setWindowModality(QtCore.Qt.ApplicationModal)
             self.ex.show()
+    
+    def lancerastar(self):
+        astar2.astar(self.chemin, self.car)
+        self.mainwindows()
 
     def mainwindows(self):
         # create components
@@ -89,7 +99,6 @@ class Dessin(QtWidgets.QWidget):
         toolbar = self.create_toolbar()
         self.add_piste()
 
-        astar2.astar(self.chemin, self.car)
 
 
         self.moving_car = affichage.CarMotion(self, self.car)
@@ -119,7 +128,8 @@ class Dessin(QtWidgets.QWidget):
         toolbar.addStretch()
         add_button('|>', self.playpause)
         add_button('R', self.redemarrer)
-        add_button('Pickle',self.sauvegarder)
+        add_button('Save Track',self.sauvegarder)
+        add_button('Save Simu', self.savesimu)
         toolbar.addStretch()
 
         def add_shortcut(text, slot):
@@ -176,20 +186,23 @@ class Dessin(QtWidgets.QWidget):
     def sauvegarder(self):
         with open('data','wb') as fichier:
             mon_picker=pickle.Pickler(fichier)
-            mon_picker.dump(self.piste)
+            mon_picker.dump(self.chemin)
         print("Sauvegarde réussie ")
 
     def listemousetracker(self):
         self.piste = self.ex.point
-        self.mainwindows()
+        self.lancerastar()
         self.ready = True
 
     def miseajour(self):
         if self.ready:
             self.moving_car.updateValues()
 
-
-
+    def savesimu(self):
+        with open('alldata','wb') as fichier:
+            picker = pickle.Pickler(fichier)
+            picker.dump([self.piste,self.car])
+        print('Sauvegarde réussie')
 
 def Polygone(A, B, longueur):
     theta = math.atan((B.y - A.y) / (B.x - A.x))
