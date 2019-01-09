@@ -75,10 +75,8 @@ class Piste:
         return Point(self.pointsm[-1].x - PAS * np.cos(self.anglerad), self.pointsm[-1].y + PAS * np.sin(self.anglerad))
 
     def creationpointspiste(self):
-        pointg = Point(self.pointsm[-1].x + LARGEUR / 2 * np.sin(self.anglerad),
-                       self.pointsm[-1].y + LARGEUR / 2 * np.cos(self.anglerad))
-        pointd = Point(self.pointsm[-1].x - LARGEUR / 2 * np.sin(self.anglerad),
-                       self.pointsm[-1].y - LARGEUR / 2 * np.cos(self.anglerad))
+        pointg = Point(self.pointsm[-1].x + LARGEUR / 2 * np.sin(self.anglerad),self.pointsm[-1].y + LARGEUR / 2 * np.cos(self.anglerad))
+        pointd = Point(self.pointsm[-1].x - LARGEUR / 2 * np.sin(self.anglerad),self.pointsm[-1].y - LARGEUR / 2 * np.cos(self.anglerad))
 
         return pointg, pointd
 
