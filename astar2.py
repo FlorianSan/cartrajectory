@@ -115,7 +115,9 @@ def astar(chemin, voit):
                 voit.position.append(current.position)
                 voit.direction.append(current.direction)
                 current = current.parent
-            return (voit.position[::-1], voit.direction[::-1])  # return le chemin 
+            voit.position=voit.position[::-1]
+            voit.direction=voit.direction[::-1]
+            return (voit.position, voit.direction)  # return le chemin
         
 
         # On boucle sur les children
