@@ -160,7 +160,7 @@ def creationpiste(nbiterations):
                 piste.zone.pop()
         piste.miseajourzone()
         k = 0
-    return [piste.pointsm, piste.pointsg, piste.pointsd]
+    return [piste.pointsm, piste.pointsg, piste.pointsd, piste.pointsgtrie]
 
 if __name__ == "__main__":
     print(creationpiste(600))
