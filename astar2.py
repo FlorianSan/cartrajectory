@@ -26,18 +26,15 @@ class Node:
         return self.position == autre.position
 
 
-M = 0
-L = 0
-Lg = 0
 
 
 # rajouter affichage
 
 
-def astar(chemin):
+def astar(chemin, voit):
+    
     compteur = 0
 
-    voit = voiture.Voiture(M, L, Lg)
     # cree le noeud de debut et de fin
     start_node = Node(0, 0, np.pi, None, chemin[0][0])
     start_node.dstart = 0
@@ -74,7 +71,6 @@ def astar(chemin):
         open_list.pop(current_index)
         closed_list.append(current_node)
 
-        #print(current_node.position.x, current_node.position.y)
 
         compteur += 1
         print(compteur)
@@ -106,20 +102,22 @@ def astar(chemin):
             if piste.intersect(current_node.position, child.position, chemin[1][-1], chemin[2][-1]):
                 listendnode.append(child)
         if len(listendnode)>0:
-            print(len(listendnode))
             endchild=listendnode[0]
             difdir=abs(current_node.direction-endchild.direction)
             for child in listendnode :
                 if difdir> abs(child.direction-current_node.direction):
                     endchild=child
                     difdir=abs(child.direction-current_node.direction)
-            #print('OK')
             path = []  # initialise le chemin
             current = endchild
+            print(endchild.temps)
             while current is not None:  # on cree le chemin en partant de la fin
-                path.append(current.position)
+                voit.position.append(current.position)
+                voit.direction.append(current.direction)
                 current = current.parent
-            return path[::-1]  # return le chemin 
+            voit.position[::-1]
+            voit.direction[::-1]
+            return (voit.position, voit.direction)  # return le chemin 
         
 
         # On boucle sur les children
@@ -144,7 +142,7 @@ def astar(chemin):
             open_list.append(child)
 
 
-chemin = piste.creationpiste(300)
+chemin = piste.creationpiste(100)
 
 
 def afficherpiste(l1, l2):
@@ -160,7 +158,9 @@ def afficherpiste(l1, l2):
 
 afficherpiste(chemin[1], chemin[2])
 
-ast = astar(chemin)
+voit=voiture.Voiture(100, 10, 10)
+
+ast = astar(chemin, voit)
 
 
 def afficherastar(l1):
@@ -172,4 +172,4 @@ def afficherastar(l1):
     plt.show()
 
 
-afficherastar(ast)
+afficherastar(ast[0])
