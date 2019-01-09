@@ -1,4 +1,4 @@
-import sys
+import sys, math
 from PyQt5.QtWidgets import QApplication, QLabel, QWidget
 from PyQt5.QtGui import QPainter
 from PyQt5.QtCore import pyqtSignal, Qt
@@ -6,7 +6,7 @@ from PyQt5.QtCore import pyqtSignal, Qt
 
 
 import piste
-
+import affichage
 
 class MouseTracker(QWidget):
     listeMouseTracker = pyqtSignal()
@@ -22,7 +22,7 @@ class MouseTracker(QWidget):
         self.label = QLabel(self)
         self.label.resize(500, 40)
         self.pos = None
-        self.point = [piste.Point(0,0)]
+        self.pointsm = [piste.Point(0, 0)]  # liste des points milieux
 
     def mouseMoveEvent(self, event):
         if QApplication.keyboardModifiers() == Qt.ShiftModifier:
@@ -31,17 +31,19 @@ class MouseTracker(QWidget):
 
     def mousePressEvent(self, event):
         if QApplication.keyboardModifiers() == Qt.ShiftModifier:
-            self.point.append(piste.Point(event.x(), event.y()))
+
+            self.pointsm.append(piste.Point(event.x(), event.y()))
             self.update()
 
     def paintEvent(self, event):
 
         q = QPainter(self)
-        if len(self.point)>=1:
-            for i in range(len(self.point)-1):
-                q.drawLine(self.point[i].x, self.point[i].y, self.point[i+1].x,self.point[i+1].y)
+        if len(self.pointsm)>=1:
+            for i in range(len(self.pointsm)-1):
+                q.drawLine(self.pointsm[i].x, self.pointsm[i].y, self.pointsm[i+1].x,self.pointsm[i+1].y)
+
             if self.pos :
-                q.drawLine(self.point[len(self.point)-1].x, self.point[len(self.point)-1].y,  self.pos.x(),  self.pos.y())
+                q.drawLine(self.pointsm[len(self.pointsm)-1].x, self.pointsm[len(self.pointsm)-1].y,  self.pos.x(),  self.pos.y())
 
     def closeEvent(self, event):
 

@@ -142,7 +142,7 @@ def astar(chemin):
             open_list.append(child)
 
 
-chemin = piste.creationpiste(300)
+
 
 
 def afficherpiste(l1, l2):
@@ -156,9 +156,9 @@ def afficherpiste(l1, l2):
         plt.axis('equal')
 
 
-afficherpiste(chemin[1], chemin[2])
 
-ast = astar(chemin)
+
+
 
 
 def afficherastar(l1):
@@ -170,4 +170,9 @@ def afficherastar(l1):
     plt.show()
 
 
-afficherastar(ast)
+
+if __name__ == "__main__":
+    chemin = piste.creationpiste(300)
+    afficherpiste(chemin[1], chemin[2])
+    ast = astar(chemin)
+    afficherastar(ast)
