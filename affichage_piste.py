@@ -12,8 +12,6 @@ import piste
 import affichage
 import mouse_tracker
 import voiture
-import astar2
-
 
 LARGEUR = piste.LARGEUR
 WIDTH = 900  # Initial window width (pixels)
@@ -46,7 +44,7 @@ class PanZoomView(QtWidgets.QGraphicsView):
 
 
 class Dessin(QtWidgets.QWidget):
-    def __init__(self,choice, car):
+    def __init__(self,choice):
         super().__init__()
 
         # Settings
@@ -57,13 +55,13 @@ class Dessin(QtWidgets.QWidget):
         self.re = False
         self.ready = False
 
-        self.car = car
+
+        self.car = voiture.Voiture(10,10,10)
 
 
 
         if choice == 1:
-            self.chemin = piste.creationpiste(60)
-            self.piste = self.chemin[0]
+            self.piste = piste.creationpiste(4)[0]
             self.mainwindows()
             self.ready = True
 
@@ -90,7 +88,7 @@ class Dessin(QtWidgets.QWidget):
         toolbar = self.create_toolbar()
         self.add_piste()
 
-        astar2.astar(self.chemin, self.car)
+        self.car.position = self.piste
 
         self.moving_car = affichage.CarMotion(self, self.car)
         # invert y axis for the view
@@ -181,7 +179,7 @@ class Dessin(QtWidgets.QWidget):
         print("Sauvegarde réussie ")
 
     def listemousetracker(self):
-        self.piste = self.ex.pointsm
+        self.piste = self.ex.point
         self.mainwindows()
         self.ready = True
 
