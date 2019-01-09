@@ -140,7 +140,7 @@ def astar(chemin, voit):
             open_list.append(child)
 
 
-chemin = piste.creationpiste(100)
+
 
 
 def afficherpiste(l1, l2):
@@ -154,11 +154,6 @@ def afficherpiste(l1, l2):
         plt.axis('equal')
 
 
-afficherpiste(chemin[1], chemin[2])
-
-voit=voiture.Voiture(100, 10, 10)
-
-ast = astar(chemin, voit)
 
 
 def afficherastar(l1):
@@ -170,4 +165,12 @@ def afficherastar(l1):
     plt.show()
 
 
-afficherastar(ast[0])
+
+if __name__ == "__main__":
+    chemin = piste.creationpiste(100)
+    afficherpiste(chemin[1], chemin[2])
+
+    voit = voiture.Voiture(100, 10, 10)
+
+    ast = astar(chemin, voit)
+    afficherastar(ast[0])
