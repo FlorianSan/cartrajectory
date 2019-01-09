@@ -61,21 +61,20 @@ class Dessin(QtWidgets.QWidget):
 
         if choice == 1:
             self.chemin = piste.creationpiste(200)
-            self.piste = self.chemin[0]
             self.lancerastar()
             self.ready = True
 
         elif choice == 2:
             with open('data','rb') as fichier:
                 mon_depickler=pickle.Unpickler(fichier)
-                self.piste  = mon_depickler.load()
+                self.chemin  = mon_depickler.load()
                 self.lancerastar()
                 self.ready =True
                 
         elif choice == 3:
             with open('alldata','rb') as fichier:
                 depickler = pickle.Unpickler(fichier)
-                [self.piste,self.car] = depickler.load()
+                [self.chemin,self.car] = depickler.load()
                 self.mainwindows()
                 self.ready = True
         else:
@@ -90,6 +89,7 @@ class Dessin(QtWidgets.QWidget):
         self.mainwindows()
 
     def mainwindows(self):
+        self.piste = self.chemin[0]
         # create components
         root_layout = QtWidgets.QVBoxLayout(self)
         self.scene = QtWidgets.QGraphicsScene()
@@ -156,15 +156,14 @@ class Dessin(QtWidgets.QWidget):
         path = QtGui.QPainterPath()
 
         path.moveTo(self.piste[0].x, self.piste[0].y)
-        self.scene.addRect(self.piste[0].x, self.piste[0].y - LARGEUR/2, 30, LARGEUR, QPen(QtGui.QColor(TK_COLOR), 1),
-                           QBrush(QColor(TK_COLOR)))
+        self.scene.addPolygon(Polygonee(self.chemin[1][0], self.chemin[2][0], self.piste[1],self.piste[2], 20), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor(TK_COLOR)))
         self.scene.addRect(self.piste[0].x, self.piste[0].y - 3.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         self.scene.addRect(self.piste[0].x, self.piste[0].y - 1.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         self.scene.addRect(self.piste[0].x, self.piste[0].y + 0.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         self.scene.addRect(self.piste[0].x, self.piste[0].y + 2.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         for i in range(1, len(self.piste)):
             path.lineTo(self.piste[i].x, self.piste[i].y)
-        #self.scene.addPolygon(Polygone(point[-2],point[-1]), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor('black')))
+        self.scene.addPolygon(Polygonee(self.chemin[1][-1],self.chemin[2][-1],self.piste[-1],self.piste[-2], 20), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor(TK_COLOR)))
         item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
 
@@ -201,7 +200,7 @@ class Dessin(QtWidgets.QWidget):
     def savesimu(self):
         with open('alldata','wb') as fichier:
             picker = pickle.Pickler(fichier)
-            picker.dump([self.piste,self.car])
+            picker.dump([self.chemin,self.car])
         print('Sauvegarde réussie')
 
 def Polygone(A, B, longueur):
@@ -216,3 +215,15 @@ def Polygone(A, B, longueur):
     for i in range(len(lt)):
         Poly.append(lt[i])
     return (Poly)
+    
+def Polygonee(A,B,C,D,longueur):
+    deltax,deltay=C.x-D.x,C.y-D.y
+    P1=QPoint(A.x,A.y)
+    P2=QPoint(A.x+longueur*deltax,A.y+longueur*deltay)
+    P3=QPoint(B.x+longueur*deltax,B.y+longueur*deltay)
+    P4=QPoint(B.x,B.y)
+    Poly = QPolygonF()
+    lt = [P1,P2,P3,P4]
+    for i in range(4):
+        Poly.append(lt[i])
+    return(Poly)
