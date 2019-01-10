@@ -50,10 +50,9 @@ class FirstView(QtWidgets.QWidget):
         return(H)
         
     def btnstate(self,car):
-        print(car)
         self.choisie = car
         self.voiturechoisie.emit()
-        #self.close()
+        self.close()
         
         
 def horizontal_box(nom,mini,maxi,valeur):
