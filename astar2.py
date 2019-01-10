@@ -219,7 +219,7 @@ def afficherastar(l1):
 
 
 if __name__ == "__main__":
-    chemin = piste.creationpiste(400)
+    chemin = piste.creationpiste(600)
     afficherpiste(chemin[1], chemin[2])
 
     voit = voiture.Voiture(100, 10, 10)
