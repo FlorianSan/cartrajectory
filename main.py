@@ -5,9 +5,6 @@ from PyQt5.QtCore import QTimer
 
 import affichage_piste
 import voiture
-import piste
-import affichage
-import mouse_tracker
 
 
 if __name__ == "__main__":

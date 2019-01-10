@@ -1,9 +1,8 @@
 import numpy as np
-from PyQt5 import QtCore
 
-import piste, presentationvoiture
+import piste
 
-PASDETEMPS = 0.1 # en seconde
+PASDETEMPS = 0.1 # en secondes
 ACCELERATION = 0.1 # en m/s²
 DELTAACC = 5
 VIRAGE = (8*np.pi)/180 #angle de virage en radian
@@ -23,14 +22,7 @@ class Voiture:
         self.vitesse = []
         self.direction = []
         self.name = None
-        self.firstview = presentationvoiture.FirstView()
-        self.ex.setWindowModality(QtCore.Qt.ApplicationModal)
-        self.firstview.voiturechoisie.connect(self.defvoiture)
-        self.firstview.show()
-        
-    def defvoiture(self):
-        [self.name,self.vitessemax,self.accelerationmax,pasvirage] = self.firstview.choisie
-        self.pasvirage = int(pasvirage)*np.pi/(180*DELTAVIR)
+        self.DELTAVIR = DELTAVIR
         
 
     def get_position(self, t):
