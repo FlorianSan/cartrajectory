@@ -60,7 +60,7 @@ class Dessin(QtWidgets.QWidget):
 
 
         if choice == 1:
-            self.chemin = piste.creationpiste(200)
+            self.chemin = piste.creationpiste(20)
             self.lancerastar()
             self.ready = True
 
@@ -189,7 +189,8 @@ class Dessin(QtWidgets.QWidget):
         print("Sauvegarde réussie ")
 
     def listemousetracker(self):
-        self.piste = self.ex.point
+        self.chemin = self.ex.chemin
+        print(self.chemin)
         self.lancerastar()
         self.ready = True
 
