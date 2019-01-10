@@ -1,4 +1,4 @@
-
+import time
 
 import matplotlib.pyplot as plt
 
@@ -82,7 +82,7 @@ class Piste:
 
         return pointg, pointd
 
-    def verificationpoint2(self, nouveaupointg, nouveaupointd):
+    """def verificationpoint2(self, nouveaupointg, nouveaupointd):
         verif = True
         for i in range(len(self.pointsg)-1):
             if intersect(nouveaupointg, self.pointsg[i], nouveaupointd, self.pointsd[i]):
@@ -90,7 +90,7 @@ class Piste:
         for i in range (len(self.pointsg)-3):
             if intersect(nouveaupointg,self.pointsg[-1],self.pointsg[i], self.pointsg[i+1]) or intersect(nouveaupointd,self.pointsd[-1],self.pointsd[i], self.pointsd[i+1]):
                 verif = False
-        return verif
+        return verif"""
         
         
     
@@ -124,7 +124,7 @@ class Piste:
 
 
 def recherche_dichotomique(point, liste_triee, epsilon ):
-    element=point.x-PAS
+    element=point.x-epsilon
     a = 0
     b = len(liste_triee)-1
     m = (a+b)//2
@@ -153,10 +153,13 @@ def creationpiste(nbiterations):
                 k = k + 1
             else:
                 l = len(piste.pointsm)
+                piste.pointsgtrie=sorted(piste.pointsgtrie, key = lambda index : index[1])
                 for j in range(l - (len(piste.zone) - 1) * NBETAPEPARTIE): #si intersection alors on enlève les points de la partie en cours ainsi que ceux de la précdente
                     piste.pointsm.pop()
                     piste.pointsg.pop()
                     piste.pointsd.pop()
+                    piste.pointsgtrie.pop()
+                piste.pointsgtrie.sort()
                 piste.zone.pop()
         piste.miseajourzone()
         k = 0
