@@ -208,7 +208,6 @@ class Dessin(QtWidgets.QWidget):
 
     def listemousetracker(self):
         self.chemin = self.ex.chemin
-        print(self.chemin)
         self.lancerastar()
         self.ready = True
 

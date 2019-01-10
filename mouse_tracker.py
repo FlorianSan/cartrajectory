@@ -53,7 +53,7 @@ class MouseTracker(QWidget):
                 self.pointsg.append(piste.Point(self.pointsm[-2].x + (piste.LARGEUR / 2) * math.sin(self.angle), self.pointsm[-2].y - (piste.LARGEUR / 2) * math.cos(self.angle)))
                 self.pointsd.append(piste.Point(self.pointsm[-2].x - (piste.LARGEUR / 2) * math.sin(self.angle), self.pointsm[-2].y + (piste.LARGEUR / 2) * math.cos(self.angle)))
 
-        self.update()
+            self.update()
 
 
     def paintEvent(self, event):
