@@ -56,7 +56,7 @@ def verifpoint(chemin,listepointgtrie,point1, point2):
     verif = True
     for j in listindex :
         #print(j)
-        if j<len(chemin[1]) :
+        if j<len(chemin[1])+1 :
             if piste.intersect(point1, point2, chemin[1][j], chemin[1][j + 1]) or piste.intersect(point1, point2, chemin[2][j], chemin[2][j + 1]):
                 verif = False
     return verif
