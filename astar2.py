@@ -71,12 +71,19 @@ def astar(chemin, voit):
         listetriee=chemin[3]
     
     compteur = 0
+    DELTAINDEX = 20
+    indexdend=DELTAINDEX
+    
+    longueur={} #création d'un dictionnaire de longueur de la piste à patir de la fin
+    longueur[len(chemin[0])-1]=0
+    for l in range (len(chemin[0])-2,-1,-1):
+        longueur[l]=longueur.get(l+1) + chemin[0][l].distance(chemin[0][l+1])
 
     # cree le noeud de debut et de fin
     start_node = Node(0, 0, np.pi, None, chemin[0][0])
     start_node.dstart = 0
     l = -1
-    d = chemin[0][l].distance(chemin[0][l - 1])
+    d = chemin[0][l].distance(chemin[0][l - 1]) #A reprendre
     while chemin[0][l].distance(start_node.position) > piste.LARGEUR:
         start_node.dend += d
         l = l - 1
@@ -166,11 +173,19 @@ def astar(chemin, voit):
             # Create coutrest, dstart, dend
             child.dstart = current_node.dstart + child.vitesse * child.temps * voiture.PASDETEMPS
 
-            l = -1
-            while chemin[0][l].distance(child.position) > 2*piste.LARGEUR:
+            while indexdend>0 and chemin[0][indexdend].distance(child.position) > 2*piste.LARGEUR :
+                indexdend-=1
+            child.dend = chemin[0][indexdend].distance(child.position) + longueur.get(indexdend)
+            if indexdend + DELTAINDEX > len(chemin[0]):
+                indexdend=len(chemin[0])-1
+            else :
+                indexdend+= DELTAINDEX
+            
+            """l = -1
+            while abs(l)<len(chemin[0]) and chemin[0][l].distance(child.position) > piste.LARGEUR:
                 child.dend += chemin[0][l].distance(chemin[0][l - 1])
                 l = l - 1
-            child.dend += chemin[0][l].distance(child.position)
+            child.dend += chemin[0][l].distance(child.position)"""
 
             child.couttot = child.dstart + child.dend
 
