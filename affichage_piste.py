@@ -169,28 +169,35 @@ class Dessin(QtWidgets.QWidget):
         item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
         
+            
     def extrem(self,nb):
-        self.dessin(self.chemin[1][0],self.chemin[2][0],self.piste[0],self.piste[5],1)
-        self.dessin(self.chemin[1][-1],self.chemin[2][-1],self.piste[-1],self.piste[-6],1)
+        deltax,deltay = self.piste[nb+1].x-self.piste[0].x,self.piste[nb+1].y-self.piste[0].y
+        dx,dy=self.piste[-(nb+2)].x-self.piste[-1].x,self.piste[-(nb+2)].y-self.piste[-1].y
+        self.dessin(self.chemin[1][0],self.chemin[2][0],self.piste[0],self.piste[nb+1],1)
+        self.dessin(self.chemin[1][-1],self.chemin[2][-1],self.piste[-1],self.piste[-(nb+2)],1)
         for i in range(1,nb):
-            P1,P2=self.dessininter(self.chemin[1][0],self.chemin[2][0],self.chemin[2][i])
-            self.dessin(P1,P2,self.piste[0],self.piste[5],(i+1)%2)
-            P3,P4=self.dessininter(self.chemin[1][-1],self.chemin[2][-1],self.chemin[2][-(i+1)])
-            self.dessin(P3,P4,self.piste[-1],self.piste[-6],(i+1)%2)
+            Pi=piste.Point(self.chemin[2][0].x+i*deltax/nb,self.chemin[2][0].y+i*deltay/nb)
+            P1,P2=self.dessininter(self.chemin[1][0],self.chemin[2][0],Pi)
+            self.dessin(P1,P2,self.piste[0],self.piste[nb+1],(i+1)%2)
+            Pi2=piste.Point(self.chemin[2][-1].x+i*dx/nb,self.chemin[2][-1].y+i*dy/nb)
+            P3,P4=self.dessininter(self.chemin[1][-1],self.chemin[2][-1],Pi2)
+            self.dessin(P3,P4,self.piste[-1],self.piste[-(nb+2)],(i+1)%2)
             
     def dessininter(self,Point1,Point2,Point3):
-        Deltax,Deltay=(Point1.x-Point2.x),Point1.y-Point2.y
+        Deltax,Deltay=Point1.x-Point2.x,Point1.y-Point2.y
         P4=piste.Point(Point3.x+Deltax,Point3.y+Deltay)
         return(Point3,P4)
         
     def dessin(self,Point1, Point2, pointpiste1,pointpiste2,nb):
         Deltax,Deltay=(Point1.x-Point2.x),(Point1.y-Point2.y)
         deltax,deltay=pointpiste1.x-pointpiste2.x,pointpiste1.y-pointpiste2.y
-        V2=math.sqrt((Deltax)**2+(Deltay)**2)/10
+        #V2=math.sqrt((Deltax)**2+(Deltay)**2)/10
         v=math.sqrt(deltax**2+deltay**2)
+        V2=LARGEUR/10
         pen = QPen(QtGui.QColor('white'),V2)
         pen.setCapStyle(Qt.SquareCap)
         pen.setJoinStyle(Qt.RoundJoin)
+        #self.scene.addLine(Point1.x,Point1.y,Point2.x,Point2.y,QPen(QtGui.QColor('red'),0.5))
         if v!=0:
             deltax,deltay=deltax/v,deltay/v
         if nb==1:
@@ -252,7 +259,7 @@ class Dessin(QtWidgets.QWidget):
     lt = [B1, B2, C2, C1]
     for i in range(len(lt)):
         Poly.append(lt[i])
-    return (Poly)'''
+    return (Poly)
     
 def Polygone(A,B,C,D,longueur):
     deltax,deltay=C.x-D.x,C.y-D.y
@@ -267,4 +274,4 @@ def Polygone(A,B,C,D,longueur):
     lt = [P1,P2,P3,P4]
     for i in range(4):
         Poly.append(lt[i])
-    return(Poly)
+    return(Poly)'''
