@@ -40,10 +40,16 @@ def tripointg(listepointg):
 
 def obindex(listepointgtrie,point):
     indextrie=piste.recherche_dichotomique(point,listepointgtrie,voiture.VMAX * voiture.PASDETEMPS)
-    listindex=[]
-    while indextrie<len(listepointgtrie) and listepointgtrie[indextrie][0] - point.x < 2*voiture.VMAX * voiture.PASDETEMPS :
+    listindex=[indextrie-2]
+    while indextrie<len(listepointgtrie) and listepointgtrie[indextrie][0] - point.x < voiture.VMAX * voiture.PASDETEMPS :
         listindex.append(listepointgtrie[indextrie][1])
         indextrie+=1
+    i=0
+    indextrie+=1
+    while indextrie<len(listepointgtrie) and i<3:
+        listindex.append(indextrie)
+        indextrie+=1
+        i=i+1
     return listindex
 
 
@@ -144,7 +150,7 @@ def astar(chemin, voit):
                     difdir=abs(child.direction-current_node.direction)
             path = []  # initialise le chemin
             current = endchild
-            print(endchild.temps)
+            #print(endchild.temps)
             while current is not None:  # on cree le chemin en partant de la fin
                 voit.position.append(current.position)
                 voit.direction.append(current.direction)
