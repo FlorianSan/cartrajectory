@@ -5,13 +5,14 @@ from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import QPoint, QTimer, Qt
 from PyQt5.QtGui import QPen, QBrush, QColor, QPolygonF
 from PyQt5.QtWidgets import QApplication
-import sys
+import numpy as np
 
 import pickle
 import piste
 import affichage
 import mouse_tracker
 import astar2
+import presentationvoiture
 
 LARGEUR = piste.LARGEUR +1
 WIDTH = 900  # Initial window width (pixels)
@@ -54,7 +55,7 @@ class Dessin(QtWidgets.QWidget):
         self.play = False
         self.re = False
         self.ready = False
-
+        self.voiturechoisie = False
 
         self.car = car
 
@@ -62,14 +63,12 @@ class Dessin(QtWidgets.QWidget):
         if choice == 1:
             self.chemin = piste.creationpiste(20)
             self.lancerastar()
-            self.ready = True
 
         elif choice == 2:
             with open('data','rb') as fichier:
                 mon_depickler=pickle.Unpickler(fichier)
                 self.chemin  = mon_depickler.load()
                 self.lancerastar()
-                self.ready =True
                 
         elif choice == 3:
             with open('alldata','rb') as fichier:
@@ -84,9 +83,16 @@ class Dessin(QtWidgets.QWidget):
             self.ex.setWindowModality(QtCore.Qt.ApplicationModal)
             self.ex.show()
     
+    def defvoiture(self):
+        [self.car.name,self.car.vitessemax,self.car.accelerationmax,pasvirage] = self.firstview.choisie
+        self.car.pasvirage = int(pasvirage)*np.pi/(180*self.car.DELTAVIR)
+        self.voiturechoisie = True
+        self.ready =True
+        
     def lancerastar(self):
-        astar2.astar(self.chemin, self.car)
-        self.mainwindows()
+        self.firstview = presentationvoiture.FirstView()
+        self.firstview.voiturechoisie.connect(self.defvoiture)
+        self.firstview.show()
 
     def mainwindows(self):
         self.piste = self.chemin[0]
@@ -224,9 +230,12 @@ class Dessin(QtWidgets.QWidget):
     def listemousetracker(self):
         self.chemin = self.ex.chemin
         self.lancerastar()
-        self.ready = True
 
     def miseajour(self):
+        if self.voiturechoisie:
+            astar2.astar(self.chemin, self.car)
+            self.voiturechoisie = False
+            self.mainwindows()
         if self.ready:
             self.moving_car.updateValues()
 
