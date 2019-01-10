@@ -1,6 +1,6 @@
 import sys, math
 from PyQt5.QtWidgets import QApplication, QLabel, QWidget
-from PyQt5.QtGui import QPainter,QColor
+from PyQt5.QtGui import QPainter
 from PyQt5.QtCore import pyqtSignal, Qt
 
 
@@ -39,7 +39,6 @@ class MouseTracker(QWidget):
             self.pointsm.append(piste.Point(event.x(), event.y()))
             if len(self.pointsm) == 2:
                 self.angle = affichage.call_angle(piste.Point(1, 0), self.pointsm[-2], self.pointsm[-1])
-                print(affichage.call_angledeg(piste.Point(1, 0), self.pointsm[-2], self.pointsm[-1]))
                 self.pointsg.append(piste.Point(0 + (piste.LARGEUR / 2) * math.sin(self.angle),0 - (piste.LARGEUR / 2) * math.cos(self.angle)))
                 self.pointsd.append(piste.Point(0 - (piste.LARGEUR / 2) * math.sin(self.angle),0 + (piste.LARGEUR / 2) * math.cos(self.angle)))
 
