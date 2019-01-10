@@ -185,10 +185,8 @@ class Dessin(QtWidgets.QWidget):
     def dessin(self,Point1, Point2, pointpiste1,pointpiste2,nb):
         Deltax,Deltay=(Point1.x-Point2.x),(Point1.y-Point2.y)
         deltax,deltay=pointpiste1.x-pointpiste2.x,pointpiste1.y-pointpiste2.y
-        theta = math.atan(deltax/deltay)
         V2=math.sqrt((Deltax)**2+(Deltay)**2)/10
         v=math.sqrt(deltax**2+deltay**2)
-        print(Point1.x,Point1.y,Point2.x,Point2.y,theta)
         pen = QPen(QtGui.QColor('white'),V2)
         pen.setCapStyle(Qt.SquareCap)
         pen.setJoinStyle(Qt.RoundJoin)
