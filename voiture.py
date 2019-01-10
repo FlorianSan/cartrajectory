@@ -1,4 +1,5 @@
 import numpy as np
+from PyQt5 import QtCore
 
 import piste, presentationvoiture
 
@@ -23,6 +24,7 @@ class Voiture:
         self.direction = []
         self.name = None
         self.firstview = presentationvoiture.FirstView()
+        self.ex.setWindowModality(QtCore.Qt.ApplicationModal)
         self.firstview.voiturechoisie.connect(self.defvoiture)
         self.firstview.show()
         
