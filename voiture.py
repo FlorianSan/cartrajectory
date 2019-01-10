@@ -28,7 +28,7 @@ class Voiture:
         
     def defvoiture(self):
         [self.name,self.vitessemax,self.accelerationmax,pasvirage] = self.firstview.choisie
-        self.pasvirage = pasvirage*np.pi/(180*DELTAVIR)
+        self.pasvirage = int(pasvirage)*np.pi/(180*DELTAVIR)
         
 
     def get_position(self, t):
