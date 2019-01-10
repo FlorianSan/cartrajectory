@@ -2,7 +2,7 @@ import numpy as np
 
 import piste, presentationvoiture
 
-PASDETEMPS = 0.1 # en secondes
+PASDETEMPS = 0.1 # en seconde
 ACCELERATION = 0.1 # en m/s²
 DELTAACC = 5
 VIRAGE = (8*np.pi)/180 #angle de virage en radian
