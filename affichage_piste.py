@@ -82,7 +82,7 @@ class Dessin(QtWidgets.QWidget):
             self.ex = mouse_tracker.MouseTracker()
             self.ex.listeMouseTracker.connect(self.listemousetracker)
             self.ex.setWindowModality(QtCore.Qt.ApplicationModal)
-            self.ex.show()
+            self.ex.showMaximized()
     
     def defvoiture(self):
         [self.car.name,self.car.vitessemax,self.car.accelerationmax,pasvirage] = self.firstview.choisie

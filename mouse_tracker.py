@@ -20,7 +20,6 @@ class MouseTracker(QWidget):
         self.setGeometry(200, 200, 1000, 500)
         self.setWindowTitle('Dessin Piste')
         self.label = QLabel(self)
-        self.label.resize(500, 40)
         self.pos = None
         self.pointsmclick = [piste.Point(0, 0)]  # liste des points milieux
         self.pointsgclick = []  # liste de points à gauche de l'axe de la piste  piste.Point(50, 50-piste.LARGEUR / 2)
