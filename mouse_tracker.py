@@ -59,6 +59,9 @@ class MouseTracker(QWidget):
                 self.pointsdclick.append(piste.Point(self.pointsmclick[-2].x - (piste.LARGEUR / 2) * math.sin(self.angle), self.pointsmclick[-2].y + (piste.LARGEUR / 2) * math.cos(self.angle)))
                 self.pointsg += self.sectionner(self.pointsgclick[-2], self.pointsgclick[-1])
                 self.pointsd+=self.sectionner(self.pointsdclick[-2],self.pointsdclick[-1])
+            print(self.pointsm)
+            print(self.pointsd)
+            print(self.pointsg)
             self.update()
 
 
@@ -78,8 +81,8 @@ class MouseTracker(QWidget):
 
 
     def closeEvent(self, event):
-        self.pointsmclick.pop()
-        self.chemin = [self.pointsmclick, self.pointsgclick, self.pointsdclick]
+        minimun = min(len(self.pointsm),len(self.pointsd),len(self.pointsg))
+        self.chemin = [self.pointsm[:minimun], self.pointsg[:minimun], self.pointsd[:minimun]]
         self.listeMouseTracker.emit()
         self.close()
 
