@@ -2,7 +2,7 @@
 import math
 
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtCore import QPoint, QTimer
+from PyQt5.QtCore import QPoint, QTimer, Qt
 from PyQt5.QtGui import QPen, QBrush, QColor, QPolygonF
 from PyQt5.QtWidgets import QApplication
 import sys
@@ -13,7 +13,7 @@ import affichage
 import mouse_tracker
 import astar2
 
-LARGEUR = piste.LARGEUR*3/2
+LARGEUR = piste.LARGEUR +1
 WIDTH = 900  # Initial window width (pixels)
 HEIGHT = 500  # Initial window height (pixels)
 AIRPORT_Z_VALUE = 0
@@ -60,7 +60,7 @@ class Dessin(QtWidgets.QWidget):
 
 
         if choice == 1:
-            self.chemin = piste.creationpiste(600)
+            self.chemin = piste.creationpiste(20)
             self.lancerastar()
             self.ready = True
 
@@ -151,22 +151,55 @@ class Dessin(QtWidgets.QWidget):
         self.scene.addItem(track_group)
 
         pen = QPen(QtGui.QColor(TK_COLOR), LARGEUR)
-        pen.setCapStyle(QtCore.Qt.RoundCap)
-
+        pen.setJoinStyle(Qt.RoundJoin)
+        self.extrem(4)
+        
         path = QtGui.QPainterPath()
-
         path.moveTo(self.piste[0].x, self.piste[0].y)
-        self.scene.addPolygon(Polygonee(self.chemin[1][0], self.chemin[2][0], self.piste[1],self.piste[2], 20), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor(TK_COLOR)))
-        self.scene.addRect(self.piste[0].x, self.piste[0].y - 3.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
-        self.scene.addRect(self.piste[0].x, self.piste[0].y - 1.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
-        self.scene.addRect(self.piste[0].x, self.piste[0].y + 0.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
-        self.scene.addRect(self.piste[0].x, self.piste[0].y + 2.5*LARGEUR/9, 5, LARGEUR/9, QPen(QtGui.QColor(TK_COLOR), 0.5), QBrush(QColor('white')))
         for i in range(1, len(self.piste)):
             path.lineTo(self.piste[i].x, self.piste[i].y)
-        self.scene.addPolygon(Polygonee(self.chemin[1][-1],self.chemin[2][-1],self.piste[-1],self.piste[-2], 20), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor(TK_COLOR)))
+        #self.scene.addPolygon(Polygone(self.chemin[1][-1],self.chemin[2][-1],self.piste[-1],self.piste[-5], 20), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor(TK_COLOR)))
         item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
+        
+    def extrem(self,nb):
+        self.dessin(self.chemin[1][0],self.chemin[2][0],self.piste[0],self.piste[5],1)
+        self.dessin(self.chemin[1][-1],self.chemin[2][-1],self.piste[-1],self.piste[-6],1)
+        for i in range(1,nb):
+            P1,P2=self.dessininter(self.chemin[1][0],self.chemin[2][0],self.chemin[2][i])
+            self.dessin(P1,P2,self.piste[0],self.piste[5],(i+1)%2)
+            P3,P4=self.dessininter(self.chemin[1][-1],self.chemin[2][-1],self.chemin[2][-(i+1)])
+            self.dessin(P3,P4,self.piste[-1],self.piste[-6],(i+1)%2)
+            
+    def dessininter(self,Point1,Point2,Point3):
+        Deltax,Deltay=(Point1.x-Point2.x),Point1.y-Point2.y
+        P4=piste.Point(Point3.x+Deltax,Point3.y+Deltay)
+        return(Point3,P4)
+        
+    def dessin(self,Point1, Point2, pointpiste1,pointpiste2,nb):
+        Deltax,Deltay=(Point1.x-Point2.x),(Point1.y-Point2.y)
+        deltax,deltay=pointpiste1.x-pointpiste2.x,pointpiste1.y-pointpiste2.y
+        theta = math.atan(deltax/deltay)
+        V2=math.sqrt((Deltax)**2+(Deltay)**2)/10
+        v=math.sqrt(deltax**2+deltay**2)
+        print(Point1.x,Point1.y,Point2.x,Point2.y,theta)
+        pen = QPen(QtGui.QColor('white'),V2)
+        pen.setCapStyle(Qt.SquareCap)
+        pen.setJoinStyle(Qt.RoundJoin)
+        if v!=0:
+            deltax,deltay=deltax/v,deltay/v
+        if nb==1:
+            for i in range(1,5):
+                P1=piste.Point(Point1.x-i*Deltax/5,Point1.y-i*Deltay/5)
+                P2=piste.Point(Point1.x -i*Deltax/5 + V2*deltax*0.5,Point1.y -i*Deltay/5+V2*deltay*0.5)
+                self.scene.addLine(P1.x,P1.y,P2.x,P2.y,pen)
+        else:
+            for i in range(5):
+                P1=piste.Point(Point1.x-(2*i+1)*Deltax/10,Point1.y-(2*i+1)*Deltay/10)
+                P2=piste.Point(Point1.x-(2*i+1)*Deltax/10 + V2*deltax*0.5,Point1.y -(2*i+1)*Deltay/10+V2*deltay*0.5)
+                self.scene.addLine(P1.x,P1.y,P2.x,P2.y,pen)
 
+            
     @QtCore.pyqtSlot()
     def playpause(self):
         """this slot toggles the replay using the timer as model"""
@@ -189,7 +222,7 @@ class Dessin(QtWidgets.QWidget):
         print("Sauvegarde réussie ")
 
     def listemousetracker(self):
-        self.piste = self.ex.point
+        self.chemin = self.ex.chemin
         self.lancerastar()
         self.ready = True
 
@@ -203,7 +236,7 @@ class Dessin(QtWidgets.QWidget):
             picker.dump([self.chemin,self.car])
         print('Sauvegarde réussie')
 
-def Polygone(A, B, longueur):
+'''def Polygone(A, B, longueur):
     theta = math.atan((B.y - A.y) / (B.x - A.x))
     B1 = QPoint(B.x - LARGEUR * math.sin(theta) / 2, B.y + LARGEUR * math.cos(theta) / 2)
     B2 = QPoint(B.x + LARGEUR * math.sin(theta) / 2, B.y - LARGEUR * math.cos(theta) / 2)
@@ -214,10 +247,13 @@ def Polygone(A, B, longueur):
     lt = [B1, B2, C2, C1]
     for i in range(len(lt)):
         Poly.append(lt[i])
-    return (Poly)
+    return (Poly)'''
     
-def Polygonee(A,B,C,D,longueur):
+def Polygone(A,B,C,D,longueur):
     deltax,deltay=C.x-D.x,C.y-D.y
+    v=math.sqrt(deltax**2+deltay**2)
+    if v!=0:
+        deltax,deltay=deltax/v,deltay/v
     P1=QPoint(A.x,A.y)
     P2=QPoint(A.x+longueur*deltax,A.y+longueur*deltay)
     P3=QPoint(B.x+longueur*deltax,B.y+longueur*deltay)
