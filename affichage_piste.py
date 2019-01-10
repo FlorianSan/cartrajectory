@@ -7,6 +7,7 @@ from PyQt5.QtGui import QPen, QBrush, QColor, QPolygonF
 from PyQt5.QtWidgets import QApplication
 import numpy as np
 
+
 import pickle
 import piste
 import affichage
@@ -61,7 +62,7 @@ class Dessin(QtWidgets.QWidget):
 
 
         if choice == 1:
-            self.chemin = piste.creationpiste(20)
+            self.chemin = piste.creationpiste(600)
             self.lancerastar()
 
         elif choice == 2:
@@ -207,9 +208,6 @@ class Dessin(QtWidgets.QWidget):
     @QtCore.pyqtSlot()
     def playpause(self):
         """this slot toggles the replay using the timer as model"""
-
-
-
         if self.play:
             self.play = False
         else:
