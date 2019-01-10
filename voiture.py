@@ -1,6 +1,6 @@
 import numpy as np
 
-import piste
+import piste, presentationvoiture
 
 PASDETEMPS = 0.1 # en secondes
 ACCELERATION = 0.1 # en m/s²
@@ -14,10 +14,22 @@ class Voiture:
         self.masse = masse
         self.longueur = longueur
         self.largeur = largeur
+        self.accelerationmax = 0
+        self.vitessemax = 0
+        self.pasvirage = 0
         self.position = []
         self.acceleration = []
         self.vitesse = []
         self.direction = []
+        self.name = None
+        self.firstview = presentationvoiture.FirstView()
+        self.firstview.voiturechoisie.connect(self.defvoiture)
+        self.firstview.show()
+        
+    def defvoiture(self):
+        [self.name,self.vitessemax,self.accelerationmax,pasvirage] = self.firstview.choisie
+        self.pasvirage = pasvirage*np.pi/(180*DELTAVIR)
+        
 
     def get_position(self, t):
         return self.position[t]

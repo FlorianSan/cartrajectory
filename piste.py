@@ -28,10 +28,6 @@ class Point:
     def __add__(self, other):
         return Point(self.x+other.x, self.y+other.y)
 
-    def __repr__(self):
-        return "({}, {})".format(
-                self.x, self.y)
-
     def mini(self, other):
         return Point(min(self.x, other.x), min(self.y, other.y))
 
@@ -61,12 +57,14 @@ class Piste:
 
     def __init__(self):
         self.pointsg = [Point(0,+LARGEUR / 2),Point(-PAS,+LARGEUR/2)] #liste de points à gauche de l'axe de la piste
+        self.pointsgtrie=[(Point(-PAS,+LARGEUR / 2).x,1),(Point(-PAS,+LARGEUR/2).x,0)]
         self.pointsd = [Point(0,-LARGEUR / 2),Point(-PAS,-LARGEUR/2)] #liste de points à droite de l'axe de la piste
         self.pointsm = [Point(0, 0),Point(-PAS, 0)] #liste des points milieux
         self.zone = [0]  # initialisation à 0 nécessaire afin que le début de la piste soit rectiligne
         self.angle = 0  # en degré
         self.anglerad = 0  # en rad (nécessaire pour les calculs)
         
+
 
     def miseajourzone(self):
         self.zone.append(rd.randint(self.zone[-1] - INTENSITEVIRAGE, self.zone[-1] + INTENSITEVIRAGE))
@@ -84,7 +82,7 @@ class Piste:
 
         return pointg, pointd
 
-    def verificationpoint(self, nouveaupointg, nouveaupointd):
+    def verificationpoint2(self, nouveaupointg, nouveaupointd):
         verif = True
         for i in range(len(self.pointsg)-1):
             if intersect(nouveaupointg, self.pointsg[i], nouveaupointd, self.pointsd[i]):
@@ -93,12 +91,53 @@ class Piste:
             if intersect(nouveaupointg,self.pointsg[-1],self.pointsg[i], self.pointsg[i+1]) or intersect(nouveaupointd,self.pointsd[-1],self.pointsd[i], self.pointsd[i+1]):
                 verif = False
         return verif
+        
+        
+    
+    def obtindex(self, point):
+        indextrie=recherche_dichotomique(point,self.pointsgtrie,PAS)
+        listindex=[]
+        while indextrie<len(self.pointsgtrie) and self.pointsgtrie[indextrie][0] - point.x < 2*PAS :
+            listindex.append(self.pointsgtrie[indextrie][1])
+            indextrie+=1
+        return listindex
+        
+    def verificationpoint(self,nouveaupointg, nouveaupointd):
+        listindex=self.obtindex(nouveaupointg)
+        verif = True
+        for i in range(len(listindex)-1):
+            if intersect(nouveaupointg, self.pointsg[i], nouveaupointd, self.pointsd[i]):
+                verif = False
+        for i in range (len(self.pointsg)-3):
+            if intersect(nouveaupointg,self.pointsg[-1],self.pointsg[i], self.pointsg[i+1]) or intersect(nouveaupointd,self.pointsd[-1],self.pointsd[i], self.pointsd[i+1]):
+                verif = False
+        return verif
+        
 
     def ajoutpoint(self, nouveaupointg, nouveaupointd, nouveaupointm):
         self.pointsg.append(nouveaupointg)
+        self.pointsgtrie.append((nouveaupointg.x,len(self.pointsg)))
+        self.pointsgtrie.sort()
         self.pointsd.append(nouveaupointd)
         self.pointsm.append(nouveaupointm)
 
+
+
+def recherche_dichotomique(point, liste_triee, epsilon ):
+    element=point.x-PAS
+    a = 0
+    b = len(liste_triee)-1
+    m = (a+b)//2
+    while a < b :
+        if abs(liste_triee[m][0] - element) < 2 * epsilon :
+            return m
+        elif liste_triee[m][0] - element > 2 * epsilon:
+            b = m-1
+        else :
+            a = m+1
+        m = (a+b)//2
+    return a
+    
 
 def creationpiste(nbiterations):
     piste = Piste()
@@ -121,9 +160,7 @@ def creationpiste(nbiterations):
                 piste.zone.pop()
         piste.miseajourzone()
         k = 0
-    return [piste.pointsm, piste.pointsg, piste.pointsd]
+    return [piste.pointsm, piste.pointsg, piste.pointsd, piste.pointsgtrie]
 
 if __name__ == "__main__":
-   # print(creationpiste(600))
-    p1= Point(10,25)
-    print(p1)
+    print(creationpiste(600))
