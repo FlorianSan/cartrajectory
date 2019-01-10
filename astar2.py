@@ -176,7 +176,7 @@ def astar(chemin, voit):
             while indexdend>0 and chemin[0][indexdend].distance(child.position) > 2*piste.LARGEUR :
                 indexdend-=1
             child.dend = chemin[0][indexdend].distance(child.position) + longueur.get(indexdend)
-            if indexdend + DELTAINDEX > len(chemin[0]):
+            if indexdend + DELTAINDEX >= len(chemin[0]):
                 indexdend=len(chemin[0])-1
             else :
                 indexdend+= DELTAINDEX
@@ -219,7 +219,7 @@ def afficherastar(l1):
 
 
 if __name__ == "__main__":
-    chemin = piste.creationpiste(600)
+    chemin = piste.creationpiste(400)
     afficherpiste(chemin[1], chemin[2])
 
     voit = voiture.Voiture(100, 10, 10)
