@@ -28,6 +28,9 @@ class Point:
     def __add__(self, other):
         return Point(self.x+other.x, self.y+other.y)
 
+    def __repr__(self):
+        return "({},{})".format(self.x,self.y)
+
     def mini(self, other):
         return Point(min(self.x, other.x), min(self.y, other.y))
 
