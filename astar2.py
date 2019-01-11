@@ -44,14 +44,14 @@ def obindex(listepointgtrie,point):
     indextrie=piste.recherche_dichotomique(point,listepointgtrie,voiture.VMAX * voiture.PASDETEMPS)
     listindex=[]
     i=1
-    while indextrie-i>0 and i<50:
+    while indextrie-i>0 and i<20:
         listindex.append(listepointgtrie[indextrie-i][1])
         i+=1
     while indextrie<len(listepointgtrie) and listepointgtrie[indextrie][0] - point.x > 2*voiture.VMAX * voiture.PASDETEMPS :
         listindex.append(listepointgtrie[indextrie][1])
         indextrie+=1
     j=1
-    while indextrie+j<len(listepointgtrie) and j<50:
+    while indextrie+j<len(listepointgtrie) and j<20:
         listindex.append(listepointgtrie[indextrie+j][1])
         j+=1
     return listindex
@@ -179,7 +179,7 @@ def astar(chemin, voit):
                 current = current.parent
             voit.position=voit.position[::-1]
             voit.direction=voit.direction[::-1]
-            voit.vitesse=voit.vitesse[::-3]
+            voit.vitesse=voit.vitesse[::-1]
             return (voit.position, voit.direction, voit.vitesse)  # return le chemin
         
 
@@ -239,7 +239,7 @@ if __name__ == "__main__":
     
     #t1=time.clock()
     
-    chemin = piste.creationpiste(800)
+    chemin = piste.creationpiste(600)
     afficherpiste(chemin[1], chemin[2])
 
     voit = voiture.Voiture(100, 10, 10)
