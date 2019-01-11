@@ -58,3 +58,4 @@ def newposition(vitesse,acceleration,direction,position):
             #print(res)
 
     return res
+

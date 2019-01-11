@@ -55,7 +55,8 @@ def obindex(listepointgtrie,point):
         listindex.append(listepointgtrie[indextrie+j][1])
         j+=1
     return listindex
-    
+
+
 
 
 def verifpoint(chemin,listepointgtrie,point1, point2):

@@ -148,6 +148,7 @@ def recherche_dichotomique(point, liste_triee, epsilon ):
         m = (a+b)//2
     return a
 
+
     
 
 def creationpiste(nbiterations):
