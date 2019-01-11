@@ -44,14 +44,14 @@ def obindex(listepointgtrie,point):
     indextrie=piste.recherche_dichotomique(point,listepointgtrie,voiture.VMAX * voiture.PASDETEMPS)
     listindex=[]
     i=1
-    while indextrie-i>0 and i<50:
+    while indextrie-i>0 and i<20:
         listindex.append(listepointgtrie[indextrie-i][1])
         i+=1
     while indextrie<len(listepointgtrie) and listepointgtrie[indextrie][0] - point.x > 2*voiture.VMAX * voiture.PASDETEMPS :
         listindex.append(listepointgtrie[indextrie][1])
         indextrie+=1
     j=1
-    while indextrie+j<len(listepointgtrie) and j<50:
+    while indextrie+j<len(listepointgtrie) and j<20:
         listindex.append(listepointgtrie[indextrie+j][1])
         j+=1
     return listindex
