@@ -42,20 +42,27 @@ def tripointg(listepointg):
 
 def obindex(listepointgtrie,point):
     indextrie=piste.recherche_dichotomique(point,listepointgtrie,voiture.VMAX * voiture.PASDETEMPS)
-    listindex=[indextrie-2, indextrie-1]
-    while indextrie<len(listepointgtrie) and listepointgtrie[indextrie][0] - point.x < voiture.VMAX * voiture.PASDETEMPS :
+    listindex=[]
+    i=1
+    while indextrie-i>0 and i<50:
+        listindex.append(listepointgtrie[indextrie-i][1])
+        i+=1
+    while indextrie<len(listepointgtrie) and listepointgtrie[indextrie][0] - point.x > 2*voiture.VMAX * voiture.PASDETEMPS :
         listindex.append(listepointgtrie[indextrie][1])
         indextrie+=1
-    if indextrie+1<len(listepointgtrie):
-        listepointgtrie[indextrie+1][1]
+    j=1
+    while indextrie+j<len(listepointgtrie) and j<50:
+        listindex.append(listepointgtrie[indextrie+j][1])
+        j+=1
     return listindex
+
+
 
 
 def verifpoint(chemin,listepointgtrie,point1, point2):
     listindex=obindex(listepointgtrie,point1)
     verif = True
     for j in listindex :
-        #print(j)
         if j<len(chemin[1])-1 :
             if piste.intersect(point1, point2, chemin[1][j], chemin[1][j + 1]) or piste.intersect(point1, point2, chemin[2][j], chemin[2][j + 1]):
                 verif = False
@@ -118,10 +125,12 @@ def astar(chemin, voit):
         # On retire le current node de la liste des noeuds a traiter et on l'ajoute dans la liste des noeuds traites
         open_list.pop(current_index)
         closed_list.append(current_node)
+        
 
 
         compteur += 1
         print(compteur)
+        #print(current_node.dend)
 
 
         # Genere les children
@@ -166,10 +175,12 @@ def astar(chemin, voit):
             while current is not None:  # on cree le chemin en partant de la fin
                 voit.position.append(current.position)
                 voit.direction.append(current.direction)
+                voit.vitesse.append(current.vitesse)
                 current = current.parent
             voit.position=voit.position[::-1]
             voit.direction=voit.direction[::-1]
-            return (voit.position, voit.direction)  # return le chemin
+            voit.vitesse=voit.vitesse[::-3]
+            return (voit.position, voit.direction, voit.vitesse)  # return le chemin
         
 
         # On boucle sur les children
@@ -228,7 +239,7 @@ if __name__ == "__main__":
     
     #t1=time.clock()
     
-    chemin = piste.creationpiste(500)
+    chemin = piste.creationpiste(800)
     afficherpiste(chemin[1], chemin[2])
 
     voit = voiture.Voiture(100, 10, 10)
