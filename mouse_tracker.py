@@ -28,6 +28,7 @@ class MouseTracker(QWidget):
         self.pointsg = []  # liste de points à gauche de l'axe de la piste  piste.Point(50, 50-piste.LARGEUR / 2)
         self.pointsd = []  # liste de points à droite de l'axe de la piste  piste.Point(50, 50+piste.LARGEUR / 2)
         self.angle = 0
+        self.iteration = 0
 
 
     def mouseMoveEvent(self, event):
@@ -39,7 +40,8 @@ class MouseTracker(QWidget):
     def mousePressEvent(self, event):
         if QApplication.keyboardModifiers() == Qt.ShiftModifier:
             self.pointsmclick.append(piste.Point(event.x(), event.y()))
-            self.pointsm+=self.sectionner(self.pointsmclick[-2],self.pointsmclick[-1])
+            self.iteration = int((self.pointsmclick[-1].x- self.pointsmclick[-2].x)// piste.PAS)
+            self.pointsm += self.sectionner(self.pointsmclick[-2],self.pointsmclick[-1])
             if len(self.pointsmclick) == 2:
                 self.angle = affichage.call_angle(piste.Point(1, 0), self.pointsmclick[-2], self.pointsmclick[-1])
                 self.pointsgclick.append(piste.Point(0 + (piste.LARGEUR / 2) * math.sin(self.angle), 0 - (piste.LARGEUR / 2) * math.cos(self.angle)))
@@ -77,20 +79,18 @@ class MouseTracker(QWidget):
 
 
     def closeEvent(self, event):
-        minimun = min(len(self.pointsm),len(self.pointsd),len(self.pointsg))
-        self.chemin = [self.pointsm[:minimun], self.pointsg[:minimun], self.pointsd[:minimun]]
+        self.chemin = [self.pointsm[:len(self.pointsg)], self.pointsg, self.pointsd]
         self.listeMouseTracker.emit()
         self.close()
 
     def sectionner(self,oldpoint,newpoint):
-
         deltax, deltay = newpoint.x - oldpoint.x, newpoint.y - oldpoint.y
-        iteration = int(deltax // piste.PAS)
         coeff_directeur = deltay / deltax
         k = newpoint.y - coeff_directeur * newpoint.x
+        pas = deltax // self.iteration
         liste=[]
-        for i in range(1, iteration):
-            x = oldpoint.x + i * piste.PAS
+        for i in range(1, self.iteration):
+            x = oldpoint.x + i * pas
             liste.append(piste.Point(x, coeff_directeur * x + k))
         liste.append(newpoint)
         return liste
