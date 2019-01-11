@@ -179,7 +179,7 @@ def astar(chemin, voit):
                 current = current.parent
             voit.position=voit.position[::-1]
             voit.direction=voit.direction[::-1]
-            voit.vitesse=voit.vitesse[::-3]
+            voit.vitesse=voit.vitesse[::-1]
             return (voit.position, voit.direction, voit.vitesse)  # return le chemin
         
 
@@ -239,7 +239,7 @@ if __name__ == "__main__":
     
     #t1=time.clock()
     
-    chemin = piste.creationpiste(800)
+    chemin = piste.creationpiste(600)
     afficherpiste(chemin[1], chemin[2])
 
     voit = voiture.Voiture(100, 10, 10)
