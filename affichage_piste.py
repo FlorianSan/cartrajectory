@@ -62,7 +62,7 @@ class Dessin(QtWidgets.QWidget):
 
 
         if choice == 1:
-            self.chemin = piste.creationpiste(600)
+            self.chemin = piste.creationpiste(30)
             self.lancerastar()
 
         elif choice == 2:
@@ -82,7 +82,7 @@ class Dessin(QtWidgets.QWidget):
             self.ex = mouse_tracker.MouseTracker()
             self.ex.listeMouseTracker.connect(self.listemousetracker)
             self.ex.setWindowModality(QtCore.Qt.ApplicationModal)
-            self.ex.show()
+            self.ex.showMaximized()
     
     def defvoiture(self):
         [self.car.name,self.car.vitessemax,self.car.accelerationmax,pasvirage] = self.firstview.choisie

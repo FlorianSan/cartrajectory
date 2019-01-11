@@ -7,7 +7,7 @@ ACCELERATION = 1 # en m/s²
 DELTAACC = 5
 VIRAGE = (8*np.pi)/180 #angle de virage en radian
 DELTAVIR = 5
-VMAX = 40
+VMAX = 50
 
 class Voiture:
     def __init__(self, masse, longueur, largeur):
@@ -58,3 +58,4 @@ def newposition(vitesse,acceleration,direction,position):
             #print(res)
 
     return res
+
