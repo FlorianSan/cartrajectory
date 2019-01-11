@@ -39,28 +39,31 @@ class MouseTracker(QWidget):
 
     def mousePressEvent(self, event):
         if QApplication.keyboardModifiers() == Qt.ShiftModifier:
-            self.pointsmclick.append(piste.Point(event.x(), event.y()))
-            self.iteration = int((self.pointsmclick[-1].x- self.pointsmclick[-2].x)// (piste.PAS*2))
+            try:
+                self.pointsmclick.append(piste.Point(event.x(), event.y()))
+                self.iteration = int((self.pointsmclick[-1].x- self.pointsmclick[-2].x)// (piste.PAS*2))
 
-            if len(self.pointsmclick) == 2:
-                self.angle = affichage.call_angle(piste.Point(1, 0), self.pointsmclick[-2], self.pointsmclick[-1])
-                self.pointsgclick.append(piste.Point(0 + (piste.LARGEUR / 2) * math.sin(self.angle), 0 - (piste.LARGEUR / 2) * math.cos(self.angle)))
-                self.pointsdclick.append(piste.Point(0 - (piste.LARGEUR / 2) * math.sin(self.angle), 0 + (piste.LARGEUR / 2) * math.cos(self.angle)))
-                self.pointsg.append(piste.Point(0 + (piste.LARGEUR / 2) * math.sin(self.angle), 0 - (piste.LARGEUR / 2) * math.cos(self.angle)))
-                self.pointsd.append(piste.Point(0 - (piste.LARGEUR / 2) * math.sin(self.angle), 0 + (piste.LARGEUR / 2) * math.cos(self.angle)))
+                if len(self.pointsmclick) == 2:
+                    self.angle = affichage.call_angle(piste.Point(1, 0), self.pointsmclick[-2], self.pointsmclick[-1])
+                    self.pointsgclick.append(piste.Point(0 + (piste.LARGEUR / 2) * math.sin(self.angle), 0 - (piste.LARGEUR / 2) * math.cos(self.angle)))
+                    self.pointsdclick.append(piste.Point(0 - (piste.LARGEUR / 2) * math.sin(self.angle), 0 + (piste.LARGEUR / 2) * math.cos(self.angle)))
+                    self.pointsg.append(piste.Point(0 + (piste.LARGEUR / 2) * math.sin(self.angle), 0 - (piste.LARGEUR / 2) * math.cos(self.angle)))
+                    self.pointsd.append(piste.Point(0 - (piste.LARGEUR / 2) * math.sin(self.angle), 0 + (piste.LARGEUR / 2) * math.cos(self.angle)))
 
-            if len(self.pointsmclick) > 2:
-                angle = affichage.call_angle(self.pointsmclick[-1], self.pointsmclick[-2], self.pointsmclick[-3])
-                if angle>0:
-                    angle = math.pi - angle
-                elif angle<0:
-                    angle = -(math.pi - abs(angle))
-                self.angle += angle/2
-                self.pointsgclick.append(piste.Point(self.pointsmclick[-2].x + (piste.LARGEUR / 2) * math.sin(self.angle), self.pointsmclick[-2].y - (piste.LARGEUR / 2) * math.cos(self.angle)))
-                self.pointsdclick.append(piste.Point(self.pointsmclick[-2].x - (piste.LARGEUR / 2) * math.sin(self.angle), self.pointsmclick[-2].y + (piste.LARGEUR / 2) * math.cos(self.angle)))
-                self.pointsm += self.sectionner(self.pointsmclick[-3], self.pointsmclick[-2])
-                self.pointsg += self.sectionner(self.pointsgclick[-2], self.pointsgclick[-1])
-                self.pointsd+=self.sectionner(self.pointsdclick[-2],self.pointsdclick[-1])
+                if len(self.pointsmclick) > 2:
+                    angle = affichage.call_angle(self.pointsmclick[-1], self.pointsmclick[-2], self.pointsmclick[-3])
+                    if angle>0:
+                        angle = math.pi - angle
+                    elif angle<0:
+                        angle = -(math.pi - abs(angle))
+                    self.angle += angle/2
+                    self.pointsgclick.append(piste.Point(self.pointsmclick[-2].x + (piste.LARGEUR / 2) * math.sin(self.angle), self.pointsmclick[-2].y - (piste.LARGEUR / 2) * math.cos(self.angle)))
+                    self.pointsdclick.append(piste.Point(self.pointsmclick[-2].x - (piste.LARGEUR / 2) * math.sin(self.angle), self.pointsmclick[-2].y + (piste.LARGEUR / 2) * math.cos(self.angle)))
+                    self.pointsm += self.sectionner(self.pointsmclick[-3], self.pointsmclick[-2])
+                    self.pointsg += self.sectionner(self.pointsgclick[-2], self.pointsgclick[-1])
+                    self.pointsd+=self.sectionner(self.pointsdclick[-2],self.pointsdclick[-1])
+            except:
+                pass
         self.update()
 
 
