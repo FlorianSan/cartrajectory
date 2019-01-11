@@ -62,7 +62,7 @@ class Dessin(QtWidgets.QWidget):
 
 
         if choice == 1:
-            self.chemin = piste.creationpiste(30)
+            self.chemin = piste.creationpiste(300)
             self.lancerastar()
 
         elif choice == 2:
@@ -165,6 +165,9 @@ class Dessin(QtWidgets.QWidget):
         path.moveTo(self.piste[0].x, self.piste[0].y)
         for i in range(1, len(self.piste)):
             path.lineTo(self.piste[i].x, self.piste[i].y)
+            #self.scene.addLine(self.chemin[0][i - 1].x, self.chemin[0][i - 1].y, self.chemin[0][i].x,self.chemin[0][i].y, QPen(QtGui.QColor(255, 0, 0), 0)) #affiche le centre de la piste
+            #self.scene.addLine(self.chemin[1][i-1].x, self.chemin[1][i-1].y,self.chemin[1][i].x,self.chemin[1][i].y, QPen(QtGui.QColor(255,0,0), 0)) #affiche le cote gauche de la piste
+            #self.scene.addLine(self.chemin[2][i - 1].x, self.chemin[2][i - 1].y, self.chemin[2][i].x,self.chemin[2][i].y, QPen(QtGui.QColor(255, 0, 0), 0)) #affiche le cote droit de la piste
         #self.scene.addPolygon(Polygone(self.chemin[1][-1],self.chemin[2][-1],self.piste[-1],self.piste[-5], 20), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor(TK_COLOR)))
         item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
@@ -237,6 +240,7 @@ class Dessin(QtWidgets.QWidget):
     def miseajour(self):
         if self.voiturechoisie:
             astar2.astar(self.chemin, self.car)
+            print("A* fini")
             self.voiturechoisie = False
             self.mainwindows()
         if self.ready:
