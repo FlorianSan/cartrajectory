@@ -56,12 +56,14 @@ class MouseTracker(QWidget):
                         angle = math.pi - angle
                     elif angle<0:
                         angle = -(math.pi - abs(angle))
-                    self.angle += angle/2
+                    demi_angle = angle/2
+                    self.angle += demi_angle
                     self.pointsgclick.append(piste.Point(self.pointsmclick[-2].x + (piste.LARGEUR / 2) * math.sin(self.angle), self.pointsmclick[-2].y - (piste.LARGEUR / 2) * math.cos(self.angle)))
                     self.pointsdclick.append(piste.Point(self.pointsmclick[-2].x - (piste.LARGEUR / 2) * math.sin(self.angle), self.pointsmclick[-2].y + (piste.LARGEUR / 2) * math.cos(self.angle)))
                     self.pointsm += self.sectionner(self.pointsmclick[-3], self.pointsmclick[-2])
                     self.pointsg += self.sectionner(self.pointsgclick[-2], self.pointsgclick[-1])
                     self.pointsd+=self.sectionner(self.pointsdclick[-2],self.pointsdclick[-1])
+                    self.angle += demi_angle
             except:
                 pass
         self.update()

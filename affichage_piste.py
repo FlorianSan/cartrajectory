@@ -62,7 +62,7 @@ class Dessin(QtWidgets.QWidget):
 
 
         if choice == 1:
-            self.chemin = piste.creationpiste(300)
+            self.chemin = piste.creationpiste(600)
             self.lancerastar()
 
         elif choice == 2:
