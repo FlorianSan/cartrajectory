@@ -118,6 +118,7 @@ def astar(chemin, voit):
         # On retire le current node de la liste des noeuds a traiter et on l'ajoute dans la liste des noeuds traites
         open_list.pop(current_index)
         closed_list.append(current_node)
+        
 
 
         compteur += 1
@@ -228,7 +229,7 @@ if __name__ == "__main__":
     
     #t1=time.clock()
     
-    chemin = piste.creationpiste(500)
+    chemin = piste.creationpiste(600)
     afficherpiste(chemin[1], chemin[2])
 
     voit = voiture.Voiture(100, 10, 10)
