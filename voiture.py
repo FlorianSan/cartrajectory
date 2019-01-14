@@ -2,7 +2,7 @@ import numpy as np
 import math
 
 import piste
-µ=0.1           #Utile si on veut changer les valeurs ?
+µ=0.8           #Utile si on veut changer les valeurs ?
 DELTAVIR = 5 
 DELTAACC = 5
 
@@ -28,9 +28,11 @@ class Voiture:
         if len(self.vitesse)!=0:
             alpha = math.asin(self.empattement*self.vitesse[-1]/9.81*µ)
             if alpha >= DELTAVIR*self.pasvirage:
-                self.deltavirage = DELTAVIR
+                return(DELTAVIR)
             else:
-                self.deltavirage = alpha//self.pasvirage
+                return(alpha//self.pasvirage)
+        else:
+            return(DELTAVIR)
         
 
     def get_position(self, t):
