@@ -71,7 +71,6 @@ def verifpoint(chemin,listepointgtrie,point1, point2, voiture):
 
 def astar(chemin, voit):
 
-
     def newposition(vitesse, acceleration, direction, position, voiture):
         res = []
         for vir in range(-voiture.deltavirage, voiture.deltavirage + 1):
@@ -206,7 +205,7 @@ def astar(chemin, voit):
         for child in children:
 
             # Create coutrest, dstart, dend
-            child.dstart = current_node.dstart + child.vitesse * child.temps * voiture.PASDETEMPS
+            child.dstart = current_node.dstart + child.vitesse * child.temps * PASDETEMPS
 
             while indexdend>0 and chemin[0][indexdend].distance(child.position) > 2*piste.LARGEUR :
                 indexdend-=1
