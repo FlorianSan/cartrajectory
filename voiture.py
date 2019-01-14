@@ -26,7 +26,6 @@ class Voiture:
         self.name = None
 
     def calculdeltavirage(self):
-        print("test")
         if len(self.vitesse) != 0:
             alpha = math.asin(self.empattement * self.vitesse[-1] / 9.81 * µ)
             if alpha >= DELTAVIR * self.pasvirage:
