@@ -134,7 +134,7 @@ class Piste:
 
 
 def recherche_dichotomique(point, liste_triee, epsilon ):
-    element=point.x-epsilon
+    element=point.x- 2 * epsilon
     a = 0
     b = len(liste_triee)-1
     m = (a+b)//2
