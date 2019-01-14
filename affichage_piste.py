@@ -90,10 +90,6 @@ class Dessin(QtWidgets.QWidget):
         A=[voiture[0],float(voiture[1]),float(voiture[2]),int(voiture[3]),float(voiture[4]),int(voiture[5]),float(voiture[6]),float(voiture[7])]
         [self.car.name,self.car.vitessemax,accelerationmax,virage,self.car.empattement,self.car.masse, self.car.longueur, self.car.largeur] = A
         self.car.pasvirage = float(virage)*np.pi/(180*self.car.deltavirage)
-
-        [self.car.name,self.car.vitessemax,accelerationmax,virage,self.car.empattement,self.car.masse, self.car.longueur, self.car.largeur] = self.firstview.choisie
-        self.car.pasvirage = float(virage)*np.pi/(180*self.car.deltavirage)
-
         self.car.pasacceleration = float(accelerationmax)/self.car.deltaacc
         self.voiturechoisie = True
         self.ready =True
