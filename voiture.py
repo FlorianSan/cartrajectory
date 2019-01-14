@@ -20,6 +20,8 @@ class Voiture:
         self.direction = []
         self.name = None
 
+    def calculdeltavirage(self):
+        pass
         
 
     def get_position(self, t):

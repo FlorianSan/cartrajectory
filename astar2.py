@@ -73,6 +73,7 @@ def astar(chemin, voit):
 
     def newposition(vitesse, acceleration, direction, position, voiture):
         res = []
+        voiture.calculdeltavirage()
         for vir in range(-voiture.deltavirage, voiture.deltavirage + 1):
             newdirection = direction + vir * voiture.pasvirage
             for acc in range(-voiture.deltaacc, voiture.deltaacc + 1):

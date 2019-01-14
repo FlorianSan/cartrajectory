@@ -66,17 +66,24 @@ class Dessin(QtWidgets.QWidget):
             self.lancerastar()
 
         elif choice == 2:
-            with open('data','rb') as fichier:
-                mon_depickler=pickle.Unpickler(fichier)
-                self.chemin  = mon_depickler.load()
-                self.lancerastar()
+            try:
+                with open('data','rb') as fichier:
+                    mon_depickler=pickle.Unpickler(fichier)
+                    self.chemin  = mon_depickler.load()
+                    self.lancerastar()
+            except:
+                print("Il n'y a pas de fichier enregistré")
+
 
         elif choice == 3:
-            with open('alldata','rb') as fichier:
-                depickler = pickle.Unpickler(fichier)
-                [self.chemin,self.car] = depickler.load()
-                self.mainwindows()
-                self.ready = True
+            try:
+                with open('alldata','rb') as fichier:
+                    depickler = pickle.Unpickler(fichier)
+                    [self.chemin,self.car] = depickler.load()
+                    self.mainwindows()
+                    self.ready = True
+            except:
+                print("Il n'y a pas de fichier enregistré")
         else:
 
             self.ex = mouse_tracker.MouseTracker()
