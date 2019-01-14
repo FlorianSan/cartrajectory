@@ -42,7 +42,8 @@ class MouseTracker(QWidget):
         if QApplication.keyboardModifiers() == Qt.ShiftModifier:
 
             self.pointsmclick.append(piste.Point(event.x(), event.y()))
-            self.iteration = int((self.pointsmclick[-1].x- self.pointsmclick[-2].x)// (piste.PAS))
+            longueur = math.sqrt((self.pointsmclick[-1].x- self.pointsmclick[-2].x)**2 + (self.pointsmclick[-1].y- self.pointsmclick[-2].y)**2)
+            self.iteration = int(longueur// (piste.PAS))
 
             if len(self.pointsmclick) == 2:
                 self.angle = affichage.call_angle(piste.Point(1, 0), self.pointsmclick[-2], self.pointsmclick[-1])
