@@ -1,6 +1,6 @@
 
 from PyQt5 import QtWidgets, QtGui
-from PyQt5.QtCore import QRectF, QPoint
+from PyQt5.QtCore import QRectF, QPoint,Qt
 from PyQt5.QtGui import QTransform, QBrush, QPen
 import math
 
@@ -80,3 +80,16 @@ if __name__ == "__main__":
     p2 = piste.Point(0, 0)
     p3 = piste.Point(0, 1)
     print(call_angledeg(p1,p2,p3))
+    
+def gradient(P1,P2):
+    gradient = QBrush.QLinearGradient(P1,P2)
+    gradient.setColorAt(0,Qt.green)
+    gradient.setColorAt(1,Qt.red)
+    return(gradient)
+    
+if __name__ == "__main__":
+   
+    app = QtWidgets.QApplication([])
+    gradient
+    main_window.show()
+    app.exec_()

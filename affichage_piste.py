@@ -62,34 +62,45 @@ class Dessin(QtWidgets.QWidget):
 
 
         if choice == 1:
-            self.chemin = piste.creationpiste(30)
+            self.chemin = piste.creationpiste(300)
             self.lancerastar()
 
         elif choice == 2:
-            with open('data','rb') as fichier:
-                mon_depickler=pickle.Unpickler(fichier)
-                self.chemin  = mon_depickler.load()
-                self.lancerastar()
-                
+            try:
+                with open('data','rb') as fichier:
+                    mon_depickler=pickle.Unpickler(fichier)
+                    self.chemin  = mon_depickler.load()
+                    self.lancerastar()
+            except:
+                print("Il n'y a pas de fichier enregistré")
+
+
         elif choice == 3:
-            with open('alldata','rb') as fichier:
-                depickler = pickle.Unpickler(fichier)
-                [self.chemin,self.car] = depickler.load()
-                self.mainwindows()
-                self.ready = True
+            try:
+                with open('alldata','rb') as fichier:
+                    depickler = pickle.Unpickler(fichier)
+                    [self.chemin,self.car] = depickler.load()
+                    self.mainwindows()
+                    self.ready = True
+            except:
+                print("Il n'y a pas de fichier enregistré")
         else:
 
             self.ex = mouse_tracker.MouseTracker()
             self.ex.listeMouseTracker.connect(self.listemousetracker)
             self.ex.setWindowModality(QtCore.Qt.ApplicationModal)
-            self.ex.showMaximized()
-    
+            self.ex.show()
+
     def defvoiture(self):
-        [self.car.name,self.car.vitessemax,self.car.accelerationmax,pasvirage] = self.firstview.choisie
-        self.car.pasvirage = int(pasvirage)*np.pi/(180*self.car.DELTAVIR)
+
+        voiture = self.firstview.choisie
+        A=[voiture[0],float(voiture[1]),float(voiture[2]),int(voiture[3]),float(voiture[4]),int(voiture[5]),float(voiture[6]),float(voiture[7])]
+        [self.car.name,self.car.vitessemax,accelerationmax,virage,self.car.empattement,self.car.masse, self.car.longueur, self.car.largeur] = A
+        self.car.pasvirage = float(virage)*np.pi/(180*self.car.deltavirage)
+        self.car.pasacceleration = float(accelerationmax)/self.car.deltaacc
         self.voiturechoisie = True
         self.ready =True
-        
+
     def lancerastar(self):
         self.firstview = presentationvoiture.FirstView()
         self.firstview.voiturechoisie.connect(self.defvoiture)
@@ -160,7 +171,7 @@ class Dessin(QtWidgets.QWidget):
         pen = QPen(QtGui.QColor(TK_COLOR), LARGEUR)
         pen.setJoinStyle(Qt.RoundJoin)
         self.extrem(4)
-        
+
         path = QtGui.QPainterPath()
         path.moveTo(self.piste[0].x, self.piste[0].y)
         for i in range(1, len(self.piste)):
@@ -247,31 +258,3 @@ class Dessin(QtWidgets.QWidget):
             picker = pickle.Pickler(fichier)
             picker.dump([self.chemin,self.car])
         print('Sauvegarde réussie')
-
-'''def Polygone(A, B, longueur):
-    theta = math.atan((B.y - A.y) / (B.x - A.x))
-    B1 = QPoint(B.x - LARGEUR * math.sin(theta) / 2, B.y + LARGEUR * math.cos(theta) / 2)
-    B2 = QPoint(B.x + LARGEUR * math.sin(theta) / 2, B.y - LARGEUR * math.cos(theta) / 2)
-    C = piste.Point(B.x + longueur * (B.x - A.x), B.y + longueur * (B.y - A.y))
-    C1 = QPoint(C.x - LARGEUR * math.sin(theta) / 2, C.y + LARGEUR * math.cos(theta) / 2)
-    C2 = QPoint(C.x + LARGEUR * math.sin(theta) / 2, C.y - LARGEUR * math.cos(theta) / 2)
-    Poly = QPolygonF()
-    lt = [B1, B2, C2, C1]
-    for i in range(len(lt)):
-        Poly.append(lt[i])
-    return (Poly)
-    
-def Polygone(A,B,C,D,longueur):
-    deltax,deltay=C.x-D.x,C.y-D.y
-    v=math.sqrt(deltax**2+deltay**2)
-    if v!=0:
-        deltax,deltay=deltax/v,deltay/v
-    P1=QPoint(A.x,A.y)
-    P2=QPoint(A.x+longueur*deltax,A.y+longueur*deltay)
-    P3=QPoint(B.x+longueur*deltax,B.y+longueur*deltay)
-    P4=QPoint(B.x,B.y)
-    Poly = QPolygonF()
-    lt = [P1,P2,P3,P4]
-    for i in range(4):
-        Poly.append(lt[i])
-    return(Poly)'''

@@ -1,12 +1,10 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QGraphicsView, QShortcut
-VITESSE_MAX=300
-VITESSE_MIN=0
-ACCEL_MAX= 1.5*9.81
-ACCEL_MIN=0  #0.5*9.81
+VITESSE_MAX=85
+ACCEL_MAX= 14
 VIRAGE_MAX=50
-VIRAGE_MIN=0
+EMPAMAX = 5
 FILE='voiture.txt'
 
 class FirstView(QtWidgets.QWidget):
@@ -27,7 +25,9 @@ class FirstView(QtWidgets.QWidget):
         Voiture=[]
         with open(FILE,'r') as fichier:
             for line in fichier:
-                Voiture.append(line.split(' '))
+                line = line.split(' ')
+                if line[0]!='#':
+                    Voiture.append(line)
         return(Voiture)
         
     def ajout_sld(self,voiture):
@@ -36,12 +36,14 @@ class FirstView(QtWidgets.QWidget):
         V.setContentsMargins(12,12,12,12)
         name=QtWidgets.QLabel(voiture[0])
         V.addWidget(name)
-        A=horizontal_box('accélération',int(ACCEL_MIN),int(ACCEL_MAX),int(voiture[2]))
+        A=horizontal_box(['accélération','m/s²'],ACCEL_MAX,float(voiture[2]))
         V.addLayout(A)
-        Vi=horizontal_box('vitesse',VITESSE_MIN,VITESSE_MAX,int(voiture[1]))
+        Vi=horizontal_box(['vitesse','m/s'],VITESSE_MAX,float(voiture[1]))
         V.addLayout(Vi)
-        Vir=horizontal_box('virage',VIRAGE_MIN,VIRAGE_MAX,int(voiture[3]))
+        Vir=horizontal_box(['virage','°'],VIRAGE_MAX,float(voiture[3]))
         V.addLayout(Vir)
+        E = horizontal_box(['Empattement','m'],EMPAMAX,float(voiture[4]))
+        V.addLayout(E)
         V.addStretch
         H.addLayout(V)
         radio = QtWidgets.QPushButton('prendre {}'.format(voiture[0]))
@@ -55,14 +57,16 @@ class FirstView(QtWidgets.QWidget):
         self.close()
         
         
-def horizontal_box(nom,mini,maxi,valeur):
+def horizontal_box(nom,maxi,valeur):
     A=QtWidgets.QHBoxLayout()
-    A.addWidget(QtWidgets.QLabel('{}'.format(nom)))
+    A.addWidget(QtWidgets.QLabel('{}'.format(nom[0])))
+    A.addStretch
     W=QtWidgets.QProgressBar() #QtCore.Qt.Horizontal
-    W.setValue((valeur-mini)*100/(maxi-mini))
+    W.setValue(valeur*100/maxi)
     A.addWidget(W)
-    A.addWidget(QtWidgets.QLabel('{}'.format(valeur)))
-    A.addWidget(QtWidgets.QLabel('{}'.format(maxi)))
+    A.addStretch
+    A.addWidget(QtWidgets.QLabel('{} {}'.format(valeur,nom[1])))
+    #A.addWidget(QtWidgets.QLabel('{}'.format(maxi)))
     return(A)
     
 if __name__=='__main__':
