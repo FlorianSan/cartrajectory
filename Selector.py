@@ -1,7 +1,6 @@
 import pickle
 import sys
 
-import numpy as np
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QApplication, QWidget
 from PyQt5 import QtCore
 
@@ -9,7 +8,7 @@ import astar2
 import mouse_tracker
 import piste
 import presentationvoiture
-import voiture
+
 import affichage_piste
 
 
@@ -17,7 +16,6 @@ class Selector(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.car = voiture.Voiture()
 
         b1 = QPushButton("Aléatoire")
         b2 = QPushButton("Enregistré (sans A*)")
@@ -83,15 +81,11 @@ class Selector(QWidget):
 
     def lancervoitureselector(self):
         self.firstview = presentationvoiture.FirstView()
-        self.firstview.voiturechoisie.connect(self.defvoiture)
+        self.firstview.voiturechoisie.connect(self.creervoiture)
         self.firstview.show()
 
-    def defvoiture(self):
-        voiture = self.firstview.choisie
-        A=[voiture[0],float(voiture[1]),float(voiture[2]),int(voiture[3]),float(voiture[4]),int(voiture[5]),float(voiture[6]),float(voiture[7])]
-        [self.car.name,self.car.vitessemax,accelerationmax,virage,self.car.empattement,self.car.masse, self.car.longueur, self.car.largeur] = A
-        self.car.pasvirage = float(virage)*np.pi/(180*self.car.deltavirage)
-        self.car.pasacceleration = float(accelerationmax)/self.car.deltaacc
+    def creervoiture(self):
+        self.car = self.firstview.car
         if not self.car.position:
             astar2.astar(self.chemin,self.car)
         self.affichagefentresimu()
