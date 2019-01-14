@@ -122,7 +122,6 @@ class Dessin(QtWidgets.QWidget):
         self.moving_car = affichage.CarMotion(self, self.car)
         # invert y axis for the view
 
-        self.view.scale(1, 1)
 
         # add components to the root_layout
         root_layout.addWidget(self.view)
