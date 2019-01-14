@@ -3,7 +3,7 @@ import math
 
 import piste
 
-µ = 0.8  # Utile si on veut changer les valeurs ?
+u = 0.8  # Utile si on veut changer les valeurs ?
 DELTAVIR = 5
 DELTAACC = 5
 
@@ -27,7 +27,7 @@ class Voiture:
 
     def calculdeltavirage(self):
         if len(self.vitesse) != 0:
-            alpha = math.asin(self.empattement * self.vitesse[-1] / 9.81 * µ)
+            alpha = math.asin(self.empattement * self.vitesse[-1] / 9.81 * u)
             if alpha >= DELTAVIR * self.pasvirage:
                 return (DELTAVIR)
             else:

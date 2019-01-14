@@ -31,7 +31,7 @@ class CarMotion():
 
 
     def updateValues(self):
-        if self.windows.play and self.t+1 < len(self.car.position):
+        if self.t+1 < len(self.car.position):
 
             self.r = self.car.direction[self.t]*(360/(2*math.pi))
             transform = QTransform()
@@ -48,15 +48,15 @@ class CarMotion():
             self.t+=1
 
 
-        if self.windows.re:
-            self.t=0
-            self.r = 0
-            transform = QTransform()
-            self.car_group.setTransformOriginPoint(self.car.position[self.t].x, self.car.position[self.t].y)
-            transform.translate(self.car.position[self.t].x, self.car.position[self.t].y)
-            transform.rotate(self.r)
-            self.car_group.setTransform(transform)
-            self.windows.re = False
+    def redemarrer(self):
+        self.t = 0
+        self.r = 0
+        transform = QTransform()
+        self.car_group.setTransformOriginPoint(self.car.position[self.t].x, self.car.position[self.t].y)
+        transform.translate(self.car.position[self.t].x, self.car.position[self.t].y)
+        transform.rotate(self.r)
+        self.car_group.setTransform(transform)
+
 
 
 def call_angle(point1, point2, point3):

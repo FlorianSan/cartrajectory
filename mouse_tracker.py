@@ -99,8 +99,9 @@ class MouseTracker(QWidget):
 
     def closeEvent(self, event):
         self.chemin = [self.pointsm, self.pointsg, self.pointsd]
+        print(len(self.pointsm))
         self.listeMouseTracker.emit()
-        a,b,c,d,e,f = [],[],[],[],[],[]
+        """a,b,c,d,e,f = [],[],[],[],[],[]
         for k in range(len(self.pointsd)):
             a.append(self.pointsg[k].x)
             b.append(self.pointsg[k].y)
@@ -112,7 +113,7 @@ class MouseTracker(QWidget):
             plt.plot(c, d)
             plt.plot(e, f)
             plt.axis('equal')
-        plt.show()
+        plt.show()"""
         self.close()
 
 
