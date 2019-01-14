@@ -8,11 +8,12 @@ class Voiture:
         self.masse = masse
         self.longueur = longueur
         self.largeur = largeur
-        self.accelerationmax = 0
+        self.pasacceleration = 0
         self.deltaacc = 5
         self.vitessemax = 0
         self.pasvirage = 0
         self.deltavirage = 5
+        self.empatement = 0
         self.position = []
         self.acceleration = []
         self.vitesse = []
