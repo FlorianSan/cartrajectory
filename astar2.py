@@ -4,8 +4,9 @@ import numpy as np
 import time
 
 import piste
-import voiture
 from operator import itemgetter, attrgetter
+
+PASDETEMPS = 0.1 # en secondes
 
 
 class Node:
@@ -40,14 +41,14 @@ def tripointg(listepointg):
     return listepointgtrie
 
 
-def obindex(listepointgtrie,point):
-    indextrie=piste.recherche_dichotomique(point,listepointgtrie,voiture.VMAX * voiture.PASDETEMPS)
+def obindex(listepointgtrie,point, voiture):
+    indextrie=piste.recherche_dichotomique(point,listepointgtrie,voiture.vitessemax * PASDETEMPS)
     listindex=[]
     i=1
     while indextrie-i>0 and i<20:
         listindex.append(listepointgtrie[indextrie-i][1])
         i+=1
-    while indextrie<len(listepointgtrie) and listepointgtrie[indextrie][0] - point.x > 2*voiture.VMAX * voiture.PASDETEMPS :
+    while indextrie<len(listepointgtrie) and listepointgtrie[indextrie][0] - point.x > 2*voiture.vitessemax * PASDETEMPS :
         listindex.append(listepointgtrie[indextrie][1])
         indextrie+=1
     j=1
@@ -59,8 +60,8 @@ def obindex(listepointgtrie,point):
 
 
 
-def verifpoint(chemin,listepointgtrie,point1, point2):
-    listindex=obindex(listepointgtrie,point1)
+def verifpoint(chemin,listepointgtrie,point1, point2, voiture):
+    listindex=obindex(listepointgtrie,point1,voiture)
     verif = True
     for j in listindex :
         if j<len(chemin[1])-1 :
@@ -69,6 +70,24 @@ def verifpoint(chemin,listepointgtrie,point1, point2):
     return verif
 
 def astar(chemin, voit):
+
+
+    def newposition(vitesse, acceleration, direction, position, voiture):
+        res = []
+        for vir in range(-voiture.deltavirage, voiture.deltavirage + 1):
+            newdirection = direction + vir * voiture.pasvirage
+            for acc in range(-voiture.deltaacc, voiture.deltaacc + 1):
+                newacceleration = acceleration + acc * voiture.pasacceleration
+                newvitesse = vitesse + PASDETEMPS * acc * voiture.pasacceleration
+                if abs(newvitesse) > voiture.vitessemax:
+                    newvitesse = voiture.vitessemax * np.sign(newvitesse)
+                newposition = position + piste.Point(-newvitesse * PASDETEMPS * np.cos(newdirection),
+                                                     newvitesse * PASDETEMPS * np.sin(newdirection))
+                # print(type(newposition))
+                res.append([newposition, newacceleration, newvitesse, newdirection])
+                # print(res)
+
+        return res
     
     
     
@@ -136,7 +155,7 @@ def astar(chemin, voit):
         # Genere les children
         children = []
 
-        res = voiture.newposition(current_node.vitesse, current_node.acceleration, current_node.direction,current_node.position)
+        res = newposition(current_node.vitesse, current_node.acceleration, current_node.direction,current_node.position, voit)
         
         
         for i in range(len(res)):
@@ -151,7 +170,7 @@ def astar(chemin, voit):
                     verif = False
             if not verif:
                 children.pop()"""
-            if not verifpoint(chemin, listetriee, current_node.position, children[-1].position):
+            if not verifpoint(chemin, listetriee, current_node.position, children[-1].position, voit):
                 children.pop()
         if len(children) == 0: #current node pas dans open_list ??
             open_list.pop(0)
