@@ -40,7 +40,7 @@ class CarMotion():
             self.car_group.setTransform(transform)
             if self.t>0:
 
-                maxi = abs(min(self.car.vitesse))
+                maxi = self.car.vitessemax
                 vitesse = abs(int(self.car.vitesse[self.t-1]*255/maxi))
                 self.windows.scene.addLine(self.car.position[self.t-1].x,self.car.position[self.t-1].y,self.car.position[self.t].x,self.car.position[self.t].y, QPen(QtGui.QColor(vitesse,255-vitesse,0), 0))
 

@@ -1,7 +1,7 @@
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QGraphicsView, QShortcut
-VITESSE_MAX=85
+VITESSE_MAX=139
 ACCEL_MAX= 14
 VIRAGE_MAX=50
 EMPAMAX = 5
@@ -11,15 +11,14 @@ class FirstView(QtWidgets.QWidget):
     voiturechoisie = pyqtSignal()
     def __init__(self):
         super().__init__()
-        root_layout = QtWidgets.QVBoxLayout(self)
-        #truc=self.createH()
+        root_layout = QtWidgets.QGridLayout(self) #QVBoxLayout(self)
         self.setWindowTitle('caractéristique voiture')
+        self.resize(100,600)
         
         self.choisie = None
         Voiture = self.add_voiture()
         for i in range(len(Voiture)):
-            root_layout.addLayout(self.ajout_sld(Voiture[i]))
-            #return(self.ajout_sld(Voiture[i]))
+            root_layout.addLayout(self.ajout_sld(Voiture[i]),i%4,i//4)
             
     def add_voiture(self):
         Voiture=[]
@@ -32,6 +31,7 @@ class FirstView(QtWidgets.QWidget):
         
     def ajout_sld(self,voiture):
         H=QtWidgets.QHBoxLayout()
+        
         V=QtWidgets.QVBoxLayout()
         V.setContentsMargins(12,12,12,12)
         name=QtWidgets.QLabel(voiture[0])

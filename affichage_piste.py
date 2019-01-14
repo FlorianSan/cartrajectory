@@ -141,7 +141,7 @@ class Dessin(QtWidgets.QWidget):
 
         # lambda function allows to pass extra arguments to slots
         # added space around '-' character to avoid different look and feel
-        add_button(' - ', lambda: self.view.zoom_view(0.9))
+        add_button(' - ', lambda: self.view.zoom_view(1/1.1))
         add_button('+', lambda: self.view.zoom_view(1.1))
         toolbar.addStretch()
         add_button('|>', self.playpause)
@@ -155,8 +155,8 @@ class Dessin(QtWidgets.QWidget):
             shortcut = QtWidgets.QShortcut(QtGui.QKeySequence(text), self)
             shortcut.activated.connect(slot)
 
-        add_shortcut('+', lambda: self.zoom_view(1.1))
-        add_shortcut('-', lambda: self.zoom_view(1 / 1.1))
+        add_shortcut('+', lambda: self.view.zoom_view(1.1))
+        add_shortcut('-', lambda: self.view.zoom_view(1 / 1.1))
         add_shortcut(' ', self.playpause)
         add_shortcut('R', self.redemarrer)
         add_shortcut('P',self.sauvegarder)
