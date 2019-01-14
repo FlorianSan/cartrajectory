@@ -66,6 +66,9 @@ class MouseTracker(QWidget):
                 self.pointsd+=self.sectionner(self.pointsdclick[-2],self.pointsdclick[-1])
                 self.angle += demi_angle
             print("Nombre de point = ",len(self.pointsm))
+            #print(self.pointsm)
+            #print(self.pointsg)
+            #print(self.pointsd)
 
         self.update()
 
