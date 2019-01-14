@@ -2,7 +2,7 @@ from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QGraphicsView, QShortcut
 VITESSE_MAX=85
-ACCEL_MAX= 10
+ACCEL_MAX= 14
 VIRAGE_MAX=50
 EMPAMAX = 5
 FILE='voiture.txt'
