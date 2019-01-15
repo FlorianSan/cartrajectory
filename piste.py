@@ -8,6 +8,8 @@ import random as rd
 
 import numpy as np
 
+import astar2
+
 LARGEUR = 15# en mètre
 PAS = 2  # en mètre
 NBETAPEPARTIE = 30  # nb étapes avant le choix d'une nouvelle zone
@@ -60,7 +62,7 @@ class Piste:
 
     def __init__(self):
         self.pointsg = [Point(0,+LARGEUR / 2),Point(-PAS,+LARGEUR/2)] #liste de points à gauche de l'axe de la piste
-        self.pointsgtrie=[(Point(-PAS,+LARGEUR / 2).x,1),(Point(-PAS,+LARGEUR/2).x,0)]
+        self.pointsgtrie=[(Point(-PAS,+LARGEUR / 2),1),(Point(-PAS,+LARGEUR/2),0)]
         self.pointsd = [Point(0,-LARGEUR / 2),Point(-PAS,-LARGEUR/2)] #liste de points à droite de l'axe de la piste
         self.pointsm = [Point(0, 0),Point(-PAS, 0)] #liste des points milieux
         self.zone = [0]  # initialisation à 0 nécessaire afin que le début de la piste soit rectiligne
@@ -85,7 +87,7 @@ class Piste:
 
         return pointg, pointd
 
-    def verificationpoint2(self, nouveaupointg, nouveaupointd):
+    def verificationpoint(self, nouveaupointg, nouveaupointd):
         verif = True
         for i in range(len(self.pointsg)-1):
             if intersect(nouveaupointg, self.pointsg[i], nouveaupointd, self.pointsd[i]):
@@ -101,19 +103,19 @@ class Piste:
         indextrie=recherche_dichotomique(point,self.pointsgtrie,PAS)
         listindex=[]
         i=1
-        while indextrie-i>0 and i<20:
+        while indextrie-i>0 and i<2:
             listindex.append(self.pointsgtrie[indextrie-i][1])
             i+=1
-        while indextrie<len(self.pointsgtrie) and self.pointsgtrie[indextrie][0] - point.x > 4*PAS : #modif
+        while indextrie<len(self.pointsgtrie) and self.pointsgtrie[indextrie][0].x - point.x > 2*PAS : #modif
             listindex.append(self.pointsgtrie[indextrie][1])
             indextrie+=1
         j=1
-        while indextrie+j<len(self.pointsgtrie) and j<20:
+        while indextrie+j<len(self.pointsgtrie) and j<2:
             listindex.append(self.pointsgtrie[indextrie+j][1])
             j+=1
         return listindex
         
-    def verificationpoint(self,nouveaupointg, nouveaupointd):
+    def verificationpoint2(self,nouveaupointg, nouveaupointd):
         listindex=self.obtindex(nouveaupointg)
         verif = True
         for i in listindex :
@@ -125,22 +127,22 @@ class Piste:
 
     def ajoutpoint(self, nouveaupointg, nouveaupointd, nouveaupointm):
         self.pointsg.append(nouveaupointg)
-        self.pointsgtrie.append((nouveaupointg.x,len(self.pointsg)))
-        self.pointsgtrie.sort()
+        self.pointsgtrie.append((nouveaupointg,len(self.pointsg)))
+        self.pointsgtrie.sort(key=lambda index : index[0].x)
         self.pointsd.append(nouveaupointd)
         self.pointsm.append(nouveaupointm)
 
 
 
 def recherche_dichotomique(point, liste_triee, epsilon ):
-    element=point.x-2 * epsilon # modif
+    element=point.x- epsilon # modif
     a = 0
     b = len(liste_triee)-1
     m = (a+b)//2
     while a < b :
-        if abs(liste_triee[m][0] - element) <  epsilon :
+        if abs(liste_triee[m][0].x - element) <  epsilon :
             return m
-        elif liste_triee[m][0] - element > epsilon:
+        elif liste_triee[m][0].x - element > epsilon:
             b = m-1
         else :
             a = m+1
@@ -166,15 +168,14 @@ def creationpiste(nbiterations):
                 k = k + 1
                 print(len(piste.pointsm))
             else:
-                #print('intersect')
                 l = len(piste.pointsm)
                 piste.pointsgtrie=sorted(piste.pointsgtrie, key = lambda index : index[1])
-                for j in range(l - (len(piste.zone) - 1) * NBETAPEPARTIE + 1): #si intersection alors on enlève les points de la partie en cours ainsi que ceux de la précédente
+                for j in range(l - (len(piste.zone) - 1) * NBETAPEPARTIE ): #si intersection alors on enlève les points de la partie en cours ainsi que ceux de la précédente
                     piste.pointsm.pop()
                     piste.pointsg.pop()
                     piste.pointsd.pop()
                     piste.pointsgtrie.pop()
-                piste.pointsgtrie.sort()
+                piste.pointsgtrie.sort(key=lambda index : index[0].x)
                 piste.zone.pop()
         piste.miseajourzone()
         k = 0
