@@ -1,7 +1,9 @@
+import numpy as np
 from PyQt5 import QtGui, QtCore, QtWidgets
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QGraphicsView, QShortcut
-VITESSE_MAX=85
+import voiture
+VITESSE_MAX=139
 ACCEL_MAX= 14
 VIRAGE_MAX=50
 EMPAMAX = 5
@@ -11,15 +13,18 @@ class FirstView(QtWidgets.QWidget):
     voiturechoisie = pyqtSignal()
     def __init__(self):
         super().__init__()
-        root_layout = QtWidgets.QVBoxLayout(self)
-        #truc=self.createH()
+        root_layout = QtWidgets.QGridLayout(self) #QVBoxLayout(self)
         self.setWindowTitle('caractéristique voiture')
-        
-        self.choisie = None
+        self.resize(100,600)
+
+        self.car = voiture.Voiture()
+
         Voiture = self.add_voiture()
         for i in range(len(Voiture)):
-            root_layout.addLayout(self.ajout_sld(Voiture[i]))
-            #return(self.ajout_sld(Voiture[i]))
+            root_layout.addLayout(self.ajout_sld(Voiture[i]),i%4,i//4)
+
+
+
             
     def add_voiture(self):
         Voiture=[]
@@ -32,6 +37,7 @@ class FirstView(QtWidgets.QWidget):
         
     def ajout_sld(self,voiture):
         H=QtWidgets.QHBoxLayout()
+        
         V=QtWidgets.QVBoxLayout()
         V.setContentsMargins(12,12,12,12)
         name=QtWidgets.QLabel(voiture[0])
@@ -52,7 +58,16 @@ class FirstView(QtWidgets.QWidget):
         return(H)
         
     def btnstate(self,car):
-        self.choisie = car
+        self.car.name = car[0]
+        self.car.vitessemax =float(car[1])
+        accelerationmax = float(car[2])
+        virage = int(car[3])
+        self.car.empattement = float(car[4])
+        self.car.masse = int(car[5])
+        self.car.longueur = float(car[6])
+        self.car.largeur =  float(car[7])
+        self.car.pasvirage = float(virage) * np.pi / (180 * self.car.deltavirage)
+        self.car.pasacceleration = float(accelerationmax) / self.car.deltaacc
         self.voiturechoisie.emit()
         self.close()
         

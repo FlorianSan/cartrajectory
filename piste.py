@@ -101,21 +101,20 @@ class Piste:
         indextrie=recherche_dichotomique(point,self.pointsgtrie,PAS)
         listindex=[]
         i=1
-        while indextrie-i>0 and i<100:
+        while indextrie-i>0 and i<20:
             listindex.append(self.pointsgtrie[indextrie-i][1])
             i+=1
-        while indextrie<len(self.pointsgtrie) and self.pointsgtrie[indextrie][0] - point.x > 2*PAS :
+        while indextrie<len(self.pointsgtrie) and self.pointsgtrie[indextrie][0] - point.x > 4*PAS : #modif
             listindex.append(self.pointsgtrie[indextrie][1])
             indextrie+=1
         j=1
-        while indextrie+j<len(self.pointsgtrie) and j<100:
+        while indextrie+j<len(self.pointsgtrie) and j<20:
             listindex.append(self.pointsgtrie[indextrie+j][1])
             j+=1
         return listindex
         
     def verificationpoint(self,nouveaupointg, nouveaupointd):
         listindex=self.obtindex(nouveaupointg)
-        #print(listindex)
         verif = True
         for i in listindex :
             if i<len(self.pointsg)-2:
@@ -134,14 +133,14 @@ class Piste:
 
 
 def recherche_dichotomique(point, liste_triee, epsilon ):
-    element=point.x- 2 * epsilon
+    element=point.x-2 * epsilon # modif
     a = 0
     b = len(liste_triee)-1
     m = (a+b)//2
     while a < b :
-        if abs(liste_triee[m][0] - element) < 2 * epsilon :
+        if abs(liste_triee[m][0] - element) <  epsilon :
             return m
-        elif liste_triee[m][0] - element > 2 * epsilon:
+        elif liste_triee[m][0] - element > epsilon:
             b = m-1
         else :
             a = m+1
@@ -165,11 +164,12 @@ def creationpiste(nbiterations):
             if piste.verificationpoint(px, py): #vérifie que les nouveaux points de la piste n'intesectent pas des anciens points
                 piste.ajoutpoint(px, py, pm)
                 k = k + 1
+                print(len(piste.pointsm))
             else:
                 #print('intersect')
                 l = len(piste.pointsm)
                 piste.pointsgtrie=sorted(piste.pointsgtrie, key = lambda index : index[1])
-                for j in range(l - (len(piste.zone) - 1) * NBETAPEPARTIE ): #si intersection alors on enlève les points de la partie en cours ainsi que ceux de la précédente
+                for j in range(l - (len(piste.zone) - 1) * NBETAPEPARTIE + 1): #si intersection alors on enlève les points de la partie en cours ainsi que ceux de la précédente
                     piste.pointsm.pop()
                     piste.pointsg.pop()
                     piste.pointsd.pop()
