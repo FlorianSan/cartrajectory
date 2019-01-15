@@ -46,19 +46,14 @@ def tripointg(listepointg):
 def obindex(listepointgtrie,listepointd, point, voiture):
     indextrie=piste.recherche_dichotomique(point,listepointgtrie,voiture.vitessemax * PASDETEMPS)
     listindex=[]
-    i=1
-    while indextrie-i>0 and i<2:
-        listindex.append(listepointgtrie[indextrie-i][1])
-        i+=1
+    if indextrie-1>0 :
+        listindex.append(listepointgtrie[indextrie-1][1])
     while indextrie<len(listepointgtrie) and listepointgtrie[indextrie][0].x - listepointgtrie[0][0].x > 2 *voiture.vitessemax * PASDETEMPS and listepointd[listepointgtrie[indextrie][1]].distance(point) <= voiture.vitessemax * PASDETEMPS :
         listindex.append(listepointgtrie[indextrie][1])
         indextrie+=1
-    j=1
-    while indextrie+j<len(listepointgtrie) and j<2:
-        listindex.append(listepointgtrie[indextrie+j][1])
-        j+=1
+    if indextrie+1 < len(listepointgtrie) :
+        listindex.append(listepointgtrie[indextrie+1][1])
     return listindex
-
 
 
 
@@ -156,7 +151,7 @@ def astar(chemin, voit):
 
         compteur += 1
         print(compteur)
-        print(current_node.dend)
+        #print(current_node.dend)
 
 
         # Genere les children
@@ -267,7 +262,7 @@ if __name__ == "__main__":
     
     #t1=time.clock()
     
-    chemin = piste.creationpiste(300)
+    chemin = piste.creationpiste(1500)
     afficherpiste(chemin[1], chemin[2])
 
     voit = voiture.Voiture()

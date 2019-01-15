@@ -102,17 +102,13 @@ class Piste:
     def obtindex(self, point):
         indextrie=recherche_dichotomique(point,self.pointsgtrie,PAS)
         listindex=[]
-        i=1
-        while indextrie-i>0 and i<2:
-            listindex.append(self.pointsgtrie[indextrie-i][1])
-            i+=1
-        while indextrie<len(self.pointsgtrie) and self.pointsgtrie[indextrie][0].x - point.x > 2*PAS : #modif
+        if indextrie-1>0:
+            listindex.append(self.pointsgtrie[indextrie-1][1])
+        while indextrie<len(self.pointsgtrie) and self.pointsgtrie[indextrie][0].x - point.x > 2*PAS and self.pointsd[[indextrie][1]].distance(point) <= PAS : 
             listindex.append(self.pointsgtrie[indextrie][1])
             indextrie+=1
-        j=1
-        while indextrie+j<len(self.pointsgtrie) and j<2:
-            listindex.append(self.pointsgtrie[indextrie+j][1])
-            j+=1
+        if indextrie + 1 <len(self.pointsgtrie):
+            listindex.append(self.pointsgtrie[indextrie+1][1])
         return listindex
         
     def verificationpoint2(self,nouveaupointg, nouveaupointd):
@@ -166,7 +162,7 @@ def creationpiste(nbiterations):
             if piste.verificationpoint(px, py): #vérifie que les nouveaux points de la piste n'intesectent pas des anciens points
                 piste.ajoutpoint(px, py, pm)
                 k = k + 1
-                print(len(piste.pointsm))
+                #print(len(piste.pointsm))
             else:
                 l = len(piste.pointsm)
                 piste.pointsgtrie=sorted(piste.pointsgtrie, key = lambda index : index[1])
