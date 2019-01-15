@@ -2,13 +2,14 @@
 import math
 
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtCore import QPoint, QTimer, Qt
-from PyQt5.QtGui import QPen, QBrush, QColor, QPolygonF
-from PyQt5.QtWidgets import QApplication
-import numpy as np
+from PyQt5.QtCore import  QTimer, Qt
+from PyQt5.QtGui import QPen, QColor
 
 
 import pickle
+
+
+
 import piste
 import affichage
 import mouse_tracker
@@ -46,93 +47,46 @@ class PanZoomView(QtWidgets.QGraphicsView):
 
 
 class Dessin(QtWidgets.QWidget):
-    def __init__(self,choice, car):
+    def __init__(self,chemin, car):
         super().__init__()
 
         # Settings
         self.setWindowTitle('Trajectoire')
         self.resize(WIDTH, HEIGHT)
 
-        self.play = False
-        self.re = False
-        self.ready = False
-        self.voiturechoisie = False
 
         self.car = car
-
-
-        if choice == 1:
-            self.chemin = piste.creationpiste(300)
-            self.lancerastar()
-
-        elif choice == 2:
-            try:
-                with open('data','rb') as fichier:
-                    mon_depickler=pickle.Unpickler(fichier)
-                    self.chemin  = mon_depickler.load()
-                    self.lancerastar()
-            except:
-                print("Il n'y a pas de fichier enregistré")
-
-
-        elif choice == 3:
-            try:
-                with open('alldata','rb') as fichier:
-                    depickler = pickle.Unpickler(fichier)
-                    [self.chemin,self.car] = depickler.load()
-                    self.mainwindows()
-                    self.ready = True
-            except:
-                print("Il n'y a pas de fichier enregistré")
-        else:
-
-            self.ex = mouse_tracker.MouseTracker()
-            self.ex.listeMouseTracker.connect(self.listemousetracker)
-            self.ex.setWindowModality(QtCore.Qt.ApplicationModal)
-            self.ex.show()
-
-    def defvoiture(self):
-
-        voiture = self.firstview.choisie
-        A=[voiture[0],float(voiture[1]),float(voiture[2]),int(voiture[3]),float(voiture[4]),int(voiture[5]),float(voiture[6]),float(voiture[7])]
-        [self.car.name,self.car.vitessemax,accelerationmax,virage,self.car.empattement,self.car.masse, self.car.longueur, self.car.largeur] = A
-        self.car.pasvirage = float(virage)*np.pi/(180*self.car.deltavirage)
-        self.car.pasacceleration = float(accelerationmax)/self.car.deltaacc
-        self.voiturechoisie = True
-        self.ready =True
-
-    def lancerastar(self):
-        self.firstview = presentationvoiture.FirstView()
-        self.firstview.voiturechoisie.connect(self.defvoiture)
-        self.firstview.show()
-
-    def mainwindows(self):
-        self.piste = self.chemin[0]
+        self.chemin = chemin
+        self.piste = chemin[0]
         # create components
         root_layout = QtWidgets.QVBoxLayout(self)
         self.scene = QtWidgets.QGraphicsScene()
         self.scene.setBackgroundBrush(QColor('green'))
         self.view = PanZoomView(self.scene)
         self.time_entry = QtWidgets.QLineEdit()
-        toolbar = self.create_toolbar()
-        self.add_piste()
-
-
 
         self.moving_car = affichage.CarMotion(self, self.car)
-        # invert y axis for the view
 
-        self.view.scale(1, 1)
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.moving_car.updateValues)
+
+        toolbar = self.create_toolbar()
+        self.add_piste()
 
         # add components to the root_layout
         root_layout.addWidget(self.view)
         root_layout.addLayout(toolbar)
         self.show()
 
+
+
     def create_toolbar(self):
         # create layout for time controls and entry
+        generaltoolbar = QtWidgets.QVBoxLayout()
         toolbar = QtWidgets.QHBoxLayout()
-
+        generaltoolbar.addLayout(toolbar)
+        self.label = QtWidgets.QLabel(self)
+        generaltoolbar.addWidget(self.label)
         def add_button(text, slot):
             """adds a button to the hbox and connects the slot"""
             button = QtWidgets.QPushButton(text)
@@ -145,7 +99,7 @@ class Dessin(QtWidgets.QWidget):
         add_button('+', lambda: self.view.zoom_view(1.1))
         toolbar.addStretch()
         add_button('|>', self.playpause)
-        add_button('R', self.redemarrer)
+        add_button('R', self.moving_car.redemarrer)
         add_button('Save Track',self.sauvegarder)
         add_button('Save Simu', self.savesimu)
         toolbar.addStretch()
@@ -158,10 +112,10 @@ class Dessin(QtWidgets.QWidget):
         add_shortcut('+', lambda: self.view.zoom_view(1.1))
         add_shortcut('-', lambda: self.view.zoom_view(1 / 1.1))
         add_shortcut(' ', self.playpause)
-        add_shortcut('R', self.redemarrer)
+        add_shortcut('R', self.moving_car.redemarrer)
         add_shortcut('P',self.sauvegarder)
         add_shortcut('q', QtCore.QCoreApplication.instance().quit)
-        return toolbar
+        return generaltoolbar
 
     def add_piste(self):
 
@@ -224,37 +178,34 @@ class Dessin(QtWidgets.QWidget):
 
             
     @QtCore.pyqtSlot()
-    def playpause(self):
-        """this slot toggles the replay using the timer as model"""
-        if self.play:
-            self.play = False
-        else:
-            self.play = True
-            
-    def redemarrer(self):
-        self.re = True
 
-    
     def sauvegarder(self):
-        with open('data','wb') as fichier:
-            mon_picker=pickle.Pickler(fichier)
-            mon_picker.dump(self.chemin)
-        print("Sauvegarde réussie ")
+        try:
+            with open('data','wb') as fichier:
+                mon_picker=pickle.Pickler(fichier)
+                mon_picker.dump(self.chemin)
+            print("Sauvegarde réussie ")
+            self.label.setText("Sauvegarde réussie ")
+        except:
+            print("Echec sauvegarde ")
+            self.label.setText("Echec sauvegarde ")
 
-    def listemousetracker(self):
-        self.chemin = self.ex.chemin
-        self.lancerastar()
 
-    def miseajour(self):
-        if self.voiturechoisie:
-            astar2.astar(self.chemin, self.car)
-            self.voiturechoisie = False
-            self.mainwindows()
-        if self.ready:
-            self.moving_car.updateValues()
 
     def savesimu(self):
-        with open('alldata','wb') as fichier:
-            picker = pickle.Pickler(fichier)
-            picker.dump([self.chemin,self.car])
-        print('Sauvegarde réussie')
+        try:
+            with open('alldata','wb') as fichier:
+                picker = pickle.Pickler(fichier)
+                picker.dump([self.chemin,self.car])
+            print('Sauvegarde réussie')
+            self.label.setText("Sauvegarde réussie ")
+        except:
+            print("Echec sauvegarde ")
+            self.label.setText("Echec sauvegarde ")
+
+    def playpause(self):
+        self.label.setText("")
+        if self.timer.isActive():
+            self.timer.stop()
+        else:
+            self.timer.start(33)
