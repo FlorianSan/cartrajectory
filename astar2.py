@@ -156,7 +156,7 @@ def astar(chemin, voit):
 
         compteur += 1
         print(compteur)
-        #print(current_node.dend)
+        print(current_node.dend)
 
 
         # Genere les children
@@ -265,7 +265,7 @@ if __name__ == "__main__":
     
     #t1=time.clock()
     
-    chemin = piste.creationpiste(1500)
+    chemin = piste.creationpiste(300)
     afficherpiste(chemin[1], chemin[2])
 
     voit = voiture.Voiture()
