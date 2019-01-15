@@ -1,8 +1,10 @@
 import sys, math
-from PyQt5.QtWidgets import QApplication, QLabel, QWidget
+from PyQt5.QtWidgets import QApplication, QLabel, QWidget, QPushButton, QHBoxLayout, QVBoxLayout
 from PyQt5.QtGui import QPainter
 from PyQt5.QtCore import pyqtSignal, Qt
 import matplotlib.pyplot as plt
+import Selector
+
 
 
 
@@ -21,6 +23,11 @@ class MouseTracker(QWidget):
         self.setGeometry(200, 200, 1000, 500)
         self.setWindowTitle('Dessin Piste')
         self.label = QLabel(self)
+        self.label.setText("Dessiner en maintenant shift + clic puis valider")
+        self.button = QPushButton('Ok', self)
+        self.button.clicked.connect(self.valide)
+
+
         self.pos = None
         self.pointsmclick = [piste.Point(0, 0)]  # liste des points milieux
         self.pointsgclick = []  # liste de points à gauche de l'axe de la piste
@@ -82,6 +89,8 @@ class MouseTracker(QWidget):
 
 
     def paintEvent(self, event):
+        self.label.move(self.width()/2, 0)
+        self.button.move((self.width()/2)+250, 0)
 
         q = QPainter(self)
         q.setRenderHint(QPainter.Antialiasing, True)
@@ -96,13 +105,12 @@ class MouseTracker(QWidget):
             q.drawLine(self.pointsmclick[-1].x, self.pointsmclick[-1].y, self.pos.x(), self.pos.y())
 
 
-
-    def closeEvent(self, event):
+    def valide(self):
         self.chemin = [self.pointsm, self.pointsg, self.pointsd]
         print(len(self.pointsm))
         self.listeMouseTracker.emit()
-        """a,b,c,d,e,f = [],[],[],[],[],[]
-        for k in range(len(self.pointsd)):
+        a,b,c,d,e,f = [],[],[],[],[],[]
+        """for k in range(len(self.pointsd)):
             a.append(self.pointsg[k].x)
             b.append(self.pointsg[k].y)
             c.append(self.pointsd[k].x)
@@ -112,9 +120,15 @@ class MouseTracker(QWidget):
             plt.plot(a, b)
             plt.plot(c, d)
             plt.plot(e, f)
-            plt.axis('equal')
+        plt.axis('equal')
         plt.show()"""
         self.close()
+
+    def closeEvent(self, event):
+        self.close()
+
+
+
 
 
     def sectionner(self,oldpoint,newpoint):

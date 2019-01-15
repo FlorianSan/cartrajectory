@@ -1,8 +1,10 @@
+import math
 import pickle
 import sys
 
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QApplication, QWidget
-from PyQt5 import QtCore
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QApplication, QWidget, QGraphicsScene, QGraphicsView
+from PyQt5 import QtCore, Qt
+
 
 import astar2
 import mouse_tracker
@@ -45,7 +47,7 @@ class Selector(QWidget):
 
     def aleatoire(self):
         self.close()
-        self.chemin = piste.creationpiste(300)
+        self.chemin = piste.creationpiste(600)
         self.lancervoitureselector()
 
 
@@ -99,7 +101,11 @@ class Selector(QWidget):
         self.lancervoitureselector()
 
 
+
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     mw = Selector()
+
     sys.exit(app.exec_())

@@ -68,8 +68,9 @@ class FirstView(QtWidgets.QWidget):
         self.car.largeur =  float(car[7])
         self.car.pasvirage = float(virage) * np.pi / (180 * self.car.deltavirage)
         self.car.pasacceleration = float(accelerationmax) / self.car.deltaacc
-        self.voiturechoisie.emit()
         self.close()
+        self.voiturechoisie.emit()
+
         
         
 def horizontal_box(nom,maxi,valeur):

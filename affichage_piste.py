@@ -2,10 +2,8 @@
 import math
 
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtCore import QPoint, QTimer, Qt
-from PyQt5.QtGui import QPen, QBrush, QColor, QPolygonF
-from PyQt5.QtWidgets import QApplication
-import numpy as np
+from PyQt5.QtCore import  QTimer, Qt
+from PyQt5.QtGui import QPen, QColor
 
 
 import pickle
