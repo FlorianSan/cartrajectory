@@ -20,13 +20,12 @@ class MouseTracker(QWidget):
         self.setMouseTracking(True)
 
     def initUI(self):
-        self.setGeometry(200, 200, 1000, 500)
         self.setWindowTitle('Dessin Piste')
         self.label = QLabel(self)
         self.label.setText("Dessiner en maintenant shift + clic puis valider            Click droit supprime le dernier point")
         self.button = QPushButton('Ok', self)
         self.button.clicked.connect(self.valide)
-        self.label.move(self.width() / 4, 0)
+        self.label.move(self.width() / 2 - 250, 0)
         self.button.move((self.width() / 2) + 250, 0)
 
 
