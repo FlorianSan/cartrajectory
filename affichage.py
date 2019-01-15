@@ -4,8 +4,6 @@ from PyQt5.QtCore import QRectF, QPoint,Qt
 from PyQt5.QtGui import QTransform, QBrush, QPen
 import math
 
-from PyQt5.uic.properties import QtCore
-
 import piste
 
 

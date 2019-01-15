@@ -2,13 +2,14 @@
 import math
 
 from PyQt5 import QtWidgets, QtGui, QtCore
-from PyQt5.QtCore import QPoint, QTimer, Qt
-from PyQt5.QtGui import QPen, QBrush, QColor, QPolygonF
-from PyQt5.QtWidgets import QApplication
-import numpy as np
+from PyQt5.QtCore import  QTimer, Qt
+from PyQt5.QtGui import QPen, QColor
 
 
 import pickle
+
+
+
 import piste
 import affichage
 import mouse_tracker
@@ -81,8 +82,11 @@ class Dessin(QtWidgets.QWidget):
 
     def create_toolbar(self):
         # create layout for time controls and entry
+        generaltoolbar = QtWidgets.QVBoxLayout()
         toolbar = QtWidgets.QHBoxLayout()
-
+        generaltoolbar.addLayout(toolbar)
+        self.label = QtWidgets.QLabel(self)
+        generaltoolbar.addWidget(self.label)
         def add_button(text, slot):
             """adds a button to the hbox and connects the slot"""
             button = QtWidgets.QPushButton(text)
@@ -111,7 +115,7 @@ class Dessin(QtWidgets.QWidget):
         add_shortcut('R', self.moving_car.redemarrer)
         add_shortcut('P',self.sauvegarder)
         add_shortcut('q', QtCore.QCoreApplication.instance().quit)
-        return toolbar
+        return generaltoolbar
 
     def add_piste(self):
 
@@ -176,18 +180,31 @@ class Dessin(QtWidgets.QWidget):
     @QtCore.pyqtSlot()
 
     def sauvegarder(self):
-        with open('data','wb') as fichier:
-            mon_picker=pickle.Pickler(fichier)
-            mon_picker.dump(self.chemin)
-        print("Sauvegarde réussie ")
+        try:
+            with open('data','wb') as fichier:
+                mon_picker=pickle.Pickler(fichier)
+                mon_picker.dump(self.chemin)
+            print("Sauvegarde réussie ")
+            self.label.setText("Sauvegarde réussie ")
+        except:
+            print("Echec sauvegarde ")
+            self.label.setText("Echec sauvegarde ")
+
+
 
     def savesimu(self):
-        with open('alldata','wb') as fichier:
-            picker = pickle.Pickler(fichier)
-            picker.dump([self.chemin,self.car])
-        print('Sauvegarde réussie')
+        try:
+            with open('alldata','wb') as fichier:
+                picker = pickle.Pickler(fichier)
+                picker.dump([self.chemin,self.car])
+            print('Sauvegarde réussie')
+            self.label.setText("Sauvegarde réussie ")
+        except:
+            print("Echec sauvegarde ")
+            self.label.setText("Echec sauvegarde ")
 
     def playpause(self):
+        self.label.setText("")
         if self.timer.isActive():
             self.timer.stop()
         else:

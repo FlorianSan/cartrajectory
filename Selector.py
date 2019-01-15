@@ -1,8 +1,10 @@
+import math
 import pickle
 import sys
 
-from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QApplication, QWidget
-from PyQt5 import QtCore
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QApplication, QWidget, QComboBox
+from PyQt5 import QtCore, Qt
+
 
 import astar2
 import mouse_tracker
@@ -16,13 +18,13 @@ class Selector(QWidget):
     def __init__(self):
         super().__init__()
 
-
-        b1 = QPushButton("Aléatoire")
+        self.cb = QComboBox()
+        self.cb.addItems(["Aléatoire", "100", "200", "300", "400", "500", "600", "700", "800", "900", "1000"])
         b2 = QPushButton("Enregistré (sans A*)")
         b3 = QPushButton("Enregistré (avec A*)")
         b4 = QPushButton("Dessin manuel")
 
-        b1.clicked.connect(self.aleatoire)
+        self.cb.currentIndexChanged.connect(self.aleatoire)
         b2.clicked.connect(self.enregistresansA)
         b3.clicked.connect(self.enregistreavecA)
         b4.clicked.connect(self.manuel)
@@ -32,7 +34,7 @@ class Selector(QWidget):
         h2box = QHBoxLayout()
         vbox.addLayout(h1box)
         vbox.addLayout(h2box)
-        h1box.addWidget(b1)
+        h1box.addWidget(self.cb)
         h1box.addWidget(b2)
         h2box.addWidget(b3)
         h2box.addWidget(b4)
@@ -45,7 +47,7 @@ class Selector(QWidget):
 
     def aleatoire(self):
         self.close()
-        self.chemin = piste.creationpiste(300)
+        self.chemin = piste.creationpiste(int(self.cb.currentText()))
         self.lancervoitureselector()
 
 
@@ -99,7 +101,11 @@ class Selector(QWidget):
         self.lancervoitureselector()
 
 
+
+
+
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     mw = Selector()
+
     sys.exit(app.exec_())

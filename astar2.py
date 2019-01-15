@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
+import voiture
+
 import time
 
 import piste
@@ -36,23 +38,23 @@ class Node:
 def tripointg(listepointg):
     listepointgtrie=[]
     for index,point in enumerate(listepointg):
-        listepointgtrie.append((point.x,index))
-    listepointgtrie.sort()
+        listepointgtrie.append((point,index))
+    listepointgtrie.sort(key=lambda index : index[0].x )
     return listepointgtrie
 
 
-def obindex(listepointgtrie,point, voiture):
+def obindex(listepointgtrie,listepointd, point, voiture):
     indextrie=piste.recherche_dichotomique(point,listepointgtrie,voiture.vitessemax * PASDETEMPS)
     listindex=[]
     i=1
-    while indextrie-i>0 and i<20:
+    while indextrie-i>0 and i<2:
         listindex.append(listepointgtrie[indextrie-i][1])
         i+=1
-    while indextrie<len(listepointgtrie) and listepointgtrie[indextrie][0] - point.x > 2*voiture.vitessemax * PASDETEMPS :
+    while indextrie<len(listepointgtrie) and listepointgtrie[indextrie][0].x - listepointgtrie[0][0].x > 2 *voiture.vitessemax * PASDETEMPS and listepointd[listepointgtrie[indextrie][1]].distance(point) <= voiture.vitessemax * PASDETEMPS :
         listindex.append(listepointgtrie[indextrie][1])
         indextrie+=1
     j=1
-    while indextrie+j<len(listepointgtrie) and j<20:
+    while indextrie+j<len(listepointgtrie) and j<2:
         listindex.append(listepointgtrie[indextrie+j][1])
         j+=1
     return listindex
@@ -61,12 +63,16 @@ def obindex(listepointgtrie,point, voiture):
 
 
 def verifpoint(chemin,listepointgtrie,point1, point2, voiture):
-    listindex=obindex(listepointgtrie,point1,voiture)
+    listindex=obindex(listepointgtrie,chemin[1], point1,voiture)
     verif = True
     for j in listindex :
-        if j<len(chemin[1])-1 :
-            if piste.intersect(point1, point2, chemin[1][j], chemin[1][j + 1]) or piste.intersect(point1, point2, chemin[2][j], chemin[2][j + 1]):
+        if j<len(chemin[1])-1 and j-1 in listindex :
+            if piste.intersect(point1, point2, chemin[1][j], chemin[1][j + 1]) or piste.intersect(point1, point2, chemin[2][j], chemin[2][j + 1]) :
                 verif = False
+        elif j<len(chemin[1])-1 and j>0 :
+            if piste.intersect(point1, point2, chemin[1][j], chemin[1][j + 1]) or piste.intersect(point1, point2, chemin[2][j], chemin[2][j + 1]) or piste.intersect(point1, point2, chemin[1][j], chemin[1][j - 1]) or piste.intersect(point1, point2, chemin[2][j], chemin[2][j - 1]) :
+                verif = False
+                
     return verif
 
 def astar(chemin, voit):
@@ -74,7 +80,8 @@ def astar(chemin, voit):
     def newposition(vitesse, acceleration, direction, position, voiture):
         res = []
         deltavirage = voiture.calculdeltavirage()
-        for vir in range(deltavirage, deltavirage + 1):
+        #print(deltavirage)
+        for vir in range(-deltavirage, deltavirage + 1):
             newdirection = direction + vir * voiture.pasvirage
             for acc in range(-voiture.deltaacc, voiture.deltaacc + 1):
                 newacceleration = acceleration + acc * voiture.pasacceleration
@@ -149,7 +156,7 @@ def astar(chemin, voit):
 
         compteur += 1
         print(compteur)
-        #print(current_node.dend)
+        print(current_node.dend)
 
 
         # Genere les children
@@ -176,7 +183,9 @@ def astar(chemin, voit):
             open_list.pop(0)
 
         # Si on a atteint la fin
-        
+
+
+
         listendnode=[]
         for child in children :
             if piste.intersect(current_node.position, child.position, chemin[1][-1], chemin[2][-1]):
@@ -261,7 +270,7 @@ if __name__ == "__main__":
     chemin = piste.creationpiste(300)
     afficherpiste(chemin[1], chemin[2])
 
-    voit = voiture.Voiture(100, 10, 10)
+    voit = voiture.Voiture()
 
     ast = astar(chemin, voit)
     afficherastar(ast[0])
