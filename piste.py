@@ -170,7 +170,7 @@ def creationpiste(nbiterations):
             else:
                 l = len(piste.pointsm)
                 piste.pointsgtrie=sorted(piste.pointsgtrie, key = lambda index : index[1])
-                for j in range(l - (len(piste.zone) - 1) * NBETAPEPARTIE ): #si intersection alors on enlève les points de la partie en cours ainsi que ceux de la précédente
+                for j in range(l - (len(piste.zone) - 1) * NBETAPEPARTIE + 1 ): #si intersection alors on enlève les points de la partie en cours ainsi que ceux de la précédente
                     piste.pointsm.pop()
                     piste.pointsg.pop()
                     piste.pointsd.pop()

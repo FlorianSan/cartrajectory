@@ -183,7 +183,9 @@ def astar(chemin, voit):
             open_list.pop(0)
 
         # Si on a atteint la fin
-        
+
+
+
         listendnode=[]
         for child in children :
             if piste.intersect(current_node.position, child.position, chemin[1][-1], chemin[2][-1]):
