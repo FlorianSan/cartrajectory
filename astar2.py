@@ -3,7 +3,6 @@ import numpy as np
 
 import voiture
 
-import time
 
 import piste
 from operator import itemgetter, attrgetter
@@ -46,19 +45,14 @@ def tripointg(listepointg):
 def obindex(listepointgtrie,listepointd, point, voiture):
     indextrie=piste.recherche_dichotomique(point,listepointgtrie,voiture.vitessemax * PASDETEMPS)
     listindex=[]
-    i=1
-    while indextrie-i>0 and i<2:
-        listindex.append(listepointgtrie[indextrie-i][1])
-        i+=1
+    if indextrie-1>0 :
+        listindex.append(listepointgtrie[indextrie-1][1])
     while indextrie<len(listepointgtrie) and listepointgtrie[indextrie][0].x - listepointgtrie[0][0].x > 2 *voiture.vitessemax * PASDETEMPS and listepointd[listepointgtrie[indextrie][1]].distance(point) <= voiture.vitessemax * PASDETEMPS :
         listindex.append(listepointgtrie[indextrie][1])
         indextrie+=1
-    j=1
-    while indextrie+j<len(listepointgtrie) and j<2:
-        listindex.append(listepointgtrie[indextrie+j][1])
-        j+=1
+    if indextrie+1 < len(listepointgtrie) :
+        listindex.append(listepointgtrie[indextrie+1][1])
     return listindex
-
 
 
 
@@ -116,11 +110,7 @@ def astar(chemin, voit):
     start_node = Node(0, 0, np.pi, None, chemin[0][0])
     start_node.dstart = 0
     
-    """l = -1
-    d = chemin[0][l].distance(chemin[0][l - 1]) #A reprendre avec longueur
-    while chemin[0][l].distance(start_node.position) > piste.LARGEUR:
-        start_node.dend += d
-        l = l - 1"""
+
         
     start_node.dend=longueur.get(0)
 
@@ -156,7 +146,7 @@ def astar(chemin, voit):
 
         compteur += 1
         print(compteur)
-        print(current_node.dend)
+        #print(current_node.dend)
 
 
         # Genere les children
@@ -169,14 +159,6 @@ def astar(chemin, voit):
             children.append(Node(res[i][2], res[i][1], res[i][3], current_node, res[i][0]))
             children[-1].temps = current_node.temps + 1
 
-            """verif = True  # Test si child se trouve dans la piste
-            for j in range(len(chemin[1]) - 1):
-                if piste.intersect(current_node.position, children[-1].position, chemin[1][j],
-                                   chemin[1][j + 1]) or piste.intersect(current_node.position, children[-1].position,
-                                                                        chemin[2][j], chemin[2][j + 1]):
-                    verif = False
-            if not verif:
-                children.pop()"""
             if not verifpoint(chemin, listetriee, current_node.position, children[-1].position, voit):
                 children.pop()
         if len(children) == 0: #current node pas dans open_list ??
@@ -225,12 +207,7 @@ def astar(chemin, voit):
             else :
                 indexdend+= DELTAINDEX
             
-            """l = -1
-            while abs(l)<len(chemin[0]) and chemin[0][l].distance(child.position) > piste.LARGEUR :
-                child.dend += chemin[0][l].distance(chemin[0][l - 1])
-                l = l - 1
-                #print(l)
-            child.dend += chemin[0][l].distance(child.position)"""
+
 
             child.couttot = child.dstart + child.dend
 
@@ -265,9 +242,9 @@ def afficherastar(l1):
 
 if __name__ == "__main__":
     
-    #t1=time.clock()
+
     
-    chemin = piste.creationpiste(300)
+    chemin = piste.creationpiste(1000)
     afficherpiste(chemin[1], chemin[2])
 
     voit = voiture.Voiture()
@@ -275,5 +252,3 @@ if __name__ == "__main__":
     ast = astar(chemin, voit)
     afficherastar(ast[0])
     
-    #t2=time.clock()
-    #print(t2-t1)
