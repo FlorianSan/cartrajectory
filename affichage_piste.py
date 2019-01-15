@@ -3,8 +3,7 @@ import math
 
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import  QTimer, Qt
-from PyQt5.QtGui import QPen, QColor
-
+from PyQt5.QtGui import QPen, QColor, QBrush
 
 import pickle
 
@@ -130,6 +129,8 @@ class Dessin(QtWidgets.QWidget):
         path.moveTo(self.piste[0].x, self.piste[0].y)
         for i in range(1, len(self.piste)):
             path.lineTo(self.piste[i].x, self.piste[i].y)
+            self.scene.addLine(self.chemin[1][i-1].x, self.chemin[1][i-1].y,self.chemin[1][i].x, self.chemin[1][i].y,QPen(QtGui.QColor(255,0,0), 1))
+            self.scene.addLine(self.chemin[2][i - 1].x, self.chemin[2][i-1].y, self.chemin[2][i].x,self.chemin[2][i].y, QPen(QtGui.QColor(255,0,0), 1))
         #self.scene.addPolygon(Polygone(self.chemin[1][-1],self.chemin[2][-1],self.piste[-1],self.piste[-5], 20), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor(TK_COLOR)))
         item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
