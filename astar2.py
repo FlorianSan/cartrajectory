@@ -71,17 +71,17 @@ def verifpoint(chemin,listepointgtrie,point1, point2, voiture):
 
 def astar(chemin, voit):
 
-    def newposition(vitesse, acceleration, direction, position, voiture):
+    def newposition(vitesse, acceleration, direction, position):
         res = []
-        deltavirage = voiture.calculdeltavirage()
+        deltavirage = voit.calculdeltavirage()
         #print(deltavirage)
         for vir in range(-deltavirage, deltavirage + 1):
-            newdirection = direction + vir * voiture.pasvirage
-            for acc in range(-voiture.deltaacc, voiture.deltaacc + 1):
-                newacceleration = acceleration + acc * voiture.pasacceleration
-                newvitesse = vitesse + PASDETEMPS * acc * voiture.pasacceleration
-                if abs(newvitesse) > voiture.vitessemax:
-                    newvitesse = voiture.vitessemax * np.sign(newvitesse)
+            newdirection = direction + vir * voit.pasvirage
+            for acc in range(-voit.deltaacc, voit.deltaacc + 1):
+                newacceleration = acceleration + acc * voit.pasacceleration
+                newvitesse = vitesse + PASDETEMPS * acc * voit.pasacceleration
+                if abs(newvitesse) > voit.vitessemax:
+                    newvitesse = voit.vitessemax * np.sign(newvitesse)
                 newposition = position + piste.Point(-newvitesse * PASDETEMPS * np.cos(newdirection),
                                                      newvitesse * PASDETEMPS * np.sin(newdirection))
                 # print(type(newposition))
@@ -152,7 +152,7 @@ def astar(chemin, voit):
         # Genere les children
         children = []
 
-        res = newposition(current_node.vitesse, current_node.acceleration, current_node.direction,current_node.position, voit)
+        res = newposition(current_node.vitesse, current_node.acceleration, current_node.direction,current_node.position)
         
         
         for i in range(len(res)):
