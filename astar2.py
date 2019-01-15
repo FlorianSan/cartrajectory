@@ -3,7 +3,6 @@ import numpy as np
 
 import voiture
 
-import time
 
 import piste
 from operator import itemgetter, attrgetter
@@ -111,11 +110,7 @@ def astar(chemin, voit):
     start_node = Node(0, 0, np.pi, None, chemin[0][0])
     start_node.dstart = 0
     
-    """l = -1
-    d = chemin[0][l].distance(chemin[0][l - 1]) #A reprendre avec longueur
-    while chemin[0][l].distance(start_node.position) > piste.LARGEUR:
-        start_node.dend += d
-        l = l - 1"""
+
         
     start_node.dend=longueur.get(0)
 
@@ -164,14 +159,6 @@ def astar(chemin, voit):
             children.append(Node(res[i][2], res[i][1], res[i][3], current_node, res[i][0]))
             children[-1].temps = current_node.temps + 1
 
-            """verif = True  # Test si child se trouve dans la piste
-            for j in range(len(chemin[1]) - 1):
-                if piste.intersect(current_node.position, children[-1].position, chemin[1][j],
-                                   chemin[1][j + 1]) or piste.intersect(current_node.position, children[-1].position,
-                                                                        chemin[2][j], chemin[2][j + 1]):
-                    verif = False
-            if not verif:
-                children.pop()"""
             if not verifpoint(chemin, listetriee, current_node.position, children[-1].position, voit):
                 children.pop()
         if len(children) == 0: #current node pas dans open_list ??
@@ -220,12 +207,7 @@ def astar(chemin, voit):
             else :
                 indexdend+= DELTAINDEX
             
-            """l = -1
-            while abs(l)<len(chemin[0]) and chemin[0][l].distance(child.position) > piste.LARGEUR :
-                child.dend += chemin[0][l].distance(chemin[0][l - 1])
-                l = l - 1
-                #print(l)
-            child.dend += chemin[0][l].distance(child.position)"""
+
 
             child.couttot = child.dstart + child.dend
 
@@ -260,9 +242,9 @@ def afficherastar(l1):
 
 if __name__ == "__main__":
     
-    #t1=time.clock()
+
     
-    chemin = piste.creationpiste(1500)
+    chemin = piste.creationpiste(1000)
     afficherpiste(chemin[1], chemin[2])
 
     voit = voiture.Voiture()
@@ -270,5 +252,3 @@ if __name__ == "__main__":
     ast = astar(chemin, voit)
     afficherastar(ast[0])
     
-    #t2=time.clock()
-    #print(t2-t1)
