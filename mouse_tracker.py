@@ -21,6 +21,7 @@ class MouseTracker(QWidget):
     def initUI(self):
         self.setGeometry(200, 200, 1000, 500)
         self.setWindowTitle('Dessin Piste')
+
         self.label = QLabel(self)
         self.label.setText("Dessiner en maintenant shift + clic puis valider")
         self.button = QPushButton('Ok', self)
@@ -28,12 +29,13 @@ class MouseTracker(QWidget):
 
 
         self.pos = None
-        self.pointsmclick = [piste.Point(0, 0)]  # liste des points milieux
-        self.pointsgclick = []  # liste de points à gauche de l'axe de la piste
-        self.pointsdclick = []  # liste de points à droite de l'axe de la piste
-        self.pointsm = [piste.Point(0, 0)]  # liste des points milieux
-        self.pointsg = []  # liste de points à gauche de l'axe de la piste
-        self.pointsd = []  # liste de points à droite de l'axe de la piste
+        self.pointsmclick = [piste.Point(0, 0)]  # liste des points milieux cliquer
+        self.pointsgclick = []  # liste de points à gauche de l'axe de la piste cliquer
+        self.pointsdclick = []  # liste de points à droite de l'axe de la piste cliquer
+
+        self.pointsm = [piste.Point(0, 0)]  # liste des points milieux subdiviser
+        self.pointsg = []  # liste de points à gauche de l'axe de la piste subdiviser
+        self.pointsd = []  # liste de points à droite de l'axe de la piste subdiviser
         self.angle = 0
         self.nbrsection = 0
         self.largeur = piste.LARGEUR
@@ -46,9 +48,12 @@ class MouseTracker(QWidget):
 
 
     def mousePressEvent(self, event):
-        if QApplication.keyboardModifiers() == Qt.ShiftModifier:
-            newpoint = piste.Point(event.x(), event.y())
-            if newpoint.x != self.pointsmclick[-1].x and newpoint.y != self.pointsmclick[-1].y:
+        if QApplication.keyboardModifiers() == Qt.ShiftModifier: #teste le bouton shift
+
+            newpoint = piste.Point(event.x(), event.y())  # récuperer le point cliqué
+
+            if newpoint.x != self.pointsmclick[-1].x or newpoint.y != self.pointsmclick[-1].y:  # teste si on clique pas deux fois au même endroit
+
                 self.pointsmclick.append(newpoint)
 
                 if len(self.pointsmclick) == 2:
@@ -76,8 +81,6 @@ class MouseTracker(QWidget):
                     self.pointsg += self.sectionner(self.pointsgclick[-2], self.pointsgclick[-1])
                     self.pointsd += self.sectionner(self.pointsdclick[-2],self.pointsdclick[-1])
                     self.angle += demi_angle
-
-
         self.update()
 
 
@@ -107,22 +110,28 @@ class MouseTracker(QWidget):
     def closeEvent(self, event):
         self.close()
 
-
-
-
-
     def sectionner(self,oldpoint,newpoint):
 
         deltax, deltay = newpoint.x - oldpoint.x, newpoint.y - oldpoint.y
-        coeff_directeur = deltay / deltax
-        b = newpoint.y - coeff_directeur * newpoint.x
-        pas = deltax / self.nbrsection
-        liste=[]
-        for i in range(1, self.nbrsection):
-            x = oldpoint.x + i * pas
-            point = piste.Point(x, coeff_directeur * x + b)
-            liste.append(point)
-        liste.append(newpoint)
+        if deltax !=0:
+            coeff_directeur = deltay / deltax
+            b = newpoint.y - coeff_directeur * newpoint.x
+            pas = deltax / self.nbrsection
+            liste = []
+            for i in range(1, self.nbrsection):
+                x = oldpoint.x + i * pas
+                point = piste.Point(x, coeff_directeur * x + b)
+                liste.append(point)
+            liste.append(newpoint)
+        else:
+            pas = deltay / self.nbrsection
+            liste = []
+            for i in range(1, self.nbrsection):
+                point = piste.Point(oldpoint.x, oldpoint.y + i * pas)
+                liste.append(point)
+            liste.append(newpoint)
+
+
         return liste
 
 
