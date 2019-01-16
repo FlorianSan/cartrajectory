@@ -19,7 +19,7 @@ class Selector(QWidget):
         super().__init__()
 
         self.cb = QComboBox()
-        self.cb.addItems(["Aléatoire", "100", "200", "300", "400", "500", "600", "700", "800", "900", "1000"])
+        self.cb.addItems(["Aléatoire", "Petite piste", "Moyenne piste", "Grande piste", "Géante piste"])
         b2 = QPushButton("Enregistré (sans A*)")
         b3 = QPushButton("Enregistré (avec A*)")
         b4 = QPushButton("Dessin manuel")
@@ -47,7 +47,15 @@ class Selector(QWidget):
 
     def aleatoire(self):
         self.close()
-        self.chemin = piste.creationpiste(int(self.cb.currentText()))
+        if self.cb.currentText() == "Petite piste":
+            longueur = 250
+        elif self.cb.currentText() == "Moyenne piste":
+            longueur = 500
+        elif self.cb.currentText() == "Grande piste":
+            longueur = 750
+        elif self.cb.currentText() == "Géante piste":
+            longueur = 1000
+        self.chemin = piste.creationpiste(longueur)
         self.lancervoitureselector()
 
 
@@ -79,7 +87,7 @@ class Selector(QWidget):
         self.ex = mouse_tracker.MouseTracker()
         self.ex.listeMouseTracker.connect(self.fermetureMousetrcker)
         self.ex.setWindowModality(QtCore.Qt.ApplicationModal)
-        self.ex.show()
+        self.ex.showMaximized()
 
     def lancervoitureselector(self):
         self.firstview = presentationvoiture.FirstView()
