@@ -3,6 +3,7 @@ import numpy as np
 
 import voiture
 
+import time
 
 import piste
 from operator import itemgetter, attrgetter
@@ -56,6 +57,7 @@ def obindex(listepointgtrie,listepointd, point, voiture):
 
 
 
+
 def verifpoint(chemin,listepointgtrie,point1, point2, voiture):
     listindex=obindex(listepointgtrie,chemin[1], point1,voiture)
     verif = True
@@ -71,17 +73,18 @@ def verifpoint(chemin,listepointgtrie,point1, point2, voiture):
 
 def astar(chemin, voit):
 
-    def newposition(vitesse, acceleration, direction, position):
+    def newposition(vitesse, acceleration, direction, position, voiture):
         res = []
-        deltavirage = voit.calculdeltavirage()
+        #deltavirage = voiture.calculdeltavirage()
         #print(deltavirage)
+        deltavirage=5
         for vir in range(-deltavirage, deltavirage + 1):
-            newdirection = direction + vir * voit.pasvirage
-            for acc in range(-voit.deltaacc, voit.deltaacc + 1):
-                newacceleration = acceleration + acc * voit.pasacceleration
-                newvitesse = vitesse + PASDETEMPS * acceleration
-                if abs(newvitesse) > voit.vitessemax:
-                    newvitesse = voit.vitessemax * np.sign(newvitesse)
+            newdirection = direction + vir * voiture.pasvirage
+            for acc in range(-voiture.deltaacc, voiture.deltaacc + 1):
+                newacceleration = acceleration + acc * voiture.pasacceleration
+                newvitesse = vitesse + PASDETEMPS * acc * voiture.pasacceleration
+                if abs(newvitesse) > voiture.vitessemax:
+                    newvitesse = voiture.vitessemax * np.sign(newvitesse)
                 newposition = position + piste.Point(-newvitesse * PASDETEMPS * np.cos(newdirection),
                                                      newvitesse * PASDETEMPS * np.sin(newdirection))
                 # print(type(newposition))
@@ -128,9 +131,7 @@ def astar(chemin, voit):
     
 
         # Acceder au noeud courant
-        """for i in range(1, len(open_list)): # ???
-            if open_list[i - 1].couttot > open_list[i].couttot:
-                open_list[i - 1], open_list[i] = open_list[i], open_list[i - 1]"""
+
         current_node = open_list[0]
         current_index = 0
         for index, item in enumerate(open_list):
@@ -146,28 +147,34 @@ def astar(chemin, voit):
 
         compteur += 1
         print(compteur)
-        #print(current_node.dend)
+        print(current_node.dend)
 
 
         # Genere les children
         children = []
 
-        res = newposition(current_node.vitesse, current_node.acceleration, current_node.direction,current_node.position)
+        res = newposition(current_node.vitesse, current_node.acceleration, current_node.direction,current_node.position, voit)
         
         
         for i in range(len(res)):
             children.append(Node(res[i][2], res[i][1], res[i][3], current_node, res[i][0]))
             children[-1].temps = current_node.temps + 1
 
+            """verif = True  # Test si child se trouve dans la piste
+            for j in range(len(chemin[1]) - 1):
+                if piste.intersect(current_node.position, children[-1].position, chemin[1][j],
+                                   chemin[1][j + 1]) or piste.intersect(current_node.position, children[-1].position,
+                                                                        chemin[2][j], chemin[2][j + 1]):
+                    verif = False
+            if not verif:
+                children.pop()"""
             if not verifpoint(chemin, listetriee, current_node.position, children[-1].position, voit):
                 children.pop()
         if len(children) == 0: #current node pas dans open_list ??
             open_list.pop(0)
 
         # Si on a atteint la fin
-
-
-
+        
         listendnode=[]
         for child in children :
             if piste.intersect(current_node.position, child.position, chemin[1][-1], chemin[2][-1]):
@@ -207,7 +214,12 @@ def astar(chemin, voit):
             else :
                 indexdend+= DELTAINDEX
             
-
+            """l = -1
+            while abs(l)<len(chemin[0]) and chemin[0][l].distance(child.position) > piste.LARGEUR :
+                child.dend += chemin[0][l].distance(chemin[0][l - 1])
+                l = l - 1
+                #print(l)
+            child.dend += chemin[0][l].distance(child.position)"""
 
             child.couttot = child.dstart + child.dend
 
@@ -242,9 +254,9 @@ def afficherastar(l1):
 
 if __name__ == "__main__":
     
-
+    #t1=time.clock()
     
-    chemin = piste.creationpiste(1000)
+    chemin = piste.creationpiste(200)
     afficherpiste(chemin[1], chemin[2])
 
     voit = voiture.Voiture()
@@ -252,3 +264,5 @@ if __name__ == "__main__":
     ast = astar(chemin, voit)
     afficherastar(ast[0])
     
+    #t2=time.clock()
+    #print(t2-t1)
