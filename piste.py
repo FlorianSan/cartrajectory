@@ -10,6 +10,8 @@ import numpy as np
 
 import astar2
 
+#Test
+
 LARGEUR = 15# en mètre
 PAS = 2  # en mètre
 NBETAPEPARTIE = 30  # nb étapes avant le choix d'une nouvelle zone
@@ -162,7 +164,7 @@ def creationpiste(nbiterations):
             if piste.verificationpoint(px, py): #vérifie que les nouveaux points de la piste n'intesectent pas des anciens points
                 piste.ajoutpoint(px, py, pm)
                 k = k + 1
-                #print(len(piste.pointsm))
+                print(len(piste.pointsm))
             else:
                 l = len(piste.pointsm)
                 piste.pointsgtrie=sorted(piste.pointsgtrie, key = lambda index : index[1])
@@ -178,4 +180,4 @@ def creationpiste(nbiterations):
     return [piste.pointsm, piste.pointsg, piste.pointsd]
 
 if __name__ == "__main__":
-    print(creationpiste(300))
+    chemin=creationpiste(300)
