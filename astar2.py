@@ -58,20 +58,19 @@ def obindex(listepointgtrie,listepointd, point, voiture):
 
 def verifpoint(chemin,listepointgtrie,point1, point2, voiture):
     listindex=obindex(listepointgtrie,chemin[1], point1,voiture)
-    verif = True
     for j in listindex :
         if j<len(chemin[1])-1 and j-1 in listindex :
             if piste.intersect(point1, point2, chemin[1][j], chemin[1][j + 1]) or piste.intersect(point1, point2, chemin[2][j], chemin[2][j + 1]) :
-                verif = False
+                return False
         elif j<len(chemin[1])-1 and j>0 :
             if piste.intersect(point1, point2, chemin[1][j], chemin[1][j + 1]) or piste.intersect(point1, point2, chemin[2][j], chemin[2][j + 1]) or piste.intersect(point1, point2, chemin[1][j], chemin[1][j - 1]) or piste.intersect(point1, point2, chemin[2][j], chemin[2][j - 1]) :
-                verif = False
+                return False
                 
-    return verif
+    return True
 
 def astar(chemin, voit):
 
-    def newposition(vitesse, acceleration, direction, position):
+    def newposition(vitesse, acceleration, direction, position,):
         res = []
         deltavirage = voit.calculdeltavirage()
         #print(deltavirage)
@@ -244,11 +243,11 @@ if __name__ == "__main__":
     
 
     
-    chemin = piste.creationpiste(1000)
+    chemin = piste.creationpiste(300)
     afficherpiste(chemin[1], chemin[2])
 
     voit = voiture.Voiture()
 
     ast = astar(chemin, voit)
-    afficherastar(ast[0])
+    afficherastar(voit.position)
     
