@@ -181,4 +181,3 @@ def creationpiste(nbiterations):
 
 if __name__ == "__main__":
     chemin=creationpiste(300)
-    astar2.afficherpiste(chemin[1],chemin[2])
