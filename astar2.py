@@ -70,7 +70,7 @@ def verifpoint(chemin,listepointgtrie,point1, point2, voiture):
 
 def astar(chemin, voit):
 
-    def newposition(vitesse, acceleration, direction, position,):
+    def newposition(vitesse, acceleration, direction, position):
         res = []
         deltavirage = voit.calculdeltavirage()
         #print(deltavirage)
