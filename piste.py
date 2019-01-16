@@ -10,6 +10,8 @@ import numpy as np
 
 import astar2
 
+#Test
+
 LARGEUR = 15# en mètre
 PAS = 2  # en mètre
 NBETAPEPARTIE = 30  # nb étapes avant le choix d'une nouvelle zone

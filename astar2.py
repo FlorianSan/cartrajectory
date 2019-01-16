@@ -79,7 +79,7 @@ def astar(chemin, voit):
             newdirection = direction + vir * voit.pasvirage
             for acc in range(-voit.deltaacc, voit.deltaacc + 1):
                 newacceleration = acceleration + acc * voit.pasacceleration
-                newvitesse = vitesse + PASDETEMPS * acc * voit.pasacceleration
+                newvitesse = vitesse + PASDETEMPS * acceleration
                 if abs(newvitesse) > voit.vitessemax:
                     newvitesse = voit.vitessemax * np.sign(newvitesse)
                 newposition = position + piste.Point(-newvitesse * PASDETEMPS * np.cos(newdirection),

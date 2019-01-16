@@ -9,6 +9,8 @@ VIRAGE_MAX=50
 EMPAMAX = 5
 FILE='voiture.txt'
 
+# Test
+
 class FirstView(QtWidgets.QWidget):
     voiturechoisie = pyqtSignal()
     def __init__(self):
