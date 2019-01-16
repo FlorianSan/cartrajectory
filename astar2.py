@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+
 import voiture
 
 
@@ -57,16 +58,15 @@ def obindex(listepointgtrie,listepointd, point, voiture):
 
 def verifpoint(chemin,listepointgtrie,point1, point2, voiture):
     listindex=obindex(listepointgtrie,chemin[1], point1,voiture)
-    verif = True
     for j in listindex :
         if j<len(chemin[1])-1 and j-1 in listindex :
             if piste.intersect(point1, point2, chemin[1][j], chemin[1][j + 1]) or piste.intersect(point1, point2, chemin[2][j], chemin[2][j + 1]) :
-                verif = False
+                return False
         elif j<len(chemin[1])-1 and j>0 :
             if piste.intersect(point1, point2, chemin[1][j], chemin[1][j + 1]) or piste.intersect(point1, point2, chemin[2][j], chemin[2][j + 1]) or piste.intersect(point1, point2, chemin[1][j], chemin[1][j - 1]) or piste.intersect(point1, point2, chemin[2][j], chemin[2][j - 1]) :
-                verif = False
+                return False
                 
-    return verif
+    return True
 
 def astar(chemin, voit):
 
@@ -78,7 +78,7 @@ def astar(chemin, voit):
             newdirection = direction + vir * voit.pasvirage
             for acc in range(-voit.deltaacc, voit.deltaacc + 1):
                 newacceleration = acceleration + acc * voit.pasacceleration
-                newvitesse = vitesse + PASDETEMPS * acceleration
+                newvitesse = vitesse + PASDETEMPS * acc * voit.pasacceleration
                 if abs(newvitesse) > voit.vitessemax:
                     newvitesse = voit.vitessemax * np.sign(newvitesse)
                 newposition = position + piste.Point(-newvitesse * PASDETEMPS * np.cos(newdirection),
@@ -243,11 +243,11 @@ if __name__ == "__main__":
     
 
     
-    chemin = piste.creationpiste(500)
+    chemin = piste.creationpiste(300)
     afficherpiste(chemin[1], chemin[2])
 
     voit = voiture.Voiture()
 
     ast = astar(chemin, voit)
-    afficherastar(ast[0])
+    afficherastar(voit.position)
     
