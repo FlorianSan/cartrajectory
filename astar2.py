@@ -86,6 +86,18 @@ def astar(chemin, voit):
                         indexdend += DELTAINDEX"""
 
                     dend = np.sqrt((chemin[0][-1].x-newposition.x)**2 + (chemin[0][-1].y-newposition.y)**2)
+                    #dend = abs(chemin[0][-1].x - newposition.x) + abs(chemin[0][-1].y - newposition.y)
+                    """c=0
+                    longueur=0
+                    while dstart>longueur:
+                        longueur += np.sqrt((chemin[0][c+1].x - chemin[0][c].x) ** 2 + (chemin[0][c+1].y - chemin[0][c].y) ** 2)
+                        c+=1
+                    if len(chemin[0][c:])>10:
+                        indexmilieu = int(len(chemin[0][c:])/2)
+                        dend = np.sqrt((chemin[0][indexmilieu].x - newposition.x) ** 2 + (chemin[0][indexmilieu].y - newposition.y) ** 2) + np.sqrt((chemin[0][-1].x-chemin[0][indexmilieu].x)**2 + (chemin[0][-1].y-chemin[0][indexmilieu].y)**2)
+                    else:
+                        dend = np.sqrt((chemin[0][-1].x - newposition.x) ** 2 + (chemin[0][-1].y - newposition.y) ** 2)"""
+
                     couttot = dstart + dend
                     newnode = Node(newvitesse, newacceleration, newdirection, temps, dstart, dend, couttot, currentnode,newposition)
                     heappush(heap, (newnode.couttot, newnode))
