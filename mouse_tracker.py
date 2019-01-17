@@ -29,17 +29,17 @@ class MouseTracker(QWidget):
         self.button.move((self.width() / 2) + 250, 0)
 
 
-        self.pos = None
-        self.pointsmclick = [piste.Point(0, 0)]  # liste des points milieux cliquer
-        self.pointsgclick = []  # liste de points à gauche de l'axe de la piste cliquer
-        self.pointsdclick = []  # liste de points à droite de l'axe de la piste cliquer
-
         self.pointsm = [piste.Point(0, 0)]  # liste des points milieux subdiviser
         self.pointsg = []  # liste de points à gauche de l'axe de la piste subdiviser
         self.pointsd = []  # liste de points à droite de l'axe de la piste subdiviser
         self.angle = 0
         self.nbrsection = 0
         self.largeur = piste.LARGEUR
+
+        self.pos = None
+        self.pointsmclick = [piste.Point(-piste.PAS, 0), piste.Point(0, 0)]  # liste des points milieux cliquer
+        self.pointsgclick = [piste.Point(-piste.PAS, self.largeur / 2)]  # liste de points à gauche de l'axe de la piste cliquer
+        self.pointsdclick = [piste.Point(-piste.PAS, -self.largeur / 2)]  # liste de points à droite de l'axe de la piste cliquer
 
 
 
@@ -59,7 +59,7 @@ class MouseTracker(QWidget):
 
                     self.pointsmclick.append(newpoint)
 
-                    if len(self.pointsmclick) == 2:
+                    if len(self.pointsmclick) == 3:
                         self.angle = affichage.call_angle(piste.Point(1, 0), self.pointsmclick[-2], self.pointsmclick[-1])
 
                         self.pointsgclick.append(piste.Point(self.pointsmclick[-2].x + (self.largeur / 2) * math.sin(self.angle),self.pointsmclick[-2].y - (self.largeur / 2) * math.cos(self.angle)))
@@ -68,7 +68,7 @@ class MouseTracker(QWidget):
                         self.pointsg.append(piste.Point(self.pointsmclick[-2].x + (self.largeur / 2) * math.sin(self.angle),self.pointsmclick[-2].y - (self.largeur / 2) * math.cos(self.angle)))
                         self.pointsd.append(piste.Point(self.pointsmclick[-2].x - (self.largeur / 2) * math.sin(self.angle),self.pointsmclick[-2].y + (self.largeur / 2) * math.cos(self.angle)))
 
-                    if len(self.pointsmclick) > 2:
+                    if len(self.pointsmclick) > 3:
                         angle = affichage.call_angle(self.pointsmclick[-1], self.pointsmclick[-2], self.pointsmclick[-3])
                         if angle>0:
                             angle = math.pi - angle
