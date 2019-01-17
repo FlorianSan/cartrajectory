@@ -54,11 +54,8 @@ def astar(chemin, voit):
     polygon = Polygon(coords)
 
 
-
     def newposition(currentnode):
 
-        DELTAINDEX = 20
-        indexdend = DELTAINDEX
 
         #deltavirage = voit.calculdeltavirage(currentnode.vitesse)
         deltavirage = 5
@@ -77,15 +74,25 @@ def astar(chemin, voit):
                     temps = currentnode.temps + 1
                     dstart = currentnode.dstart + newvitesse * temps * PASDETEMPS
 
-                    """while indexdend > 0 and chemin[0][indexdend].distance(newposition) > 2 * piste.LARGEUR:
+                    """while indexdend > 0 and chemin[0][indexdend].distance(newposition) > 2 * piste.PAS:
                         indexdend -= 1
                     dend = chemin[0][indexdend].distance(newposition) + longueur.get(indexdend)
                     if indexdend + DELTAINDEX >= len(chemin[0]):
                         indexdend = len(chemin[0]) - 1
                     else:
                         indexdend += DELTAINDEX"""
+                        
+                    
+                    
+                    l = -1
+                    dend=0
+                    while chemin[0][l].distance(newposition) > piste.LARGEUR:
+                        dend += chemin[0][l].distance(chemin[0][l - 1])
+                        l = l - 1
+                    dend += chemin[0][l].distance(newposition)
 
-                    dend = np.sqrt((chemin[0][-1].x-newposition.x)**2 + (chemin[0][-1].y-newposition.y)**2)
+
+                    #dend = np.sqrt((chemin[0][-1].x-newposition.x)**2 + (chemin[0][-1].y-newposition.y)**2)
                     #dend = abs(chemin[0][-1].x - newposition.x) + abs(chemin[0][-1].y - newposition.y)
                     """c=0
                     longueur=0
