@@ -14,10 +14,10 @@ class Voiture:
         self.masse = 0
         self.longueur = 0
         self.largeur = 0
-        self.pasacceleration = 0
+        self.pasacceleration = 1
         self.deltaacc = DELTAACC
-        self.vitessemax = 0
-        self.pasvirage = 0
+        self.vitessemax = 40
+        self.pasvirage = 0.139
         self.deltavirage = DELTAVIR
         self.empattement = 0
         self.position = []
@@ -27,7 +27,9 @@ class Voiture:
         self.name = None
 
     def calculdeltavirage(self):
+
         if len(self.vitesse) != 0:
+            print("test")
             alpha = math.asin(self.empattement * self.vitesse[-1] / 9.81 * u)
             if alpha >= DELTAVIR * self.pasvirage:
                 return (DELTAVIR)

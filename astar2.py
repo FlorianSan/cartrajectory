@@ -1,4 +1,6 @@
 import matplotlib.pyplot as plt
+from heapq import heappush, heappop
+from shapely.geometry import Point, Polygon
 import numpy as np
 
 import voiture
@@ -12,15 +14,15 @@ PASDETEMPS = 0.1 # en secondes
 
 class Node:
 
-    def __init__(self, vitesse, acceleration, direction, parent=None, position=None):
+    def __init__(self, vitesse, acceleration, direction, temps, dstart, dend, couttot, parent=None, position=None):
         self.parent = parent
         self.position = position
 
-        self.dstart = 0
-        self.dend = 0
-        self.couttot = 0
+        self.dstart = dstart
+        self.dend = dend
+        self.couttot = couttot
 
-        self.temps = 0  # nb de pas de temps pour arriver à ce noeud
+        self.temps = temps  # nb de pas de temps pour arriver à ce noeud
 
         self.vitesse = vitesse
         self.direction = direction
@@ -29,8 +31,8 @@ class Node:
     def __eq__(self, autre):
         return self.position == autre.position
 
-
-
+    def __lt__(self, other):
+        return self.position.x < other.position.x and self.position.y < other.position.y
 
 # rajouter affichage
 
@@ -42,175 +44,99 @@ def tripointg(listepointg):
     return listepointgtrie
 
 
-def obindex(listepointgtrie,listepointd, point, voiture):
-    indextrie=piste.recherche_dichotomique(point,listepointgtrie,voiture.vitessemax * PASDETEMPS)
-    listindex=[]
-    if indextrie-1>0 :
-        listindex.append(listepointgtrie[indextrie-1][1])
-    while indextrie<len(listepointgtrie) and listepointgtrie[indextrie][0].x - listepointgtrie[0][0].x > 2 *voiture.vitessemax * PASDETEMPS and listepointd[listepointgtrie[indextrie][1]].distance(point) <= voiture.vitessemax * PASDETEMPS :
-        listindex.append(listepointgtrie[indextrie][1])
-        indextrie+=1
-    if indextrie+1 < len(listepointgtrie) :
-        listindex.append(listepointgtrie[indextrie+1][1])
-    return listindex
-
-
-
-def verifpoint(chemin,listepointgtrie,point1, point2, voiture):
-    listindex=obindex(listepointgtrie,chemin[1], point1,voiture)
-    for j in listindex :
-        if j<len(chemin[1])-1 and j-1 in listindex :
-            if piste.intersect(point1, point2, chemin[1][j], chemin[1][j + 1]) or piste.intersect(point1, point2, chemin[2][j], chemin[2][j + 1]) :
-                return False
-        elif j<len(chemin[1])-1 and j>0 :
-            if piste.intersect(point1, point2, chemin[1][j], chemin[1][j + 1]) or piste.intersect(point1, point2, chemin[2][j], chemin[2][j + 1]) or piste.intersect(point1, point2, chemin[1][j], chemin[1][j - 1]) or piste.intersect(point1, point2, chemin[2][j], chemin[2][j - 1]) :
-                return False
-                
-    return True
-
 def astar(chemin, voit):
 
-    def newposition(vitesse, acceleration, direction, position):
-        res = []
+    coords = []
+    for i in range(len(chemin[1])):
+        coords.append((chemin[1][i].x,chemin[1][i].y))
+    for j in range(len(chemin[2])-1,0,-1):
+        coords.append((chemin[2][j].x, chemin[2][j].y))
+    polygon = Polygon(coords)
+
+
+
+    def newposition(currentnode):
+
+        DELTAINDEX = 20
+        indexdend = DELTAINDEX
+
         deltavirage = voit.calculdeltavirage()
+        #deltavirage = 5
         #print(deltavirage)
         for vir in range(-deltavirage, deltavirage + 1):
-            newdirection = direction + vir * voit.pasvirage
+            newdirection = currentnode.direction + vir * voit.pasvirage
             for acc in range(-voit.deltaacc, voit.deltaacc + 1):
-                newacceleration = acceleration + acc * voit.pasacceleration
-                newvitesse = vitesse + PASDETEMPS * acc * voit.pasacceleration
+                newacceleration = currentnode.acceleration + acc * voit.pasacceleration
+                newvitesse = currentnode.vitesse + PASDETEMPS * currentnode.acceleration
+
                 if abs(newvitesse) > voit.vitessemax:
                     newvitesse = voit.vitessemax * np.sign(newvitesse)
-                newposition = position + piste.Point(-newvitesse * PASDETEMPS * np.cos(newdirection),
-                                                     newvitesse * PASDETEMPS * np.sin(newdirection))
-                # print(type(newposition))
-                res.append([newposition, newacceleration, newvitesse, newdirection])
-                # print(res)
+                newposition = currentnode.position + piste.Point(-newvitesse * PASDETEMPS * np.cos(newdirection),newvitesse * PASDETEMPS * np.sin(newdirection))
 
-        return res
-    
-    
+                if polygon.contains(Point(newposition.x, newposition.y)) or piste.intersect(currentnode.parent.position, newposition, chemin[1][-1], chemin[2][-1]):
+                    temps = currentnode.temps + 1
+                    dstart = currentnode.dstart + newvitesse * temps * PASDETEMPS
+
+                    """while indexdend > 0 and chemin[0][indexdend].distance(newposition) > 2 * piste.LARGEUR:
+                        indexdend -= 1
+                    dend = chemin[0][indexdend].distance(newposition) + longueur.get(indexdend)
+                    if indexdend + DELTAINDEX >= len(chemin[0]):
+                        indexdend = len(chemin[0]) - 1
+                    else:
+                        indexdend += DELTAINDEX"""
+
+                    dend = np.sqrt((chemin[0][-1].x-newposition.x)**2 + (chemin[0][-1].y-newposition.y)**2)
+                    couttot = dstart + dend
+                    newnode = Node(newvitesse, newacceleration, newdirection, temps, dstart, dend, couttot, currentnode,newposition)
+                    heappush(heap, (newnode.couttot, newnode))
+
     
     if len(chemin)==3:
         listetriee=tripointg(chemin[1])
     else :
         listetriee=chemin[3]
-    
-    compteur = 0
-    DELTAINDEX = 20
-    indexdend=DELTAINDEX
-    
-    longueur={} #création d'un dictionnaire de longueur de la piste à patir de la fin
-    longueur[len(chemin[0])-1]=0
-    for l in range (len(chemin[0])-2,-1,-1):
-        longueur[l]=longueur.get(l+1) + chemin[0][l].distance(chemin[0][l+1])
+
+    longueur = {}  # création d'un dictionnaire de longueur de la piste à patir de la fin
+    longueur[len(chemin[0]) - 1] = 0
+    for l in range(len(chemin[0]) - 2, -1, -1):
+        longueur[l] = longueur.get(l + 1) + chemin[0][l].distance(chemin[0][l + 1])
 
     # cree le noeud de debut et de fin
-    start_node = Node(0, 0, np.pi, None, chemin[0][0])
-    start_node.dstart = 0
-    
-
-        
-    start_node.dend=longueur.get(0)
-
-    start_node.couttot = start_node.dstart + start_node.dend
+    start_node = Node(0, 0, 0, 0, 0, longueur.get(0), longueur.get(0), None, chemin[0][1])
 
     # Initialisation des deux listes
-    open_list = []  # liste des noeuds a traiter  FILE DE PRIORITe
-    closed_list = []  # liste des noeuds deja traites
+    heap = []  # liste des noeuds a traiter  FILE DE PRIORITe
+
 
     # Ajoute le noeud de depart
-    open_list.append(start_node)
-
+    heappush(heap, (start_node.couttot, start_node))
+    i=0
     # On boucle jusqu'au noeud final
-    while len(open_list) > 0:  # tant qu'il y a des noeuds a traiter
-    
+    while heap:  # tant qu'il y a des noeuds a traiter
 
-        # Acceder au noeud courant
-        """for i in range(1, len(open_list)): # ???
-            if open_list[i - 1].couttot > open_list[i].couttot:
-                open_list[i - 1], open_list[i] = open_list[i], open_list[i - 1]"""
-        current_node = open_list[0]
-        current_index = 0
-        for index, item in enumerate(open_list):
-            if item.couttot < current_node.couttot:
-                current_node = item
-                current_index = index
+        current_node = heappop(heap)[1]
 
-        # On retire le current node de la liste des noeuds a traiter et on l'ajoute dans la liste des noeuds traites
-        open_list.pop(current_index)
-        closed_list.append(current_node)
-        
+        #test fin
+        if len(heap)>1 and piste.intersect(current_node.parent.position, current_node.position, chemin[1][-1], chemin[2][-1]):
+            position,acceleration, direction, vitesse =[],[],[],[]
+            while current_node is not None:
+                position.append(current_node.position)
+                acceleration.append(current_node.acceleration)
+                direction.append(current_node.direction)
+                vitesse.append(current_node.vitesse)
+                current_node = current_node.parent
 
+            voit.position = position[::-1]
+            voit.acceleration = acceleration[::-1]
+            voit.vitesse = vitesse[::-1]
+            voit.direction = direction[::-1]
+            return None
 
-        compteur += 1
-        print(compteur)
-        #print(current_node.dend)
-
-
-        # Genere les children
-        children = []
-
-        res = newposition(current_node.vitesse, current_node.acceleration, current_node.direction,current_node.position)
-        
-        
-        for i in range(len(res)):
-            children.append(Node(res[i][2], res[i][1], res[i][3], current_node, res[i][0]))
-            children[-1].temps = current_node.temps + 1
-
-            if not verifpoint(chemin, listetriee, current_node.position, children[-1].position, voit):
-                children.pop()
-        if len(children) == 0: #current node pas dans open_list ??
-            open_list.pop(0)
-
-        # Si on a atteint la fin
+        newposition(current_node)
+        print(i)
+        i+=1
 
 
-
-        listendnode=[]
-        for child in children :
-            if piste.intersect(current_node.position, child.position, chemin[1][-1], chemin[2][-1]):
-                listendnode.append(child)
-        if len(listendnode)>0:
-            endchild=listendnode[0]
-            difdir=abs(current_node.direction-endchild.direction)
-            for child in listendnode :
-                if difdir> abs(child.direction-current_node.direction):
-                    endchild=child
-                    difdir=abs(child.direction-current_node.direction)
-            path = []  # initialise le chemin
-            current = endchild
-            #print(endchild.temps)
-            while current is not None:  # on cree le chemin en partant de la fin
-                voit.position.append(current.position)
-                voit.direction.append(current.direction)
-                voit.vitesse.append(current.vitesse)
-                current = current.parent
-            voit.position=voit.position[::-1]
-            voit.direction=voit.direction[::-1]
-            voit.vitesse=voit.vitesse[::-1]
-            return (voit.position, voit.direction, voit.vitesse)  # return le chemin
-        
-
-        # On boucle sur les children
-        for child in children:
-
-            # Create coutrest, dstart, dend
-            child.dstart = current_node.dstart + child.vitesse * child.temps * PASDETEMPS
-
-            while indexdend>0 and chemin[0][indexdend].distance(child.position) > 2*piste.LARGEUR :
-                indexdend-=1
-            child.dend = chemin[0][indexdend].distance(child.position) + longueur.get(indexdend)
-            if indexdend + DELTAINDEX >= len(chemin[0]):
-                indexdend=len(chemin[0])-1
-            else :
-                indexdend+= DELTAINDEX
-            
-
-
-            child.couttot = child.dstart + child.dend
-
-            open_list.append(child)
 
 
 
