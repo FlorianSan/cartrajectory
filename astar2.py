@@ -60,12 +60,12 @@ def astar(chemin, voit):
         DELTAINDEX = 20
         indexdend = DELTAINDEX
 
-        deltavirage = voit.calculdeltavirage()
-        #deltavirage = 5
+        #deltavirage = voit.calculdeltavirage(currentnode.vitesse)
+        deltavirage = 5
         #print(deltavirage)
         for vir in range(-deltavirage, deltavirage + 1):
             newdirection = currentnode.direction + vir * voit.pasvirage
-            for acc in range(-voit.deltaacc, voit.deltaacc + 1):
+            for acc in range(-voit.deltaacc+3, voit.deltaacc + 4):
                 newacceleration = currentnode.acceleration + acc * voit.pasacceleration
                 newvitesse = currentnode.vitesse + PASDETEMPS * currentnode.acceleration
 
@@ -86,6 +86,18 @@ def astar(chemin, voit):
                         indexdend += DELTAINDEX"""
 
                     dend = np.sqrt((chemin[0][-1].x-newposition.x)**2 + (chemin[0][-1].y-newposition.y)**2)
+                    #dend = abs(chemin[0][-1].x - newposition.x) + abs(chemin[0][-1].y - newposition.y)
+                    """c=0
+                    longueur=0
+                    while dstart>longueur:
+                        longueur += np.sqrt((chemin[0][c+1].x - chemin[0][c].x) ** 2 + (chemin[0][c+1].y - chemin[0][c].y) ** 2)
+                        c+=1
+                    if len(chemin[0][c:])>10:
+                        indexmilieu = int(len(chemin[0][c:])/2)
+                        dend = np.sqrt((chemin[0][indexmilieu].x - newposition.x) ** 2 + (chemin[0][indexmilieu].y - newposition.y) ** 2) + np.sqrt((chemin[0][-1].x-chemin[0][indexmilieu].x)**2 + (chemin[0][-1].y-chemin[0][indexmilieu].y)**2)
+                    else:
+                        dend = np.sqrt((chemin[0][-1].x - newposition.x) ** 2 + (chemin[0][-1].y - newposition.y) ** 2)"""
+
                     couttot = dstart + dend
                     newnode = Node(newvitesse, newacceleration, newdirection, temps, dstart, dend, couttot, currentnode,newposition)
                     heappush(heap, (newnode.couttot, newnode))
@@ -102,7 +114,7 @@ def astar(chemin, voit):
         longueur[l] = longueur.get(l + 1) + chemin[0][l].distance(chemin[0][l + 1])
 
     # cree le noeud de debut et de fin
-    start_node = Node(0, 0, 0, 0, 0, longueur.get(0), longueur.get(0), None, chemin[0][1])
+    start_node = Node(0, 0, np.pi, 0, 0, longueur.get(0), longueur.get(0), None, chemin[0][1])
 
     # Initialisation des deux listes
     heap = []  # liste des noeuds a traiter  FILE DE PRIORITe

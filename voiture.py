@@ -26,15 +26,14 @@ class Voiture:
         self.direction = []
         self.name = None
 
-    def calculdeltavirage(self):
-
-        if len(self.vitesse) != 0:
-            print("test")
-            alpha = math.asin(self.empattement * self.vitesse[-1] / 9.81 * u)
+    def calculdeltavirage(self, vitesse):
+        cst = self.empattement * 9.81 * u
+        if math.sqrt(cst) <= abs(vitesse):
+            alpha = math.asin(cst / (vitesse ** 2))
             if alpha >= DELTAVIR * self.pasvirage:
                 return (DELTAVIR)
             else:
-                return (alpha // self.pasvirage)
+                return (int(alpha // self.pasvirage))
         else:
             return (DELTAVIR)
 

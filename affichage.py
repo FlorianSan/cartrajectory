@@ -25,6 +25,7 @@ class CarMotion():
         brush = QBrush(QtGui.QColor("Red"))
         item = QtWidgets.QGraphicsPathItem(self.path, self.car_group)
         item.setBrush(brush)
+        item.setPen(QPen(QtGui.QColor("Red")))
 
 
 
