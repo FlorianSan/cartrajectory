@@ -1,6 +1,7 @@
 import math
 import pickle
 import sys
+import os
 
 from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QApplication, QWidget, QComboBox
 from PyQt5 import QtCore, Qt
@@ -17,7 +18,7 @@ import affichage_piste
 class Selector(QWidget):
     def __init__(self):
         super().__init__()
-
+        self.exec = Lancerexec()
         self.cb = QComboBox()
         self.cb.addItems(["Aléatoire", "Petite piste", "Moyenne piste", "Grande piste", "Géante piste"])
         b2 = QPushButton("Enregistré (sans A*)")
@@ -48,46 +49,77 @@ class Selector(QWidget):
     def aleatoire(self):
         self.close()
         if self.cb.currentText() == "Petite piste":
-            longueur = 250
+            longueur = 25
         elif self.cb.currentText() == "Moyenne piste":
             longueur = 500
         elif self.cb.currentText() == "Grande piste":
             longueur = 750
         elif self.cb.currentText() == "Géante piste":
             longueur = 1000
-        self.chemin = piste.creationpiste(longueur)
-        self.lancervoitureselector()
+        self.exec.chemin = piste.creationpiste(longueur)
+        self.exec.lancervoitureselector()
 
 
     def enregistresansA(self):
         self.close()
-
-        try:
-            with open('data', 'rb') as fichier:
-                mon_depickler = pickle.Unpickler(fichier)
-                self.chemin = mon_depickler.load()
-                self.lancervoitureselector()
-        except:
-            print("Il n'y a pas de fichier enregistré")
+        listefichier = ['sans A*']+os.listdir('./DATA')
+        self.data = DATA(listefichier,'./DATA')
+        self.data.show()
 
     def enregistreavecA(self):
         self.close()
-        try:
-            with open('alldata', 'rb') as fichier:
-                depickler = pickle.Unpickler(fichier)
-                [self.chemin, self.car] = depickler.load()
-                self.affichagefentresimu()
-        except:
-            print("Il n'y a pas de fichier enregistré")
-
+        listefichier = ['avec A*']+os.listdir('./DATAstar')
+        self.data = DATA(listefichier,'./DATAstar')
+        self.data.show()        
 
     def manuel(self):
         self.close()
 
         self.ex = mouse_tracker.MouseTracker()
-        self.ex.listeMouseTracker.connect(self.fermetureMousetrcker)
+        self.ex.listeMouseTracker.connect(lambda : self.exec.fermetureMousetrcker(self.ex.chemin))
         self.ex.setWindowModality(QtCore.Qt.ApplicationModal)
         self.ex.showMaximized()
+
+class DATA(QWidget):
+    def __init__(self,listefichier,racine):
+        super().__init__()
+        self.racine = racine
+        self.exec = Lancerexec()
+        self.cb = QComboBox()
+        if len(listefichier)==1:
+            print("Il n'y a pas de fichier enregistré")
+            self.close()
+        else:
+            self.cb.addItems(listefichier)
+            self.cb.currentIndexChanged.connect(self.fichierchoisi)
+        
+        vbox = QVBoxLayout()
+        vbox.addWidget(self.cb)
+        self.setLayout(vbox)
+        self.setFixedSize(230, 70)
+        self.setWindowTitle('Choix data')
+        self.show()
+    
+    def fichierchoisi(self):
+        self.close()
+        self.filename = self.racine+'/'+self.cb.currentText()
+        if self.racine == './DATAstar':
+            self.exec.avecA(self.filename)
+        else:
+            self.exec.sansA(self.filename)
+            
+class Lancerexec(): #nouvelle classe car utilisée par DATA et Selector.manuel Selector.aleatoire
+    def sansA(self,filename):
+        with open(filename, 'rb') as fichier:
+            mon_depickler = pickle.Unpickler(fichier)
+            self.chemin = mon_depickler.load()
+            self.lancervoitureselector()
+
+    def avecA(self, filename):
+        with open(filename, 'rb') as fichier:
+            depickler = pickle.Unpickler(fichier)
+            [self.chemin, self.car] = depickler.load()
+            self.affichagefentresimu()
 
     def lancervoitureselector(self):
         self.firstview = presentationvoiture.FirstView()
@@ -104,9 +136,10 @@ class Selector(QWidget):
         windows = affichage_piste.Dessin(self.chemin, self.car)
         windows.show()
 
-    def fermetureMousetrcker(self):
-        self.chemin = self.ex.chemin
+    def fermetureMousetrcker(self,chemin):
+        self.chemin = chemin
         self.lancervoitureselector()
+        
 
 
 

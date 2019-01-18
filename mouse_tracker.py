@@ -5,6 +5,8 @@ from PyQt5.QtCore import pyqtSignal, Qt
 
 
 
+import matplotlib.pyplot as plt
+
 
 
 import piste
@@ -18,6 +20,7 @@ class MouseTracker(QWidget):
         super().__init__()
         self.initUI()
         self.setMouseTracking(True)
+        
 
     def initUI(self):
         self.setWindowTitle('Dessin Piste')
@@ -108,6 +111,7 @@ class MouseTracker(QWidget):
         print(len(self.pointsm))
         self.listeMouseTracker.emit()
         self.close()
+        #afficherpiste(self.pointsg,self.pointsd)
 
     def closeEvent(self, event):
         self.close()
@@ -135,10 +139,27 @@ class MouseTracker(QWidget):
 
 
         return liste
+        
+
+def afficherpiste(l1, l2):
+    for k in range(len(l1) - 1):
+        a = [l1[k].x, l1[k + 1].x]
+        b = [l1[k].y, l1[k + 1].y]
+        c = [l2[k].x, l2[k + 1].x]
+        d = [l2[k].y, l2[k + 1].y]
+        plt.plot(a, b)
+        plt.plot(c, d)
+        plt.axis('equal')
+        plt.show()
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     ex = MouseTracker()
+    
     ex.show()
+    
+    
+    
     sys.exit(app.exec_())
+    
