@@ -29,7 +29,7 @@ class MouseTracker(QWidget):
         self.button = QPushButton('Ok', self)
         self.button.clicked.connect(self.valide)
         self.label.move(self.width() / 2 - 250, 0)
-        self.button.move((self.width() / 2) + 250, 0)
+        self.button.move((self.width() / 2) + 400, 0)
 
 
         self.pointsm = [piste.Point(0, 0)]  # liste des points milieux subdiviser
