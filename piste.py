@@ -88,30 +88,6 @@ class Piste:
         pointd = Point(self.pointsm[-1].x - LARGEUR / 2 * np.sin(self.anglerad),self.pointsm[-1].y - LARGEUR / 2 * np.cos(self.anglerad))
 
         return pointg, pointd
-
-    def verificationpoint(self, nouveaupointg, nouveaupointd):
-        verif = True
-        for i in range(len(self.pointsg)-1):
-            if intersect(nouveaupointg, self.pointsg[i], nouveaupointd, self.pointsd[i]):
-                verif = False
-        for i in range (1,len(self.pointsg)-2):
-            if intersect(nouveaupointg,self.pointsg[-1],self.pointsg[i], self.pointsg[i+1]) or intersect(nouveaupointd,self.pointsd[-1],self.pointsd[i], self.pointsd[i+1]):
-                verif = False
-        return verif
-        
-        
-    
-    def obtindex(self, point):
-        indextrie=recherche_dichotomique(point,self.pointsgtrie,PAS)
-        listindex=[]
-        if indextrie-1>0:
-            listindex.append(self.pointsgtrie[indextrie-1][1])
-        while indextrie<len(self.pointsgtrie) and self.pointsgtrie[indextrie][0].x - point.x > 2*PAS and self.pointsd[[indextrie][1]].distance(point) <= PAS : 
-            listindex.append(self.pointsgtrie[indextrie][1])
-            indextrie+=1
-        if indextrie + 1 <len(self.pointsgtrie):
-            listindex.append(self.pointsgtrie[indextrie+1][1])
-        return listindex
         
 
     def ajoutpoint(self, nouveaupointg, nouveaupointd, nouveaupointm):
@@ -120,15 +96,6 @@ class Piste:
         self.pointsgtrie.sort(key=lambda index : index[0].x)
         self.pointsd.append(nouveaupointd)
         self.pointsm.append(nouveaupointm)
-
-    def verificationpoint2(self,nouveaupointg, nouveaupointd):
-        listindex=self.obtindex(nouveaupointg)
-        verif = True
-        for i in listindex :
-            if i<len(self.pointsg)-2:
-                if intersect(nouveaupointg,self.pointsg[-1],self.pointsg[i], self.pointsg[i+1]) or intersect(nouveaupointd,self.pointsd[-1],self.pointsd[i], self.pointsd[i+1]):
-                    verif = False
-        return verif
 
 
 

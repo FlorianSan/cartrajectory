@@ -38,6 +38,7 @@ class Voiture:
 
         else:
             return (DELTAVIR)
+        
 
     def calculvitessevirage(self, r):
         return np.sqrt((u*r)/self.masse)
