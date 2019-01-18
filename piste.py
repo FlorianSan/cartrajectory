@@ -113,15 +113,6 @@ class Piste:
             listindex.append(self.pointsgtrie[indextrie+1][1])
         return listindex
         
-    def verificationpoint2(self,nouveaupointg, nouveaupointd):
-        listindex=self.obtindex(nouveaupointg)
-        verif = True
-        for i in listindex :
-            if i<len(self.pointsg)-2:
-                if intersect(nouveaupointg,self.pointsg[-1],self.pointsg[i], self.pointsg[i+1]) or intersect(nouveaupointd,self.pointsd[-1],self.pointsd[i], self.pointsd[i+1]):
-                    verif = False
-        return verif
-        
 
     def ajoutpoint(self, nouveaupointg, nouveaupointd, nouveaupointm):
         self.pointsg.append(nouveaupointg)
@@ -130,10 +121,20 @@ class Piste:
         self.pointsd.append(nouveaupointd)
         self.pointsm.append(nouveaupointm)
 
+    def verificationpoint2(self,nouveaupointg, nouveaupointd):
+        listindex=self.obtindex(nouveaupointg)
+        verif = True
+        for i in listindex :
+            if i<len(self.pointsg)-2:
+                if intersect(nouveaupointg,self.pointsg[-1],self.pointsg[i], self.pointsg[i+1]) or intersect(nouveaupointd,self.pointsd[-1],self.pointsd[i], self.pointsd[i+1]):
+                    verif = False
+        return verif
+
+
 
 
 def recherche_dichotomique(point, liste_triee, epsilon ):
-    element=point.x- epsilon # modif
+    element=point.x- epsilon
     a = 0
     b = len(liste_triee)-1
     m = (a+b)//2
@@ -147,21 +148,42 @@ def recherche_dichotomique(point, liste_triee, epsilon ):
         m = (a+b)//2
     return a
 
+def verifpoint(piste,point1, point2, epsilon):
+    listindex=obtindex(piste, point1, epsilon)
+    for j in listindex :
+        if j<len(piste.pointsg)-1 and j-1 in listindex :
+            if intersect(point1, point2, piste.pointsg[j], piste.pointsg[j + 1]) or intersect(point1, point2, piste.pointsd[j], piste.pointsd[j + 1]) :
+                return False
+        elif j<len(piste.pointsg)-1 and j>0 :
+            if intersect(point1, point2, piste.pointsg[j], piste.pointsg[j + 1]) or intersect(point1, point2, piste.pointsd[j], piste.pointsd[j + 1]) or intersect(point1, point2, piste.pointsg[j], piste.pointsg[j - 1]) or intersect(point1, point2, piste.pointsd[j], piste.pointsd[j - 1]) :
+                return False
+    return True
 
-    
+def obtindex(piste, point, epsilon):
+    indextrie=recherche_dichotomique(point,piste.pointsgtrie,epsilon) #voiture.vitessemax * PASDETEMPS)
+    listindex=[]
+    if indextrie-1>0 :
+        listindex.append(piste.pointsgtrie[indextrie-1][1])
+    while indextrie<len(piste.pointsgtrie)-1 and piste.pointsgtrie[indextrie][1]<len(piste.pointsd) and piste.pointsgtrie[indextrie][0].x - piste.pointsgtrie[0][0].x > 2 *epsilon and abs(piste.pointsd[piste.pointsgtrie[indextrie][1]].distance(point)) <= epsilon :
+        listindex.append(piste.pointsgtrie[indextrie][1])
+        indextrie+=1
+    if indextrie+1 < len(piste.pointsgtrie) :
+        listindex.append(piste.pointsgtrie[indextrie+1][1])
+    return listindex
+
 
 def creationpiste(nbiterations):
     piste = Piste()
     k = 0
     while len(piste.pointsm) < nbiterations:
-        
-        #print(len(piste.pointsm))
 
+        #print(len(piste.pointsm))
+        
         while k < NBETAPEPARTIE:
             piste.miseajourangle()
             pm = piste.miseajourpointm()
             px, py = piste.creationpointspiste()
-            if piste.verificationpoint(px, py): #vérifie que les nouveaux points de la piste n'intesectent pas des anciens points
+            if verifpoint(piste, px, py, PAS): #vérifie que les nouveaux points de la piste n'intesectent pas des anciens points
                 piste.ajoutpoint(px, py, pm)
                 k = k + 1
                 print(len(piste.pointsm))

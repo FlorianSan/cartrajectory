@@ -20,7 +20,7 @@ class CarMotion():
         self.windows.scene.addItem(self.car_group)
         self.car_group.setZValue(1)
         self.path = QtGui.QPainterPath()
-        self.voiture = QRectF(QPoint(self.car.position[0].x-self.car.longueur/2, self.car.position[0].y-self.car.largeur/2), QPoint(self.car.position[0].x+self.car.longueur/2, self.car.position[0].y+self.car.largeur/2))
+        self.voiture = QRectF(QPoint(self.car.position[0].x+self.car.largeur/2, self.car.position[0].y-self.car.longueur/2), QPoint(self.car.position[0].x-self.car.largeur/2, self.car.position[0].y+self.car.longueur/2))
         self.path.addRect(self.voiture)
         brush = QBrush(QtGui.QColor("Red"))
         item = QtWidgets.QGraphicsPathItem(self.path, self.car_group)
