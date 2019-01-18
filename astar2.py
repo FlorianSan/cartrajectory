@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 from heapq import heappush, heappop
-from shapely.geometry import Point, Polygon
+from shapely.geometry import Point, Polygon, LineString
 import numpy as np
+import time
 
 import voiture
 
@@ -14,7 +15,7 @@ PASDETEMPS = 0.1 # en secondes
 
 class Node:
 
-    def __init__(self, vitesse, acceleration, direction, temps, dstart, dend, couttot,indexdend, parent=None, position=None):
+    def __init__(self, vitesse, acceleration, direction, temps, dstart, dend, couttot, indexdend, parent=None, position=None):
         self.parent = parent
         self.position = position
 
@@ -33,8 +34,9 @@ class Node:
     def __eq__(self, autre):
         return self.position == autre.position
 
-    def __lt__(self, other):
-        return self.position.x < other.position.x and self.position.y < other.position.y
+
+    def __repr__(self):
+        return str(self.temps)
 
 # rajouter affichage
 
@@ -49,16 +51,24 @@ def tripointg(listepointg):
 def astar(chemin, voit):
 
     coords = []
+    coordligneg = []
+    coordligned =[]
     for i in range(len(chemin[1])):
         coords.append((chemin[1][i].x,chemin[1][i].y))
+        coordligneg.append((chemin[1][i].x,chemin[1][i].y))
     for j in range(len(chemin[2])-1,0,-1):
         coords.append((chemin[2][j].x, chemin[2][j].y))
+        coordligned.append((chemin[2][j].x, chemin[2][j].y))
     polygon = Polygon(coords)
+    ligneg = LineString(coordligneg)
+    ligned = LineString(coordligned)
+    lignefin = LineString([(chemin[1][-1].x,chemin[1][-1].y),(chemin[2][-1].x,chemin[2][-1].y)])
+
 
 
     def newposition(currentnode):
         
-        print('dend = ' + str(current_node.dend))
+        #print('dend = ' + str(current_node.dend))
 
 
         #deltavirage = voit.calculdeltavirage(currentnode.vitesse)
@@ -66,7 +76,7 @@ def astar(chemin, voit):
         #print(deltavirage)
         for vir in range(-deltavirage, deltavirage + 1):
             newdirection = currentnode.direction + vir * voit.pasvirage
-            for acc in range(-voit.deltaacc+3, voit.deltaacc + 4):
+            for acc in range(-voit.deltaacc, voit.deltaacc + 1):
                 newacceleration = currentnode.acceleration + acc * voit.pasacceleration
                 newvitesse = currentnode.vitesse + PASDETEMPS * currentnode.acceleration
 
@@ -74,10 +84,10 @@ def astar(chemin, voit):
                     newvitesse = voit.vitessemax * np.sign(newvitesse)
                 newposition = currentnode.position + piste.Point(-newvitesse * PASDETEMPS * np.sin(newdirection),newvitesse * PASDETEMPS * np.cos(newdirection))
                 
-                #if abs(newvitesse)<abs(current_node.vitesse):
-                    #print('OK')
-
-                if polygon.contains(Point(newposition.x, newposition.y)) or piste.intersect(currentnode.parent.position, newposition, chemin[1][-1], chemin[2][-1]):
+                if abs(newvitesse)<abs(current_node.vitesse):
+                    print('OK')
+                ligne = LineString([(currentnode.position.x, currentnode.position.y), (newposition.x, newposition.y)])
+                if (polygon.contains(Point(newposition.x, newposition.y)) and (not ligned.intersects(ligne) or not ligneg.intersects(ligne))) or ligne.intersects(lignefin):
                     temps = currentnode.temps + 1
                     #print(temps)
                     dstart = currentnode.dstart + newvitesse * PASDETEMPS
@@ -91,33 +101,9 @@ def astar(chemin, voit):
                     while indexdend > 0 and chemin[0][indexdend].distance(newposition) > 2 * piste.LARGEUR:
                         indexdend -= 1
                     dend = chemin[0][indexdend].distance(newposition) + longueur.get(indexdend)
-                    
-
-
-                    #dend = np.sqrt((chemin[0][-1].x-newposition.x)**2 + (chemin[0][-1].y-newposition.y)**2)
-                    #dend = abs(chemin[0][-1].x - newposition.x) + abs(chemin[0][-1].y - newposition.y)
-                    
-                    
-                    """c=0
-                    longueur=0
-                    while dstart>longueur:
-                        longueur += np.sqrt((chemin[0][c+1].x - chemin[0][c].x) ** 2 + (chemin[0][c+1].y - chemin[0][c].y) ** 2)
-                        c+=1
-                    if len(chemin[0][c:])>10:
-                        indexmilieu = int(len(chemin[0][c:])/2)
-                        dend = np.sqrt((chemin[0][indexmilieu].x - newposition.x) ** 2 + (chemin[0][indexmilieu].y - newposition.y) ** 2) + np.sqrt((chemin[0][-1].x-chemin[0][indexmilieu].x)**2 + (chemin[0][-1].y-chemin[0][indexmilieu].y)**2)
-                    else:
-                        dend = np.sqrt((chemin[0][-1].x - newposition.x) ** 2 + (chemin[0][-1].y - newposition.y) ** 2)"""
-
                     couttot = dstart + dend
                     newnode = Node(newvitesse, newacceleration, newdirection, temps, dstart, dend, couttot,indexdend, currentnode,newposition)
                     heappush(heap, (newnode.couttot, newnode))
-
-    
-    """if len(chemin)==3:
-        listetriee=tripointg(chemin[1])
-    else :
-        listetriee=chemin[3]"""
 
     longueur = {}  # création d'un dictionnaire de longueur de la piste à patir de la fin
     longueur[len(chemin[0]) - 1] = 0
@@ -165,12 +151,12 @@ def astar(chemin, voit):
 def directioninit(Point1,Point2):
     dx,dy=Point1.x-Point2.x,Point1.y-Point2.y
     if dx>0:
-        return(-np.atan(dy/dx)+np.pi)
+        return(-np.arctan(dy/dx)+np.pi)
     elif dx<0:
         if dy>0:
-            return(np.atan(dx/dy))
+            return(np.arctan(dx/dy))
         elif dy<0:
-            return(np.atan(dx/dy)+np.pi)
+            return(np.arctan(dx/dy)+np.pi)
         else:
             return(3*np.pi/2)
     else:

@@ -19,7 +19,7 @@ class Voiture:
         self.vitessemax = 40
         self.pasvirage = 0.139
         self.deltavirage = DELTAVIR
-        self.empattement = 0
+        self.empattement = 2
         self.position = []
         self.acceleration = []
         self.vitesse = []
@@ -33,9 +33,15 @@ class Voiture:
             if alpha >= DELTAVIR * self.pasvirage:
                 return (DELTAVIR)
             else:
+                print(int(alpha // self.pasvirage))
                 return (int(alpha // self.pasvirage))
+
         else:
             return (DELTAVIR)
+
+    def calculvitessevirage(self, r):
+        return np.sqrt((u*r)/self.masse)
+
 
     def get_position(self, t):
         return self.position[t]

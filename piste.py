@@ -202,4 +202,7 @@ def creationpiste(nbiterations):
     return [piste.pointsm, piste.pointsg, piste.pointsd]
 
 if __name__ == "__main__":
-    chemin=creationpiste(300)
+    #chemin=creationpiste(300)
+    p1 = Point(14, 37)
+    p2 = Point(34, 7)
+    p3 = Point(43, 30)
