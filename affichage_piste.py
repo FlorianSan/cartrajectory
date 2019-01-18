@@ -4,6 +4,8 @@ import math
 from PyQt5 import QtWidgets, QtGui, QtCore
 from PyQt5.QtCore import  QTimer, Qt
 from PyQt5.QtGui import QPen, QColor, QBrush
+from PyQt5.QtWidgets import QVBoxLayout, QHBoxLayout, QPushButton, QApplication, QWidget, QLabel, QLineEdit
+
 
 import pickle
 
@@ -99,8 +101,8 @@ class Dessin(QtWidgets.QWidget):
         toolbar.addStretch()
         add_button('|>', self.playpause)
         add_button('R', self.moving_car.redemarrer)
-        add_button('Save Track',self.sauvegarder)
-        add_button('Save Simu', self.savesimu)
+        add_button('Save Track', lambda: self.sauvegarder('sansA'))
+        add_button('Save Simu', lambda: self.sauvegarder('avecA'))
         toolbar.addStretch()
 
         def add_shortcut(text, slot):
@@ -112,7 +114,7 @@ class Dessin(QtWidgets.QWidget):
         add_shortcut('-', lambda: self.view.zoom_view(1 / 1.1))
         add_shortcut(' ', self.playpause)
         add_shortcut('R', self.moving_car.redemarrer)
-        add_shortcut('P',self.sauvegarder)
+        add_shortcut('s', lambda: self.sauvegarder('AvecA'))
         add_shortcut('q', QtCore.QCoreApplication.instance().quit)
         return generaltoolbar
 
@@ -179,10 +181,49 @@ class Dessin(QtWidgets.QWidget):
 
             
     @QtCore.pyqtSlot()
+    def playpause(self):
+        self.label.setText("")
+        if self.timer.isActive():
+            self.timer.stop()
+        else:
+            self.timer.start(33)
+            
+    def sauvegarder(self,style):
+        self.savedata=SAVEDATA(style,self.chemin,self.car)
+        self.savedata.show()
 
-    def sauvegarder(self):
+class SAVEDATA(QWidget):
+    def __init__(self,style,chemin,voiture):
+        super().__init__()
+        self.chemin = chemin
+        self.car = voiture
+        self.style= style
+        self.label = QLabel('nom fichier',self)
+        self.nom = QLineEdit('',self)
+        button = QPushButton("Save")
+        button.clicked.connect(self.savename)
+        hbox = QHBoxLayout()
+        hbox.addWidget(self.label)
+        hbox.addWidget(self.nom)
+        hbox.addWidget(button)
+        self.setLayout(hbox)
+        self.setFixedSize(300, 50)
+        self.setWindowTitle('Choix data')
+        self.show()
+
+    def savename(self):
+        self.close()
+        name=str(self.nom.text())
+        if self.style == 'sansA':
+            filename = './DATA/'+name
+            self.sauvegarder(filename)
+        else:
+            filename = './DATAstar/'+name
+            self.savesimu(filename)
+
+    def sauvegarder(self,filename):
         try:
-            with open('data','wb') as fichier:
+            with open(filename,'wb') as fichier:
                 mon_picker=pickle.Pickler(fichier)
                 mon_picker.dump(self.chemin)
             print("Sauvegarde réussie ")
@@ -193,9 +234,9 @@ class Dessin(QtWidgets.QWidget):
 
 
 
-    def savesimu(self):
+    def savesimu(self,filename):
         try:
-            with open('alldata','wb') as fichier:
+            with open(filename,'wb') as fichier:
                 picker = pickle.Pickler(fichier)
                 picker.dump([self.chemin,self.car])
             print('Sauvegarde réussie')
@@ -203,10 +244,3 @@ class Dessin(QtWidgets.QWidget):
         except:
             print("Echec sauvegarde ")
             self.label.setText("Echec sauvegarde ")
-
-    def playpause(self):
-        self.label.setText("")
-        if self.timer.isActive():
-            self.timer.stop()
-        else:
-            self.timer.start(33)

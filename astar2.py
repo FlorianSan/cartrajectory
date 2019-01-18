@@ -14,13 +14,15 @@ PASDETEMPS = 0.1 # en secondes
 
 class Node:
 
-    def __init__(self, vitesse, acceleration, direction, temps, dstart, dend, couttot, parent=None, position=None):
+    def __init__(self, vitesse, acceleration, direction, temps, dstart, dend, couttot,indexdend, parent=None, position=None):
         self.parent = parent
         self.position = position
 
         self.dstart = dstart
         self.dend = dend
         self.couttot = couttot
+        
+        self.indexdend=indexdend #index du point de l'axe de piste le plus proche du noeud
 
         self.temps = temps  # nb de pas de temps pour arriver à ce noeud
 
@@ -55,6 +57,8 @@ def astar(chemin, voit):
 
 
     def newposition(currentnode):
+        
+        print('dend = ' + str(current_node.dend))
 
 
         #deltavirage = voit.calculdeltavirage(currentnode.vitesse)
@@ -68,32 +72,32 @@ def astar(chemin, voit):
 
                 if abs(newvitesse) > voit.vitessemax:
                     newvitesse = voit.vitessemax * np.sign(newvitesse)
-                newposition = currentnode.position + piste.Point(-newvitesse * PASDETEMPS * np.cos(newdirection),newvitesse * PASDETEMPS * np.sin(newdirection))
+                newposition = currentnode.position + piste.Point(-newvitesse * PASDETEMPS * np.sin(newdirection),newvitesse * PASDETEMPS * np.cos(newdirection))
+                
+                #if abs(newvitesse)<abs(current_node.vitesse):
+                    #print('OK')
 
                 if polygon.contains(Point(newposition.x, newposition.y)) or piste.intersect(currentnode.parent.position, newposition, chemin[1][-1], chemin[2][-1]):
                     temps = currentnode.temps + 1
-                    dstart = currentnode.dstart + newvitesse * temps * PASDETEMPS
+                    #print(temps)
+                    dstart = currentnode.dstart + newvitesse * PASDETEMPS
+                    
+                    
+                    if current_node.indexdend + 20 >= len(chemin[0]):
+                        indexdend=len(chemin[0]) - 1
+                    else :
+                        indexdend=current_node.indexdend+20
 
-                    """while indexdend > 0 and chemin[0][indexdend].distance(newposition) > 2 * piste.PAS:
+                    while indexdend > 0 and chemin[0][indexdend].distance(newposition) > 2 * piste.LARGEUR:
                         indexdend -= 1
                     dend = chemin[0][indexdend].distance(newposition) + longueur.get(indexdend)
-                    if indexdend + DELTAINDEX >= len(chemin[0]):
-                        indexdend = len(chemin[0]) - 1
-                    else:
-                        indexdend += DELTAINDEX"""
-                        
                     
-                    
-                    l = -1
-                    dend=0
-                    while chemin[0][l].distance(newposition) > piste.LARGEUR:
-                        dend += chemin[0][l].distance(chemin[0][l - 1])
-                        l = l - 1
-                    dend += chemin[0][l].distance(newposition)
 
 
                     #dend = np.sqrt((chemin[0][-1].x-newposition.x)**2 + (chemin[0][-1].y-newposition.y)**2)
                     #dend = abs(chemin[0][-1].x - newposition.x) + abs(chemin[0][-1].y - newposition.y)
+                    
+                    
                     """c=0
                     longueur=0
                     while dstart>longueur:
@@ -106,14 +110,14 @@ def astar(chemin, voit):
                         dend = np.sqrt((chemin[0][-1].x - newposition.x) ** 2 + (chemin[0][-1].y - newposition.y) ** 2)"""
 
                     couttot = dstart + dend
-                    newnode = Node(newvitesse, newacceleration, newdirection, temps, dstart, dend, couttot, currentnode,newposition)
+                    newnode = Node(newvitesse, newacceleration, newdirection, temps, dstart, dend, couttot,indexdend, currentnode,newposition)
                     heappush(heap, (newnode.couttot, newnode))
 
     
-    if len(chemin)==3:
+    """if len(chemin)==3:
         listetriee=tripointg(chemin[1])
     else :
-        listetriee=chemin[3]
+        listetriee=chemin[3]"""
 
     longueur = {}  # création d'un dictionnaire de longueur de la piste à patir de la fin
     longueur[len(chemin[0]) - 1] = 0
@@ -121,7 +125,8 @@ def astar(chemin, voit):
         longueur[l] = longueur.get(l + 1) + chemin[0][l].distance(chemin[0][l + 1])
 
     # cree le noeud de debut et de fin
-    start_node = Node(0, 0, np.pi, 0, 0, longueur.get(0), longueur.get(0), None, chemin[0][1])
+    start_node = Node(0, 0, directioninit(chemin[0][1],chemin[0][0]), 0, 0, longueur.get(0), longueur.get(0),len(chemin[0])-1, None, chemin[0][1],)
+    
 
     # Initialisation des deux listes
     heap = []  # liste des noeuds a traiter  FILE DE PRIORITe
@@ -157,7 +162,22 @@ def astar(chemin, voit):
 
 
 
-
+def directioninit(Point1,Point2):
+    dx,dy=Point1.x-Point2.x,Point1.y-Point2.y
+    if dx>0:
+        return(-np.atan(dy/dx)+np.pi)
+    elif dx<0:
+        if dy>0:
+            return(np.atan(dx/dy))
+        elif dy<0:
+            return(np.atan(dx/dy)+np.pi)
+        else:
+            return(3*np.pi/2)
+    else:
+        if dy>0:
+            return(0)
+        else:
+            return(np.pi)
 
 
 

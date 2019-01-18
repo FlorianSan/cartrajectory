@@ -12,15 +12,18 @@ class CarMotion():
     def __init__(self, windows, car):
 
         self.t=0
-        self.r=0
         self.car = car
         self.windows = windows
 
         self.car_group = QtWidgets.QGraphicsItemGroup()
         self.windows.scene.addItem(self.car_group)
+        self.r=self.car.direction[0]*(360/(2*math.pi))
+        transform = QTransform()
+        transform.rotate(self.r)
+        self.car_group.setTransform(transform)
         self.car_group.setZValue(1)
         self.path = QtGui.QPainterPath()
-        self.voiture = QRectF(QPoint(self.car.position[0].x-self.car.longueur/2, self.car.position[0].y-self.car.largeur/2), QPoint(self.car.position[0].x+self.car.longueur/2, self.car.position[0].y+self.car.largeur/2))
+        self.voiture = QRectF(QPoint(self.car.position[0].x-self.car.largeur/2, self.car.position[0].y-self.car.longueur/2), QPoint(self.car.position[0].x+self.car.largeur/2, self.car.position[0].y+self.car.longueur/2))
         self.path.addRect(self.voiture)
         brush = QBrush(QtGui.QColor("Red"))
         item = QtWidgets.QGraphicsPathItem(self.path, self.car_group)
