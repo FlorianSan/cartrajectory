@@ -42,14 +42,14 @@ class Selector(QWidget):
 
         self.setLayout(vbox)
         self.setGeometry(300, 300, 300, 150)
-        self.setFixedSize(300, 150)
+        self.setFixedSize(400, 150)
         self.setWindowTitle('Selector')
         self.show()
 
     def aleatoire(self):
         self.close()
         if self.cb.currentText() == "Petite piste":
-            longueur = 25
+            longueur = 250
         elif self.cb.currentText() == "Moyenne piste":
             longueur = 500
         elif self.cb.currentText() == "Grande piste":
