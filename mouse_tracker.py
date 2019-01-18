@@ -22,7 +22,7 @@ class MouseTracker(QWidget):
         self.setMouseTracking(True)
         
 
-    def initUI(self):
+    def initUI(self): # Initialisation de l'interface graphique
         self.setWindowTitle('Dessin Piste')
         self.label = QLabel(self)
         self.label.setText("Dessiner en maintenant shift + clic puis valider            Click droit supprime le dernier point")
@@ -46,14 +46,14 @@ class MouseTracker(QWidget):
 
 
 
-    def mouseMoveEvent(self, event):
+    def mouseMoveEvent(self, event):  #Evenement déplacement de la souris
         if QApplication.keyboardModifiers() == Qt.ShiftModifier:
             self.pos = event.pos()
             self.update()
 
 
-    def mousePressEvent(self, event):
-        if event.button() == Qt.LeftButton:
+    def mousePressEvent(self, event): #Evenement clic de la souris
+        if event.button() == Qt.LeftButton: #teste le bouton gauche est appuyé
             if QApplication.keyboardModifiers() == Qt.ShiftModifier: #teste le bouton shift
 
                 newpoint = piste.Point(event.x(), event.y())  # récuperer le point cliqué
@@ -62,7 +62,7 @@ class MouseTracker(QWidget):
 
                     self.pointsmclick.append(newpoint)
 
-                    if len(self.pointsmclick) == 3:
+                    if len(self.pointsmclick) == 3: #ajoute les premiers point gauche et droite
                         self.angle = affichage.call_angle(piste.Point(1, 0), self.pointsmclick[-2], self.pointsmclick[-1])
 
                         self.pointsgclick.append(piste.Point(self.pointsmclick[-2].x + (self.largeur / 2) * math.sin(self.angle),self.pointsmclick[-2].y - (self.largeur / 2) * math.cos(self.angle)))
@@ -87,12 +87,10 @@ class MouseTracker(QWidget):
                         self.pointsg += self.sectionner(self.pointsgclick[-2], self.pointsgclick[-1])
                         self.pointsd += self.sectionner(self.pointsdclick[-2],self.pointsdclick[-1])
                         self.angle += demi_angle
-
-
         self.update()
 
 
-    def paintEvent(self, event):
+    def paintEvent(self, event): #Evenement qui met à jour l'affichage
         q = QPainter(self)
         q.setRenderHint(QPainter.Antialiasing, True)
         if len(self.pointsmclick)>=1:
@@ -106,17 +104,17 @@ class MouseTracker(QWidget):
             q.drawLine(self.pointsmclick[-1].x, self.pointsmclick[-1].y, self.pos.x(), self.pos.y())
 
 
-    def valide(self):
+    def valide(self): # Slot appelé lors du clic sur le bouton OK
         self.chemin = [self.pointsm, self.pointsg, self.pointsd]
         print(len(self.pointsm))
         self.listeMouseTracker.emit()
         self.close()
-        #afficherpiste(self.pointsg,self.pointsd)
+
 
     def closeEvent(self, event):
         self.close()
 
-    def sectionner(self,oldpoint,newpoint):
+    def sectionner(self,oldpoint,newpoint): #Fonction qui decoupe un segment en plusieur segment
 
         deltax, deltay = newpoint.x - oldpoint.x, newpoint.y - oldpoint.y
         if deltax !=0:
@@ -136,30 +134,11 @@ class MouseTracker(QWidget):
                 point = piste.Point(oldpoint.x, oldpoint.y + i * pas)
                 liste.append(point)
             liste.append(newpoint)
-
-
         return liste
-        
-
-def afficherpiste(l1, l2):
-    for k in range(len(l1) - 1):
-        a = [l1[k].x, l1[k + 1].x]
-        b = [l1[k].y, l1[k + 1].y]
-        c = [l2[k].x, l2[k + 1].x]
-        d = [l2[k].y, l2[k + 1].y]
-        plt.plot(a, b)
-        plt.plot(c, d)
-        plt.axis('equal')
-        plt.show()
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     ex = MouseTracker()
-    
     ex.show()
-    
-    
-    
     sys.exit(app.exec_())
     
