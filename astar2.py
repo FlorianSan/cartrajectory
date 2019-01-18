@@ -141,9 +141,7 @@ def astar(chemin, voit):
             voit.vitesse = vitesse[::-1]
             voit.direction = direction[::-1]
             return None
-        """print(heap)
-        print(len(heap))
-        time.sleep(2)"""
+
         newposition(current_node)
         print(i)
         i+=1
