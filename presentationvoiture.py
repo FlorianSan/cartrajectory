@@ -15,6 +15,7 @@ class FirstView(QtWidgets.QWidget):
     voiturechoisie = pyqtSignal()
     def __init__(self):
         super().__init__()
+        #paramètres
         root_layout = QtWidgets.QGridLayout(self) #QVBoxLayout(self)
         self.setWindowTitle('caractéristique voiture')
         self.resize(100,600)
@@ -23,12 +24,14 @@ class FirstView(QtWidgets.QWidget):
 
         Voiture = self.add_voiture()
         for i in range(len(Voiture)):
+            #ajoute dans la grille les voitures du fichier
             root_layout.addLayout(self.ajout_sld(Voiture[i]),i%4,i//4)
 
 
 
             
     def add_voiture(self):
+        #récupère les données d'une voiture
         Voiture=[]
         with open(FILE,'r') as fichier:
             for line in fichier:
@@ -38,6 +41,7 @@ class FirstView(QtWidgets.QWidget):
         return(Voiture)
         
     def ajout_sld(self,voiture):
+        #crée des progress bar par voiture pour montrer certaines caractéristiques
         H=QtWidgets.QHBoxLayout()
         
         V=QtWidgets.QVBoxLayout()
@@ -60,6 +64,7 @@ class FirstView(QtWidgets.QWidget):
         return(H)
         
     def btnstate(self,car):
+        #récupère les données de la voiture choisie
         self.car.name = car[0]
         self.car.vitessemax =float(car[1])
         accelerationmax = float(car[2])
@@ -76,6 +81,7 @@ class FirstView(QtWidgets.QWidget):
         
         
 def horizontal_box(nom,maxi,valeur):
+    #pour une progressbar
     A=QtWidgets.QHBoxLayout()
     A.addWidget(QtWidgets.QLabel('{}'.format(nom[0])))
     A.addStretch
@@ -86,10 +92,3 @@ def horizontal_box(nom,maxi,valeur):
     A.addWidget(QtWidgets.QLabel('{} {}'.format(valeur,nom[1])))
     #A.addWidget(QtWidgets.QLabel('{}'.format(maxi)))
     return(A)
-    
-if __name__=='__main__':
-    app = QtWidgets.QApplication([])
-    main_window = FirstView()
-    main_window.show()
-    app.exec_()
-    

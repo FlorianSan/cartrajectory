@@ -27,7 +27,7 @@ ANIMATION_DELAY = 51  # milliseconds
 
 class PanZoomView(QtWidgets.QGraphicsView):
     """An interactive view that supports Pan and Zoom functions"""
-
+    # repris de aéroport
     def __init__(self, scene):
         super().__init__(scene)
         # enable anti-aliasing
@@ -82,7 +82,7 @@ class Dessin(QtWidgets.QWidget):
 
 
     def create_toolbar(self):
-        # create layout for time controls and entry
+        # pris de aéroport
         generaltoolbar = QtWidgets.QVBoxLayout()
         toolbar = QtWidgets.QHBoxLayout()
         generaltoolbar.addLayout(toolbar)
@@ -119,7 +119,7 @@ class Dessin(QtWidgets.QWidget):
         return generaltoolbar
 
     def add_piste(self):
-
+        #création des éléments de la piste
         track_group = QtWidgets.QGraphicsItemGroup()
         self.scene.addItem(track_group)
 
@@ -131,15 +131,13 @@ class Dessin(QtWidgets.QWidget):
         path.moveTo(self.piste[0].x, self.piste[0].y)
         for i in range(1, len(self.piste)):
             path.lineTo(self.piste[i].x, self.piste[i].y)
-            #self.scene.addLine(self.chemin[1][i-1].x, self.chemin[1][i-1].y,self.chemin[1][i].x, self.chemin[1][i].y,QPen(QtGui.QColor(255,0,0), 1)) #affiche le bord droit de la piste
-            #self.scene.addLine(self.chemin[2][i - 1].x, self.chemin[2][i-1].y, self.chemin[2][i].x,self.chemin[2][i].y, QPen(QtGui.QColor(255,0,0), 1)) #affiche le bord gauche de la piste
-        #self.scene.addPolygon(Polygone(self.chemin[1][-1],self.chemin[2][-1],self.piste[-1],self.piste[-5], 20), QPen(QtGui.QColor(TK_COLOR), 1), QBrush(QColor(TK_COLOR)))
         item = QtWidgets.QGraphicsPathItem(path, track_group)
         item.setPen(pen)
         
             
     def extrem(self,nb):
-        deltax,deltay = self.piste[nb+1].x-self.piste[0].x,self.piste[nb+1].y-self.piste[0].y
+        #création de nb lignes de carrés à l'arrivée et au départ
+        deltax, deltay = self.piste[nb+1].x-self.piste[0].x,self.piste[nb+1].y-self.piste[0].y
         dx,dy=self.piste[-(nb+2)].x-self.piste[-1].x,self.piste[-(nb+2)].y-self.piste[-1].y
         self.dessin(self.chemin[1][0],self.chemin[2][0],self.piste[0],self.piste[nb+1],1)
         self.dessin(self.chemin[1][-1],self.chemin[2][-1],self.piste[-1],self.piste[-(nb+2)],1)
@@ -152,31 +150,31 @@ class Dessin(QtWidgets.QWidget):
             self.dessin(P3,P4,self.piste[-1],self.piste[-(nb+2)],(i+1)%2)
             
     def dessininter(self,Point1,Point2,Point3):
+        #crée un quatrième point pour faire un losange
         Deltax,Deltay=Point1.x-Point2.x,Point1.y-Point2.y
         P4=piste.Point(Point3.x+Deltax,Point3.y+Deltay)
         return(Point3,P4)
         
-    def dessin(self,Point1, Point2, pointpiste1,pointpiste2,nb):
-        Deltax,Deltay=(Point1.x-Point2.x),(Point1.y-Point2.y)
+    def dessin(self,point1, point2, pointpiste1,pointpiste2,nb):
+        #dessin de ligne de carrés entre point1 et point2
+        Deltax,Deltay=(point1.x-point2.x),(point1.y-point2.y)
         deltax,deltay=pointpiste1.x-pointpiste2.x,pointpiste1.y-pointpiste2.y
-        #V2=math.sqrt((Deltax)**2+(Deltay)**2)/10
         v=math.sqrt(deltax**2+deltay**2)
         V2=LARGEUR/10
         pen = QPen(QtGui.QColor('white'),V2)
         pen.setCapStyle(Qt.SquareCap)
         pen.setJoinStyle(Qt.RoundJoin)
-        #self.scene.addLine(Point1.x,Point1.y,Point2.x,Point2.y,QPen(QtGui.QColor('red'),0.5))
         if v!=0:
             deltax,deltay=deltax/v,deltay/v
         if nb==1:
             for i in range(1,5):
-                P1=piste.Point(Point1.x-i*Deltax/5,Point1.y-i*Deltay/5)
-                P2=piste.Point(Point1.x -i*Deltax/5 + V2*deltax*0.5,Point1.y -i*Deltay/5+V2*deltay*0.5)
+                P1=piste.Point(point1.x-i*Deltax/5,point1.y-i*Deltay/5)
+                P2=piste.Point(point1.x -i*Deltax/5 + V2*deltax*0.5,point1.y -i*Deltay/5+V2*deltay*0.5)
                 self.scene.addLine(P1.x,P1.y,P2.x,P2.y,pen)
         else:
             for i in range(5):
-                P1=piste.Point(Point1.x-(2*i+1)*Deltax/10,Point1.y-(2*i+1)*Deltay/10)
-                P2=piste.Point(Point1.x-(2*i+1)*Deltax/10 + V2*deltax*0.5,Point1.y -(2*i+1)*Deltay/10+V2*deltay*0.5)
+                P1=piste.Point(point1.x-(2*i+1)*Deltax/10,point1.y-(2*i+1)*Deltay/10)
+                P2=piste.Point(point1.x-(2*i+1)*Deltax/10 + V2*deltax*0.5,point1.y -(2*i+1)*Deltay/10+V2*deltay*0.5)
                 self.scene.addLine(P1.x,P1.y,P2.x,P2.y,pen)
 
             
@@ -193,11 +191,14 @@ class Dessin(QtWidgets.QWidget):
         self.savedata.show()
 
 class SAVEDATA(QWidget):
+    #permet de sauvegarder la piste et/ou la simulation entière en fonction de style qui peut être 'sansA' ou 'avecA'
     def __init__(self,style,chemin,voiture):
         super().__init__()
+        #récupère les données à sauvegarder
         self.chemin = chemin
         self.car = voiture
         self.style= style
+        #paramètres
         self.label = QLabel('nom fichier',self)
         self.nom = QLineEdit('',self)
         button = QPushButton("Save")
@@ -212,6 +213,7 @@ class SAVEDATA(QWidget):
         self.show()
 
     def savename(self):
+        #crée le nom et appelle la bonne fonction pour sauvegarder
         self.close()
         name=str(self.nom.text())
         if self.style == 'sansA':
@@ -222,6 +224,7 @@ class SAVEDATA(QWidget):
             self.savesimu(filename)
 
     def sauvegarder(self,filename):
+        #sauvegarde uniquement la piste dans le dossier DATA
         try:
             with open(filename,'wb') as fichier:
                 mon_picker=pickle.Pickler(fichier)
@@ -235,6 +238,7 @@ class SAVEDATA(QWidget):
 
 
     def savesimu(self,filename):
+        #sauvegarde la simulation dans le dossier DATAstar
         try:
             with open(filename,'wb') as fichier:
                 picker = pickle.Pickler(fichier)
