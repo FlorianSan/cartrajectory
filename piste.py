@@ -26,7 +26,7 @@ class Point:
         return Point(self.x+other.x, self.y+other.y)
 
     def __repr__(self):
-        return "({},{})".format(self.x,self.y)
+        return "({},{})".format(self.x, self.y)
 
     def mini(self, other):
         return Point(min(self.x, other.x), min(self.y, other.y))
@@ -34,7 +34,7 @@ class Point:
     def maxi(self, other):
         return Point(max(self.x, other.x), max(self.y, other.y))
         
-    def distance(self,other):
+    def distance(self, other):
         return sqrt((self.x-other.x)**2 + (self.y-other.y)**2)
 
 
@@ -85,7 +85,7 @@ class Piste:
     def ajoutpoint(self, nouveaupointg, nouveaupointd, nouveaupointm):
         self.pointsg.append(nouveaupointg)
         self.pointsgtrie.append((nouveaupointg,len(self.pointsg))) #on ajoute nouveaupointg dans pointsgtrie (len(self.pointsg) correspond à son indice dans la liste pointsg)
-        self.pointsgtrie.sort(key=lambda index : index[0].x) # on retrie la liste pointsgtrie
+        self.pointsgtrie.sort(key=lambda index: index[0].x)# on retrie la liste pointsgtrie
         self.pointsd.append(nouveaupointd)
         self.pointsm.append(nouveaupointm)
 
@@ -98,36 +98,36 @@ def recherche_dichotomique(point, liste_triee, epsilon ):
     b = len(liste_triee)-1
     m = (a+b)//2
     while a < b :
-        if abs(liste_triee[m][0].x - element) <  epsilon :
+        if abs(liste_triee[m][0].x - element) < epsilon:
             return m
-        elif liste_triee[m][0].x - element > epsilon :
+        elif liste_triee[m][0].x - element > epsilon:
             b = m-1
         else :
             a = m+1
         m = (a+b)//2
-    return a # on retourne son indice
+    return a# on retourne son indice
     
     
-def obtindex(piste, point, epsilon): # on obtient la liste des points de la piste pouvant potentiellement intersecter 'point'
-    indextrie=recherche_dichotomique(point,piste.pointsgtrie,epsilon)
+def obtindex(piste, point, epsilon) : # on obtient la liste des points de la piste pouvant potentiellement intersecter 'point'
+    indextrie=recherche_dichotomique(point, piste.pointsgtrie, epsilon)
     listindex=[]
-    if indextrie-1>0 :
+    if indextrie-1 > 0:
         listindex.append(piste.pointsgtrie[indextrie-1][1])
     while indextrie<len(piste.pointsgtrie) and piste.pointsgtrie[indextrie][1]<len(piste.pointsd) and abs(piste.pointsgtrie[indextrie][0].x - point.x) < 4 *epsilon : #on vérifie que les éléments à mettre dans listindex ont leur abscisse comprise entre -4epsilon et +4epsilon
         listindex.append(piste.pointsgtrie[indextrie][1]) #on ajoute l'indice de l'élément dans listindex
-        indextrie+=1
-    if indextrie+1 < len(piste.pointsgtrie) :
+        indextrie += 1
+    if indextrie+1 < len(piste.pointsgtrie):
         listindex.append(piste.pointsgtrie[indextrie+1][1])
     return listindex
     
 
 def verifpoint(piste,point1, point2, epsilon): # on vérifie que le segment [point1,point2] n'intersecte pas la piste existante
-    listindex=obtindex(piste, point1, epsilon) # on vérifie uniquement l'intersection avec des segments où l'un des deux points appartient à listindex
-    for j in listindex :
+    listindex = obtindex(piste, point1, epsilon) # on vérifie uniquement l'intersection avec des segments où l'un des deux points appartient à listindex
+    for j in listindex:
         if j<len(piste.pointsg)-1 and j-1 in listindex : #on vérifie que le segment [point1,point2] n'intersecte pas les segments gauches et droits définis par les points d'indices j et j+1
-            if intersect(point1, point2, piste.pointsg[j], piste.pointsg[j + 1]) or intersect(point1, point2, piste.pointsd[j], piste.pointsd[j + 1]) :
+            if intersect(point1, point2, piste.pointsg[j], piste.pointsg[j + 1]) or intersect(point1, point2, piste.pointsd[j], piste.pointsd[j + 1]):
                 return False
-        elif j<len(piste.pointsg)-1 and j>0 : #si j-1 n'est pas dans listindex alors on procède à une double vérification j-1/j et j/j+1
+        elif j<len(piste.pointsg) - 1 and j > 0:#si j-1 n'est pas dans listindex alors on procède à une double vérification j-1/j et j/j+1
             if intersect(point1, point2, piste.pointsg[j], piste.pointsg[j + 1]) or intersect(point1, point2, piste.pointsd[j], piste.pointsd[j + 1]) or intersect(point1, point2, piste.pointsg[j], piste.pointsg[j - 1]) or intersect(point1, point2, piste.pointsd[j], piste.pointsd[j - 1]) :
                 return False
     return True
@@ -144,15 +144,15 @@ def creationpiste(nbiterations):
             pm = piste.miseajourpointm()
             px, py = piste.creationpointspiste()
             
-            if verifpoint(piste, px, py, PAS) : #on vérifie que les nouveaux points de la piste n'intersectent pas des anciens points
+            if verifpoint(piste, px, py, PAS): #on vérifie que les nouveaux points de la piste n'intersectent pas des anciens points
                 piste.ajoutpoint(px, py, pm)
                 k = k + 1
                 
             else : #si il y a intersection
                 l = len(piste.pointsm)
-                piste.pointsgtrie=sorted(piste.pointsgtrie, key = lambda index : index[1]) #on trie la liste des pointsgtrie en fonction de l'indice des points pour pouvoir utiliser la fonction pop
+                piste.pointsgtrie=sorted(piste.pointsgtrie, key = lambda index: index[1]) #on trie la liste des pointsgtrie en fonction de l'indice des points pour pouvoir utiliser la fonction pop
                 
-                for j in range(l - (len(piste.zone) - 1) * NBETAPEPARTIE + 1 ) : #si intersection alors on enlève les points de la partie en cours ainsi que ceux de la précédente
+                for j in range(l - (len(piste.zone) - 1) * NBETAPEPARTIE + 1 ): #si intersection alors on enlève les points de la partie en cours ainsi que ceux de la précédente
                     piste.pointsm.pop() #on retire les derniers éléments ajoutés
                     piste.pointsg.pop()
                     piste.pointsd.pop()
