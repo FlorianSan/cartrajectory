@@ -1,0 +1,24 @@
+CREATE DATABASE IF NOT EXISTS bddvoitures;
+
+CREATE TABLE IF NOT EXISTS Personne(
+	idPersonne INT NOT NULL,
+	nom VARCHAR(40),
+	prenom VARCHAR(40),
+	dateNaiss VARCHAR(20),
+	motdepasse VARCHAR(40),
+	login VARCHAR(40),
+	mail VARCHAR(40),
+	telephone VARCHAR(20),
+	PRIMARY KEY (idPersonne)
+)ENGINE=INNODB CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS Client(
+	idPersonne INT NOT NULL,
+	nbkm INT,
+	numCarte INT,
+	numLicence INT,
+	FOREIGN KEY (idPersonne) REFERENCES Personne(idPersonne) ON DELETE CASCADE ON UPDATE CASCADE
+)ENGINE=INNODB CHARSET=utf8;
+
+INSERT INTO Personne(idPersonne, nom, prenom, dateNaiss, motdepasse, login, mail, telephone)
+VALUES (1, 'Dupont', 'Pierre', '1998-12-08', '1234', 'pidu','pidu@gmail.com', '0612345678');
